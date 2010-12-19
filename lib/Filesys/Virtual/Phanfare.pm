@@ -34,7 +34,9 @@ File access to photos and videos in Phanfare library.
 
 =head1 SUBROUTINES/METHODS
 
-=head2 function1
+=head2 list
+
+Directory listing.
 
 =cut
 
@@ -43,9 +45,6 @@ sub list {
   my $path = $self->_path_from_root( shift );
 
   return 'library';
-}
-
-sub function1 {
 }
 
 =head2 function2
