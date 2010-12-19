@@ -2,6 +2,8 @@ package Filesys::Virtual::Phanfare;
 
 use warnings;
 use strict;
+use Carp;
+use WWW::Phanfare::API;
 use base qw( Filesys::Virtual );
 
 =head1 NAME
@@ -15,7 +17,6 @@ Version 0.01
 =cut
 
 our $VERSION = '0.01';
-
 
 =head1 SYNOPSIS
 
@@ -33,6 +34,46 @@ File access to photos and videos in Phanfare library.
     my @files = $fs->list("/");
 
 =head1 SUBROUTINES/METHODS
+
+=head2 new
+
+Initialize new virtual filesystem
+
+=cut
+
+sub new {
+  my $that  = shift;
+  my %args = @_;
+
+  my $class = ref($that) || $that;
+  my $self = {};
+  bless $self, $class;
+
+  # Create new Phanfare API agent
+  my $agent;
+  if ( $args{api_key} and $args{private_key} ) {
+    $agent = WWW::Phanfare::API->new(
+      api_key     => $args{api_key},
+      private_key => $args{private_key},
+    );
+  } else {
+    croak "api_key and private_key are required for Phanfare API";
+  }
+  $self->{_phanfare} = $agent;
+
+  # Authenticate as user or guest
+  if ( $args{email_address} and $args{password} ) {
+    my $session = $agent->Authenticate(
+      email_address => $args{email_address},
+      password      => $args{password},
+    );
+    $self->{_target_uid} = $session->{session}{uid};
+  } else {
+    $agent->AuthenticateGuest();
+  }
+
+  return $self;
+}
 
 =head2 list
 
