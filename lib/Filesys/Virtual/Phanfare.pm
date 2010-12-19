@@ -4,7 +4,9 @@ use warnings;
 use strict;
 use Carp;
 use WWW::Phanfare::API;
-use base qw( Filesys::Virtual );
+use Filesys::Virtual::Plain;
+use base qw( Filesys::Virtual Class::Accessor::Fast );
+__PACKAGE__->mk_accessors(qw( cwd root_path home_path host ));
 
 =head1 NAME
 
@@ -40,6 +42,12 @@ File access to photos and videos in Phanfare library.
 Initialize new virtual filesystem
 
 =cut
+
+# HACKY - mixin these from the ::Plain class, they only deal with the
+# mapping of root_path, cwd, and home_path, so they should be safe
+#
+*_path_from_root = \&Filesys::Virtual::Plain::_path_from_root;
+*_resolve_path   = \&Filesys::Virtual::Plain::_resolve_path;
 
 sub new {
   my $that  = shift;
@@ -88,11 +96,33 @@ sub list {
   return 'library';
 }
 
-=head2 function2
+=head2 stat
+
+File stat
 
 =cut
 
-sub function2 {
+sub stat {
+  my $self = shift;
+
+  # dev, ino, mode, nlink, uid, gid, rdev, size, atime, mtime, ctime, blksize, blocks
+  return (
+    0+$self, 42, 042555, 1, $self->{_target_uid}, $self->{_target_uid},
+    0, 1024, 0, 0, 0, 024, 1
+  );
+}
+
+=head2 test
+
+File test
+
+=cut
+
+sub test {
+  my $self = shift;
+  my $test = shift;
+
+  return 1;
 }
 
 =head1 AUTHOR
