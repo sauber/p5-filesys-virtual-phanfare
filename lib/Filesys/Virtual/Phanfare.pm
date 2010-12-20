@@ -21,6 +21,19 @@ Version 0.01
 
 our $VERSION = '0.01';
 our $BLOCKSIZE = 1024;
+our $AUTOLOAD;
+
+sub AUTOLOAD {
+  my $self = shift;
+
+  my $field = $AUTOLOAD;
+  $field =~ s/.*:://;
+	
+  return if $field eq 'DESTROY';
+
+  croak("No such property or method '$AUTOLOAD'");
+}
+
 
 =head1 SYNOPSIS
 
