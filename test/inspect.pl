@@ -20,9 +20,10 @@ my $session = $agent->Authenticate(
   password      => $config{password},
 );
 my $uid = $session->{session}{uid};
+print Dumper $session;
 
 my $albumlist = $agent->GetAlbumList(
   target_uid => $uid,
 );
 
-print Dumper $albumlist;
+#print Dumper $albumlist;

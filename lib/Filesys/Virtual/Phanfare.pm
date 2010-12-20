@@ -2,6 +2,7 @@ package Filesys::Virtual::Phanfare;
 
 use warnings;
 use strict;
+use POSIX qw(ceil);
 use Carp;
 use WWW::Phanfare::API;
 use Filesys::Virtual::Plain;
@@ -19,6 +20,7 @@ Version 0.01
 =cut
 
 our $VERSION = '0.01';
+our $BLOCKSIZE = 1024;
 
 =head1 SYNOPSIS
 
@@ -36,6 +38,17 @@ File access to photos and videos in Phanfare library.
     my @files = $fs->list("/");
 
 =head1 SUBROUTINES/METHODS
+
+=head2 x
+
+debug
+
+=cut
+
+sub x {
+ use Data::Dumper;
+ warn Data::Dumper->Dump([$_[1]], ["*** $_[0]"]);
+}
 
 =head2 new
 
@@ -75,12 +88,88 @@ sub new {
       email_address => $args{email_address},
       password      => $args{password},
     );
-    $self->{_target_uid} = $session->{session}{uid};
+    $self->{_uid} = $session->{session}{uid};
+    $self->{_gid} = $session->{session}{public_group_id};
+    $self->{_top} = $session->{session};
   } else {
     $agent->AuthenticateGuest();
   }
 
   return $self;
+}
+
+########################################################################
+### General
+########################################################################
+
+# Standard file stat values
+#
+sub _filestat {
+  my $self = shift;
+  my $file = shift;
+
+  my $size = $file ? length($file) : 0;
+  return (
+    0 + $self,			# dev
+    int(rand 8**4),		# ino
+    0100444,			# mode
+    1,				# nlink
+    $self->{_uid},		# uid
+    $self->{_gid},		# gid
+    0,				# rdev
+    $size,			# size
+    0,				# atime
+    0,				# mtime
+    time,			# ctime
+    $BLOCKSIZE,			# blksize
+    ceil($size/$BLOCKSIZE),	# blocks
+  );
+
+}
+
+# Standard dir stat values
+#
+sub _dirstat {
+  my $self = shift;
+  my $dir = shift;
+
+  return (
+    0 + $self,			# dev
+    42,		# ino
+    042555,			# mode
+    1,				# nlink
+    $self->{_uid},		# uid
+    $self->{_gid},		# gid
+    0,				# rdev
+    1024		,	# size
+    0,				# atime
+    0,				# mtime
+    time,			# ctime
+    $BLOCKSIZE,			# blksize
+    1				# blocks
+  );
+}
+
+
+
+########################################################################
+### Site List
+########################################################################
+
+# Get list of sites available (dirs) and properties (values)
+#
+sub _sitelist {
+  my $self = shift;
+
+  # Site name and all site properties
+  my %dir = (
+    $self->{_top}{primary_site_name} => [],
+    map {( $_ => $self->{_top}{$_} )}
+    grep { ! ref $self->{_top}{$_} }
+    keys %{$self->{_top}}
+  );
+  #x '_sitelist', \%dir;
+  return %dir;
 }
 
 =head2 list
@@ -93,7 +182,19 @@ sub list {
   my $self = shift;
   my $path = $self->_path_from_root( shift );
 
-  return 'library';
+  warn "*** list path: $path\n";
+  my($top,$site,$album,$section,$rendition,$image) = split '/', $path;
+
+  if ( $image ) {
+  } elsif ( $rendition ) {
+  } elsif ( $section ) {
+  } elsif ( $album ) {
+  } elsif ( $site ) {
+  } else {
+    my %dir = $self->_sitelist;
+    #x 'list', \%dir;
+    return ".", keys %dir;
+  }
 }
 
 =head2 stat
@@ -104,12 +205,68 @@ File stat
 
 sub stat {
   my $self = shift;
+  my $path = $self->_path_from_root( shift );
+  warn "*** stat path: $path\n";
+  my($top,$site,$album,$section,$rendition,$image) = split '/', $path;
+  if ( $image ) {
+  } elsif ( $rendition ) {
+  } elsif ( $section ) {
+  } elsif ( $album ) {
+  } elsif ( $site ) {
+    my %node = $self->_sitelist;
+    return unless $node{$site};
+    if ( ref $node{$site} ) {
+      return $self->_dirstat;
+    } else {
+      return $self->_filestat($node{$site});
+    }
+  } else {
+    return $self->_dirstat;
+  }
+  return;
+}
 
-  # dev, ino, mode, nlink, uid, gid, rdev, size, atime, mtime, ctime, blksize, blocks
-  return (
-    0+$self, 42, 042555, 1, $self->{_target_uid}, $self->{_target_uid},
-    0, 1024, 0, 0, 0, 024, 1
-  );
+=head2 open_read
+
+Open a file for reading
+
+=cut
+
+sub open_read {
+  my $self = shift;
+  my $path = $self->_path_from_root( shift );
+  warn "*** open_read path: $path\n";
+  my($top,$site,$album,$section,$rendition,$image) = split '/', $path;
+  if ( $image ) {
+  } elsif ( $rendition ) {
+  } elsif ( $section ) {
+  } elsif ( $album ) {
+  } elsif ( $site ) {
+    my %node = $self->_sitelist;
+    return unless $node{$site};
+    if ( not ref $node{$site} ) {
+      my $content = $node{$site} . "\n";
+      open( my $fh, '<', \$content );
+      warn "*** create file hander $fh\n";
+      return $fh;
+    }
+  } else {
+  }
+  return;
+}
+
+
+=head2 close_read
+
+File close
+
+=cut
+
+sub close_read {
+  my $self = shift;
+  my ($fh) = @_;
+  warn "*** close_read fh: $fh\n";
+  return close $fh;
 }
 
 =head2 test
