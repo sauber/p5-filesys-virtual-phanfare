@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use strict;
 use warnings;
@@ -26,4 +26,4 @@ my $albumlist = $agent->GetAlbumList(
   target_uid => $uid,
 );
 
-#print Dumper $albumlist;
+print Dumper $albumlist;
