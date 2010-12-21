@@ -189,7 +189,7 @@ sub _sitelist {
 ### Album List
 ########################################################################
 
-=head _albumlist
+=head2 _albumlist
 
 List albums
 
@@ -199,10 +199,11 @@ sub _albumlist {
   my $self = shift;
 
   my $albumlist = $self->{_phanfare}->GetAlbumList(target_uid=>$self->{_uid});
+  #x 'albumlist', $albumlist;
 
   return
-    map {( $_->{albumname} => [] )}
-    @{ $albumlist->{album}{albums} };
+    map {( "$_->{album_name}.$_->{album_id}" => [] )}
+    @{ $albumlist->{albums}{album} };
 }
 
 =head2 list
