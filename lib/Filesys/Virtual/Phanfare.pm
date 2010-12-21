@@ -185,6 +185,26 @@ sub _sitelist {
   return %dir;
 }
 
+########################################################################
+### Album List
+########################################################################
+
+=head _albumlist
+
+List albums
+
+=cut
+
+sub _albumlist {
+  my $self = shift;
+
+  my $albumlist = $self->{_phanfare}->GetAlbumList(target_uid=>$self->{_uid});
+
+  return
+    map {( $_->{albumname} => [] )}
+    @{ $albumlist->{album}{albums} };
+}
+
 =head2 list
 
 Directory listing.
@@ -203,6 +223,8 @@ sub list {
   } elsif ( $section ) {
   } elsif ( $album ) {
   } elsif ( $site ) {
+    my %dir = $self->_albumlist;
+    return ".", "..", keys %dir;
   } else {
     my %dir = $self->_sitelist;
     #x 'list', \%dir;
@@ -225,6 +247,9 @@ sub stat {
   } elsif ( $rendition ) {
   } elsif ( $section ) {
   } elsif ( $album ) {
+    my %node = $self->_albumlist;
+    return unless $node{$album};
+    return $self->_dirstat;
   } elsif ( $site ) {
     my %node = $self->_sitelist;
     return unless $node{$site};
