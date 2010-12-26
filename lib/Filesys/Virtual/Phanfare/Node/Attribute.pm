@@ -2,6 +2,8 @@ package Filesys::Virtual::Phanfare::Node::Attribute;
 use Moose;
 use MooseX::Method::Signatures;
 
+with 'Filesys::Virtual::Phanfare::Node::File';
+
 has 'value' => ( isa => 'Str', is=>'rw', );
 
 # Size of attribute

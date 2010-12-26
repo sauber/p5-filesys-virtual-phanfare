@@ -3,22 +3,31 @@ use Moose;
 use MooseX::Method::Signatures;
 use WWW::Phanfare::API;
 use Carp;
+use Filesys::Virtual::Phanfare::Node::Site;
 
-has 'uid'      => ( is=>'rw', isa=>'Int' );
-has 'gid'      => ( is=>'rw', isa=>'Int' );
-has '_agent'   => ( is=>'rw', isa=>'WWW::Phanfare::API' );
-has 'sitelist' => ( is=>'ro', isa=>'ArrayRef', lazy_build=>1 );
+has '_agent'   => ( is=>'rw', isa=>'WWW::Phanfare::API', required=>1 );
+has 'uid' => ( is=>'rw', isa=>'Int', required=>1 );
+has 'gid' => ( is=>'rw', isa=>'Int', required=>1 );
+has 'sitelist' => ( is=>'ro', isa=>'HashRef', lazy_build=>1 );
 
 # List of available sites
 sub _build_sitelist {
   my $self = shift;
 
   my $sitename = $self->attribute('primary_site_name')->value;
-  #return { $sitename => Filesys::Virtual::Phanfare::Node::Site->new( sitename => $sitename ) };
-  return [ $sitename ];
+  return {
+    $sitename => Filesys::Virtual::Phanfare::Node::Site->new(
+      sitename => $sitename,
+      uid => $self->uid,
+      gid => $self->gid,
+      _agent => $self->_agent,
+    )
+  };
+  #return [ $sitename ];
 }
 
 # When object is created, log into Phanfare right away
+# XXX: Don't have new method - instead use builder
 sub new {
   my $that  = shift;
   my %args = @_;
@@ -65,14 +74,21 @@ method size {
 
 # And attribute or a site
 method getnode ( Str $nodename ) {
-  if ( grep $nodename, $self->attributelist ) {
+  #warn "*** account getnode: $nodename\n";
+  if ( grep /^$nodename$/, $self->attributelist ) {
+    #warn "*** $nodename is an attribute\n";
     return $self->attribute( $nodename );
-  #} elsif ( grep $nodename, @{ $self->sitelist } ) {
-  #  $self->{_site}{$nodename} ||= Filesys::Virtual::Phanfare::Node::Site->new(
-  #    sitename => $nodename
-  #  );
-  #  return $self->{_site}{$nodename};
+  } elsif ( grep /^$nodename/, keys %{ $self->sitelist } ) {
+    #warn "*** $nodename is in sitelist\n";
+    $self->{_site}{$nodename} ||= Filesys::Virtual::Phanfare::Node::Site->new(
+      sitename => $nodename,
+      uid => $self->uid,
+      gid => $self->gid,
+      _agent => $self->_agent,
+    );
+    return $self->{_site}{$nodename};
   } else {
+    #warn "*** $nodename is unknown\n";
     return undef;
   }
 }
@@ -81,8 +97,8 @@ method getnode ( Str $nodename ) {
 #
 method list {
   return (
-    @{ $self->sitelist },
-    keys %{ $self->attributes }
+    keys %{ $self->sitelist   },
+    keys %{ $self->attributes },
   );
 }
 

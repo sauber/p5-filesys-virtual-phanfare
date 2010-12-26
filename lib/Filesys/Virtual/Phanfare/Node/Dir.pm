@@ -5,20 +5,19 @@ use Devel::Size qw(size);
 
 our $BLOCKSIZE = 1024;
 
-requires 'size';
 requires 'getnode';
-requires 'uid';
-requires 'gid';
+has 'uid' => ( is=>'ro', isa=>'Int', required=>1 );
+has 'gid' => ( is=>'ro', isa=>'Int', required=>1 );
 
 sub stat {
   my $self = shift;
   my $size = size($self);
   #my $size = 26565;
-  warn "*** stat $self size $size\n";
+  #warn "*** stat $self size $size\n";
   return (
     0 + $self,                  # dev
     42,         # ino
-    042555,                     # mode
+    "042555",                     # mode
     1,                          # nlink
     $self->uid,              # uid
     $self->gid,              # gid

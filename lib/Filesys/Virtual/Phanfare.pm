@@ -103,40 +103,6 @@ Initialize new virtual filesystem
 *_path_from_root = \&Filesys::Virtual::Plain::_path_from_root;
 *_resolve_path   = \&Filesys::Virtual::Plain::_resolve_path;
 
-#sub new {
-#  my $that  = shift;
-#  #my %args = @_;
-#
-#  my $class = ref($that) || $that;
-#  my $self = {};
-#  bless $self, $class;
-#
-#  $self->account( Filesys::Virtual::Phanfare::Node::Account->new( @_ ) );
-#
-#  return $self;
-#}
-
-########################################################################
-### Album List
-########################################################################
-
-#=head2 _albumlist
-#
-#List albums
-#
-#=cut
-#
-#sub _albumlist {
-#  my $self = shift;
-#
-#  my $albumlist = $self->{_phanfare}->GetAlbumList(target_uid=>$self->{_uid});
-#  #x 'albumlist', $albumlist;
-#
-#  return
-#    map {( "$_->{album_name}.$_->{album_id}" => [] )}
-#    @{ $albumlist->{albums}{album} };
-#}
-
 =head2 list
 
 Directory listing.
@@ -149,7 +115,7 @@ sub list {
   my $path = $self->_path_from_root( $patharg );
 
   #warn sprintf "*** list patharg  : %s\n", $patharg;
-  warn sprintf "*** list path     : %s\n", $path;
+  #warn sprintf "*** list path     : %s\n", $path;
   #warn sprintf "*** list root_path: %s\n", $self->root_path;
   #warn sprintf "*** list home_path: %s\n", $self->home_path;
   #warn sprintf "*** list cwd      : %s\n", $self->cwd;
@@ -181,7 +147,7 @@ File stat
 sub stat {
   my $self = shift;
   my $path = $self->_path_from_root( shift );
-  warn "*** stat path: $path\n";
+  #warn "*** stat path: $path\n";
   my($top,$site,$album,$section,$rendition,$image) = split '/', $path;
   if ( $image ) {
   } elsif ( $rendition ) {
@@ -198,6 +164,7 @@ sub stat {
     #} else {
     #  return $self->_filestat($node{$site});
     #}
+    return $self->account->getnode($site)->stat;
   } else {
     return $self->account->stat;
   }

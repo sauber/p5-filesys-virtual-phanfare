@@ -18,7 +18,11 @@ sub attributes {
     while ( my($key,$value) = each %$data ) {
       # XXX: For now only handle strings
       next if ref $value;
-      $self->{_attr}{$key} = Filesys::Virtual::Phanfare::Node::Attribute->new( value => $value );
+      $self->{_attr}{$key} = Filesys::Virtual::Phanfare::Node::Attribute->new(
+        value => $value,
+        uid => $self->uid,
+        gid => $self->gid,
+      );
     }
   } else {
     # Read all attribute values
@@ -36,7 +40,11 @@ sub attribute {
   my($self, $key, $value) = @_;
 
   if ( $value ) {
-    $self->{_attr}{$key} = Filesys::Virtual::Phanfare::Node::Attribute->new( value => $value );
+    $self->{_attr}{$key} = Filesys::Virtual::Phanfare::Node::Attribute->new(
+      value => $value,
+      uid => $self->uid,
+      gid => $self->gid,
+    );
   }
   return $self->{_attr}{$key}; # Object reference
 }
