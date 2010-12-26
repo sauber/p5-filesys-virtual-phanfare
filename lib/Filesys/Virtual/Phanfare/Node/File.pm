@@ -27,4 +27,25 @@ sub stat {
   );
 }
 
+=head1 NAME
+
+Filesys::Virtual::Phanfare::Node::Account - File Node
+
+=head1 SUBROUTINES/METHODS
+  
+=head2 new
+    
+Create object
+
+=head2 stat
+
+posix stat values for a file.
+
+=head1 SEE ALSO
+
+L<Filesys::Virtual::Phanfare>
+
+=cut
+
+
 1;

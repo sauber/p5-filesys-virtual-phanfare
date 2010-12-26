@@ -57,9 +57,24 @@ sub new {
   return $self;
 }
 
+# Size of account dir
 method size {
   # XXX: something more reasonable...
   int rand 1024*64;
+}
+
+# And attribute or a site
+method getnode ( Str $nodename ) {
+  if ( grep $nodename, keys %{ $self->attributes } ) {
+    return $self->attribute( $nodename );
+  #} elsif ( grep $nodename, @{ $self->sitelist } ) {
+  #  $self->{_site}{$nodename} ||= Filesys::Virtual::Phanfare::Node::Site->new(
+  #    sitename => $nodename
+  #  );
+  #  return $self->{_site}{$nodename};
+  } else {
+    return undef;
+  }
 }
 
 # List of sites and properties
@@ -73,3 +88,19 @@ method list {
 
 with 'Filesys::Virtual::Phanfare::Node::Attributes';
 with 'Filesys::Virtual::Phanfare::Node::Dir';
+
+=head1 NAME
+
+Filesys::Virtual::Phanfare::Node::Account - Account Node
+
+=head1 SUBROUTINES/METHODS
+
+=head2 new
+
+Create object
+
+=head1 SEE ALSO
+
+L<Filesys::Virtual::Phanfare>
+
+=cut

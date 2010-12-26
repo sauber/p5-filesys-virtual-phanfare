@@ -41,4 +41,29 @@ sub attribute {
   return $self->{_attr}{$key}; # Object reference
 }
 
+=head1 NAME
+
+Filesys::Virtual::Phanfare::Node::Attributes - Node Attributes
+
+=head1 SUBROUTINES/METHODS
+  
+=head2 new
+    
+Create object.
+
+=head2 attribute
+
+Get named attribute object.
+
+=head2 attributes
+
+Get hashref of all attribute key/value pairs
+
+=head1 SEE ALSO
+
+L<Filesys::Virtual::Phanfare>
+
+=cut
+
+
 1;
