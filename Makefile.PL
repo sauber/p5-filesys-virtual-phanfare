@@ -5,7 +5,13 @@ all_from 'lib/Filesys/Virtual/Phanfare.pm';
 author   q{Soren Dossing <netcom@sauber.net>};
 license  'perl';
 
-build_requires 'Test::More';
+test_requires 'Test::More';
+test_requires 'Test::Pod::Coverage';
+test_requires 'Fuse::Filesys::Virtual';
+test_requires 'Fuse';
+
+requires 'WWW::Phanfare::API';
+requires 'Filesys::Virtual::Plain';
 
 auto_install;
 
