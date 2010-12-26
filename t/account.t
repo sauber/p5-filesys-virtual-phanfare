@@ -40,7 +40,7 @@ for my $key ( keys %accountproperties ) {
   my @stat = $fs->stat( $key );
   #warn "*** stat $key: " . Dumper \@stat;
   ok( scalar @stat == 13, "stat $key has 13 values" );
-  ok( $stat[2] eq '0100444', "$key is file" );
+  ok( $stat[2] eq 0100444, "$key is file" );
 }
 
 # Verify there is a site
@@ -48,6 +48,6 @@ my($sitename) = grep ! $accountproperties{$_}, keys %dir;
 ok( $sitename, 'There is a site' );
 my @sitestat = $fs->stat( $sitename );
 ok( scalar @sitestat == 13, "stat $sitename has 13 values" );
-ok( $sitestat[2] eq '042555', "$sitename is dir" );
+ok( $sitestat[2] eq 042555, "$sitename is dir" );
 
 done_testing();

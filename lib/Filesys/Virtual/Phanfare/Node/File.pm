@@ -14,11 +14,11 @@ sub size {
 
 sub stat {
   my $self = shift;
-  #warn "*** stat $self\n";
+  #warn sprintf "*** stat $self size %s\n", $self->size;
   return (
     0 + $self,                  # dev
     42,         # ino
-    "0100444",                     # mode
+    0100444,                     # mode
     1,                          # nlink
     $self->uid,              # uid
     $self->gid,              # gid

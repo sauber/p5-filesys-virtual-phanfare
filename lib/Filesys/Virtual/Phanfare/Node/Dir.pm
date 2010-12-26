@@ -17,7 +17,7 @@ sub stat {
   return (
     0 + $self,                  # dev
     42,         # ino
-    "042555",                     # mode
+    042555,                     # mode
     1,                          # nlink
     $self->uid,              # uid
     $self->gid,              # gid

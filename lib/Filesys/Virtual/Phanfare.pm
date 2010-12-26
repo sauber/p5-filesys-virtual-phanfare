@@ -147,7 +147,7 @@ File stat
 sub stat {
   my $self = shift;
   my $path = $self->_path_from_root( shift );
-  #warn "*** stat path: $path\n";
+  #warn "*** stat path     : $path\n";
   my($top,$site,$album,$section,$rendition,$image) = split '/', $path;
   if ( $image ) {
   } elsif ( $rendition ) {
@@ -164,10 +164,14 @@ sub stat {
     #} else {
     #  return $self->_filestat($node{$site});
     #}
-    return $self->account->getnode($site)->stat;
+    my $node = $self->account->getnode($site);
+    #warn "*** stat node     : $node\n" if $node;
+    return $node->stat if $node;
   } else {
+    #warn "*** stat account\n";
     return $self->account->stat;
   }
+  #warn "*** stat no matches\n";
   return;
 }
 
