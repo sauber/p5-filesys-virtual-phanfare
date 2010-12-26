@@ -21,6 +21,6 @@ my $fuse = Fuse::Filesys::Virtual->new($fs, { debug => 1});
 
 $fuse->main(
   mountpoint => File::HomeDir->my_home . "/Phanfare",
-  #mountopts  => "allow_other",
+  mountopts  => "allow_other",
 );
 

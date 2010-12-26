@@ -28,7 +28,8 @@ my $fuse = new_ok ( 'Fuse::Filesys::Virtual' => [
   $fs, { debug => 1},
 ] );
 
-ok( $fuse->getdir('/'), 'Cannot list /');
+ok( my @dir = $fuse->getdir('/'), 'Cannot list /');
+diag "@dir";
 #ok( $fuse->read('/cookie'), 'Cannot list /');
 
 done_testing();
