@@ -5,18 +5,19 @@ our $BLOCKSIZE = 1024;
 
 requires 'size';
 requires 'getnode';
-#requires 'uid';
-##requires 'gid';
+requires 'uid';
+requires 'gid';
 
 sub stat {
   my $self = shift;
+  warn "*** stat $self\n";
   return (
     0 + $self,                  # dev
     42,         # ino
     042555,                     # mode
     1,                          # nlink
-    0,              # uid
-    0,              # gid
+    $self->uid,              # uid
+    $self->gid,              # gid
     0,                          # rdev
     1024                ,       # size
     0,                          # atime
