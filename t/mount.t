@@ -18,10 +18,7 @@ eval '
 plan skip_all => "Modules or config not found: $@" if $@;
 
 my $fs = new_ok ( 'Filesys::Virtual::Phanfare' => [
-  root_path => '/',
-  home_path => '/',
-  cwd       => '/',
-  %config
+  %config,
 ] );
 
 my $fuse = new_ok ( 'Fuse::Filesys::Virtual' => [

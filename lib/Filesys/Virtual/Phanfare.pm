@@ -8,19 +8,34 @@ use Carp;
 use Filesys::Virtual::Phanfare::Node::Account;
 use Filesys::Virtual::Plain;
 #use base qw( Filesys::Virtual Class::Accessor::Fast );
+use base qw( Filesys::Virtual Moose::Object );
 #__PACKAGE__->mk_accessors(qw( cwd root_path home_path host ));
 
 use Moose;
 use MooseX::Method::Signatures;
 
-extends 'Filesys::Virtual';
+#extends 'Filesys::Virtual';
 
-has 'account' => (isa=>'Filesys::Virtual::Phanfare::Node::Account', is=>'rw');
-has 'cwd' => ( is => 'rw' );
-has 'root_path' => ( is => 'rw' );
-has 'home_path' => ( is => 'rw' );
-has 'host' => ( is => 'rw' );
+has 'cwd' => ( is => 'rw', isa => 'Str', default => '/' );
+has 'root_path' => ( is => 'ro', isa => 'Str', default => '' );
+has 'home_path' => ( is => 'ro', isa => 'Str', default => '/' );
+#has 'host' => ( is => 'ro' );
+has 'api_key' => ( is => 'ro' );
+has 'private_key' => ( is => 'ro' );
+has 'email_address' => ( is => 'ro' );
+has 'password' => ( is => 'ro' );
+has 'account' => ( isa=>'Filesys::Virtual::Phanfare::Node::Account', is=>'ro', lazy_build => 1 );
+sub _build_account {
+  my $self = shift;
 
+  return Filesys::Virtual::Phanfare::Node::Account->new(
+    api_key       => $self->api_key,
+    private_key   => $self->private_key,
+    email_address => $self->email_address,
+    password      => $self->password,
+  );
+  # XXX: clear password
+}
 
 =head1 NAME
 
@@ -88,121 +103,17 @@ Initialize new virtual filesystem
 *_path_from_root = \&Filesys::Virtual::Plain::_path_from_root;
 *_resolve_path   = \&Filesys::Virtual::Plain::_resolve_path;
 
-sub new {
-  my $that  = shift;
-  #my %args = @_;
-
-  my $class = ref($that) || $that;
-  my $self = {};
-  bless $self, $class;
-
-  ## Create new Phanfare API agent
-  #my $agent;
-  #if ( $args{api_key} and $args{private_key} ) {
-  #  $agent = WWW::Phanfare::API->new(
-  #    api_key     => $args{api_key},
-  #    private_key => $args{private_key},
-  #  );
-  #} else {
-  #  croak "api_key and private_key are required for Phanfare API";
-  #}
-  #$self->{_phanfare} = $agent;
+#sub new {
+#  my $that  = shift;
+#  #my %args = @_;
 #
-#  # Authenticate as user or guest
-#  if ( $args{email_address} and $args{password} ) {
-#    my $session = $agent->Authenticate(
-#      email_address => $args{email_address},
-#      password      => $args{password},
-#    );
-#    $self->{_uid} = $session->{session}{uid};
-#    $self->{_gid} = $session->{session}{public_group_id};
-#    $self->{_top} = $session->{session};
-#  } else {
-#    $agent->AuthenticateGuest();
-#  }
-
-  $self->account( Filesys::Virtual::Phanfare::Node::Account->new( @_ ) );
-
-  return $self;
-}
-
-########################################################################
-### General
-########################################################################
-
-# Standard file stat values
+#  my $class = ref($that) || $that;
+#  my $self = {};
+#  bless $self, $class;
 #
-#sub _filestat {
-#  my $self = shift;
-#  my $file = shift;
+#  $self->account( Filesys::Virtual::Phanfare::Node::Account->new( @_ ) );
 #
-#  my $size = $file ? length($file) : 0;
-#  return (
-#    0 + $self,			# dev
-#    int(rand 8**4),		# ino
-#    0100444,			# mode
-#    1,				# nlink
-#    $self->{_uid},		# uid
-#    $self->{_gid},		# gid
-#    0,				# rdev
-#    $size,			# size
-#    0,				# atime
-#    0,				# mtime
-#    time,			# ctime
-#    $BLOCKSIZE,			# blksize
-#  ceil($size/$BLOCKSIZE),	# blocks
-#  );
-#
-#}
-
-# Standard dir stat values
-#
-#sub _dirstat {
-#  my $self = shift;
-#  my $dir = shift;
-#
-#  return (
-#    0 + $self,			# dev
-#    42,		# ino
-#    042555,			# mode
-#    1,				# nlink
-#    $self->{_uid},		# uid
-#    $self->{_gid},		# gid
-#    0,				# rdev
-#    1024		,	# size
-#    0,				# atime
-#    0,				# mtime
-#    time,			# ctime
-#    $BLOCKSIZE,			# blksize
-#    1				# blocks
-#  );
-#}
-
-
-
-########################################################################
-### Site List
-########################################################################
-
-# Get list of sites available (dirs) and properties (values)
-#
-#sub _sitelist {
-#  my $self = shift;
-#
-#  # Site name and all site properties
-#  #my %dir = (
-#  #  $self->{_top}{primary_site_name} => [],
-#  #  map {( $_ => $self->{_top}{$_} )}
-#  #  grep { ! ref $self->{_top}{$_} }
-#  #  keys %{$self->{_top}}
-#  #);
-#  #x '_sitelist', \%dir;
-#
-#  my %dir = (
-#    map { $_ => [] }
-#    $self->account->sitelist
-#  );
-#  return %dir;
+#  return $self;
 #}
 
 ########################################################################
@@ -234,9 +145,16 @@ Directory listing.
 
 sub list {
   my $self = shift;
-  my $path = $self->_path_from_root( shift );
+  my $patharg = shift;
+  my $path = $self->_path_from_root( $patharg );
 
-  warn "*** list path: $path\n";
+  #warn sprintf "*** list patharg  : %s\n", $patharg;
+  warn sprintf "*** list path     : %s\n", $path;
+  #warn sprintf "*** list root_path: %s\n", $self->root_path;
+  #warn sprintf "*** list home_path: %s\n", $self->home_path;
+  #warn sprintf "*** list cwd      : %s\n", $self->cwd;
+  #warn sprintf "*** list resolve  : %s\n", $self->_resolve_path($patharg);
+  #warn "*** list path: $path\n";
   my($top,$site,$album,$section,$rendition,$image) = split '/', $path;
 
   if ( $image ) {
