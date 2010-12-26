@@ -281,7 +281,6 @@ sub stat {
     #  return $self->_filestat($node{$site});
     #}
   } else {
-    #return $self->_dirstat;
     return $self->account->stat;
   }
   return;

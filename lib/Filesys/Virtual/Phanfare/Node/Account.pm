@@ -65,7 +65,7 @@ method size {
 
 # And attribute or a site
 method getnode ( Str $nodename ) {
-  if ( grep $nodename, keys %{ $self->attributes } ) {
+  if ( grep $nodename, $self->attributelist ) {
     return $self->attribute( $nodename );
   #} elsif ( grep $nodename, @{ $self->sitelist } ) {
   #  $self->{_site}{$nodename} ||= Filesys::Virtual::Phanfare::Node::Site->new(

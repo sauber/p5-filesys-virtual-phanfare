@@ -28,9 +28,11 @@ my $fuse = new_ok ( 'Fuse::Filesys::Virtual' => [
   $fs, { debug => 1},
 ] );
 
-ok( my @dir = $fuse->getdir('/'), 'Cannot list /');
-#diag "@dir";
-ok( my @dir = $fuse->getattr('/'), 'Cannot stat /');
+ok( my @dir = $fuse->getdir('/'), 'list /' );
+ok( scalar @dir >= 2, 'At least two entries in /' );
+ok( my @stat = $fuse->getattr('/'), 'Stat stat /' );
+ok( scalar @stat == 13, 'stat has 13 entries' );
+diag "stat scalar: " . scalar @stat;
 #ok( $fuse->read('/cookie'), 'Cannot list /');
 
 done_testing();

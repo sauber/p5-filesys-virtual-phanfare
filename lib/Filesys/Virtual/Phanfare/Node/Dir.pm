@@ -1,5 +1,7 @@
 package Filesys::Virtual::Phanfare::Node::Dir;
 use Moose::Role;
+use POSIX qw(ceil);
+use Devel::Size qw(size);
 
 our $BLOCKSIZE = 1024;
 
@@ -10,7 +12,9 @@ requires 'gid';
 
 sub stat {
   my $self = shift;
-  warn "*** stat $self\n";
+  my $size = size($self);
+  #my $size = 26565;
+  warn "*** stat $self size $size\n";
   return (
     0 + $self,                  # dev
     42,         # ino
@@ -19,12 +23,12 @@ sub stat {
     $self->uid,              # uid
     $self->gid,              # gid
     0,                          # rdev
-    1024                ,       # size
+    $size                ,       # size
     0,                          # atime
     0,                          # mtime
     time,                       # ctime
     $BLOCKSIZE,                 # blksize
-    ceil($self->size/$BLOCKSIZE),     # blocks
+    ceil($size/$BLOCKSIZE),     # blocks
   );
 }
 

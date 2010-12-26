@@ -25,7 +25,7 @@ sub attributes {
     #warn "*** reading attributes for $self\n";
     return {
       map { $_ => $self->{_attr}{$_}->value }
-      keys %{ $self->{_attr} }
+      $self->attributelist
     }
   }
 }
@@ -39,6 +39,13 @@ sub attribute {
     $self->{_attr}{$key} = Filesys::Virtual::Phanfare::Node::Attribute->new( value => $value );
   }
   return $self->{_attr}{$key}; # Object reference
+}
+
+# List of attribute names
+#
+sub attributelist {
+  my $self = shift;
+  keys %{ $self->{_attr} };
 }
 
 =head1 NAME
@@ -58,6 +65,10 @@ Get named attribute object.
 =head2 attributes
 
 Get hashref of all attribute key/value pairs
+
+=head2 attributelist
+
+List of all attribute keys.
 
 =head1 SEE ALSO
 

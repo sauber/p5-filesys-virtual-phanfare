@@ -24,5 +24,4 @@ L<Filesys::Virtual::Phanfare>
 
 =cut
 
-
 1;
