@@ -13,6 +13,7 @@ test_requires 'Fuse';
 requires 'WWW::Phanfare::API';
 requires 'Filesys::Virtual::Plain';
 requires 'MooseX::Method::Signatures';
+requires 'Devel::Size';
 
 auto_install;
 
