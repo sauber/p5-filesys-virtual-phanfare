@@ -10,6 +10,19 @@ has 'value' => ( isa => 'Str', is=>'rw', );
 #
 method size { length $self->value }
 
+method open_read {
+  my $content = $self->value . "\n";
+  open( my $fh, '<', \$content );
+  warn "*** create file hander $fh\n";
+  return $fh;
+}
+
+method close_read {
+  my ($fh) = @_;
+  warn "*** close_read fh: $fh\n";
+  return close $fh;
+}
+
 =head1 NAME
 
 Filesys::Virtual::Phanfare::Node::Attribute - Node Attribute

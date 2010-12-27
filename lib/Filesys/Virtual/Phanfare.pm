@@ -103,133 +103,108 @@ Initialize new virtual filesystem
 *_path_from_root = \&Filesys::Virtual::Plain::_path_from_root;
 *_resolve_path   = \&Filesys::Virtual::Plain::_resolve_path;
 
-=head2 list
-
-Directory listing.
-
-=cut
-
-sub list {
-  my $self = shift;
-  my $patharg = shift;
-  my $path = $self->_path_from_root( $patharg );
-
-  #warn sprintf "*** list patharg  : %s\n", $patharg;
-  #warn sprintf "*** list path     : %s\n", $path;
-  #warn sprintf "*** list root_path: %s\n", $self->root_path;
-  #warn sprintf "*** list home_path: %s\n", $self->home_path;
-  #warn sprintf "*** list cwd      : %s\n", $self->cwd;
-  #warn sprintf "*** list resolve  : %s\n", $self->_resolve_path($patharg);
-  #warn "*** list path: $path\n";
-  my($top,$site,$album,$section,$rendition,$image) = split '/', $path;
-
-  if ( $image ) {
-  } elsif ( $rendition ) {
-  } elsif ( $section ) {
-  } elsif ( $album ) {
-  } elsif ( $site ) {
-    #my %dir = $self->_albumlist;
-    #return ".", "..", keys %dir;
-  } else {
-    #my %dir = $self->account->list;
-    #x 'list', \%dir;
-    #return ".", keys %dir;
-    return $self->account->list;
-  }
-}
-
-=head2 stat
-
-File stat
-
-=cut
-
-sub stat {
-  my $self = shift;
-  my $path = $self->_path_from_root( shift );
-  #warn "*** stat path     : $path\n";
-  my($top,$site,$album,$section,$rendition,$image) = split '/', $path;
-  if ( $image ) {
-  } elsif ( $rendition ) {
-  } elsif ( $section ) {
-  } elsif ( $album ) {
-    #my %node = $self->_albumlist;
-    #return unless $node{$album};
-    #return $self->_dirstat;
-  } elsif ( $site ) {
-    #my %node = $self->_sitelist;
-    #return unless $node{$site};
-    #if ( ref $node{$site} ) {
-    #  return $self->_dirstat;
-    #} else {
-    #  return $self->_filestat($node{$site});
-    #}
-    my $node = $self->account->getnode($site);
-    #warn "*** stat node     : $node\n" if $node;
-    return $node->stat if $node;
-  } else {
-    #warn "*** stat account\n";
-    return $self->account->stat;
-  }
-  #warn "*** stat no matches\n";
-  return;
-}
-
-#=head2 open_read
+# Is requested file op on account, site, album, section, rendition or image?
+# Run file operation on node
 #
-#Open a file for reading
+method opnode ( Str $operation, Str $path, ArrayRef $args ) {
+  my $pathfromroot = $self->_path_from_root( $path );
+  my($account,$site,$album,$section,$rendition,$image)
+    = split '/', $pathfromroot;
+
+  # Determine which node to do operation on
+  my $node;
+  if ( $image ) {
+    $node = $self->account->getnode($site)->getnode($album)->getnode($section)->getnode->($rendition)->getnode($image);
+  } elsif ( $rendition ) {
+    $node = $self->account->getnode($site)->getnode($album)->getnode($section)->getnode->($rendition);
+  } elsif ( $section ) {
+    $node = $self->account->getnode($site)->getnode($album)->getnode($section);
+  } elsif ( $album ) {
+    $node = $self->account->getnode($site)->getnode($album);
+  } elsif ( $site ) {
+    $node = $self->account->getnode($site);
+  } else {
+    $node = $self->account;
+  }
+
+  # Perform the operation if node exists and has the capability
+  if ( $node ) {
+    if ( $node->can($operation) ) {
+      #warn "fsop $operation $node @$args\n";
+      return $node->$operation(@$args) if $node and $node->can($operation);
+    } else {
+      #warn "fsop $node $node @$args not implemented\n";
+    }
+  } else {
+    #warn "fsop $operation $path does not exist\n";
+  }
+  return undef;
+}
+
+=head2 File operations
+
+Implemented functions
+
+=over
+
+=item modtime
+
+=item size
+
+=item delete
+
+=item mkdir
+
+=item rmdir
+
+=item list
+
+=item list_details
+
+=item stat
+
+=item test
+
+=item open_read
+
+=item close_read
+
+=item open_write
+
+=item close_write
+
+=back
+
+=cut
+
+sub modtime      { shift->opnode('modtime',      shift, [     ]) }
+sub size         { shift->opnode('size',         shift, [     ]) }
+sub delete       { shift->opnode('delete',       shift, [     ]) }
+sub mkdir        { shift->opnode('mkdir',        shift, [shift]) }
+sub rmdir        { shift->opnode('rmdir',        shift, [     ]) }
+sub list         { shift->opnode('list',         shift, [     ]) }
+sub list_details { shift->opnode('list_details', shift, [     ]) }
+sub stat         { shift->opnode('stat',         shift, [     ]) }
+sub test         { shift->opnode('test',         pop  , [shift]) }
+sub open_read    { shift->opnode('open_read',    shift, [ @_  ]) }
+#sub close_read   { shift->opnode('close_read',   shift, [     ]) }
+sub close_read   { close shift }
+sub open_write   { shift->opnode('open_write',   shift, [shift]) }
+#sub close_write  { shift->opnode('close_write',  shift, [     ]) }
+sub close_write  { close shift }
+
+#=head2 test
+#
+#File test
 #
 #=cut
 #
-#sub open_read {
+#sub test {
 #  my $self = shift;
-#  my $path = $self->_path_from_root( shift );
-#  warn "*** open_read path: $path\n";
-#  my($top,$site,$album,$section,$rendition,$image) = split '/', $path;
-#  if ( $image ) {
-#  } elsif ( $rendition ) {
-#  } elsif ( $section ) {
-#  } elsif ( $album ) {
-#  } elsif ( $site ) {
-#    my %node = $self->_sitelist;
-#    return unless $node{$site};
-#    if ( not ref $node{$site} ) {
-#      my $content = $node{$site} . "\n";
-#      open( my $fh, '<', \$content );
-#      warn "*** create file hander $fh\n";
-#      return $fh;
-#    }
-#  } else {
-#  }
-#  return;
+#  my $test = shift;
+#
+#  return 1;
 #}
-
-
-#=head2 close_read
-#
-#File close
-#
-#=cut
-#
-#sub close_read {
-#  my $self = shift;
-#  my ($fh) = @_;
-#  warn "*** close_read fh: $fh\n";
-#  return close $fh;
-#}
-
-=head2 test
-
-File test
-
-=cut
-
-sub test {
-  my $self = shift;
-  my $test = shift;
-
-  return 1;
-}
 
 =head1 AUTHOR
 
