@@ -62,13 +62,14 @@ isa_ok( $account, 'WWW::Phanfare::Class::Account' );
 
 # Verify there is a site
 ok( my ($sitename) = $class->sitelist, "Class has sites" );
+diag "*** site is " . $sitename;
 ok( my $site = $class->site($sitename), "Class has site object" );
 isa_ok( $site, 'WWW::Phanfare::Class::Site' );
-diag "*** site is " . $sitename;
 
 # Verify there are albums
 ok( my ($albumname) = $class->albumlist, "Class has an album" );
 diag "*** album is " . $albumname;
 ok( my $album = $class->album($albumname), "Class has album object" );
+#diag Dumper $album;
 
 done_testing();

@@ -3,6 +3,9 @@ use Moose;
 use MooseX::Method::Signatures;
 #use WWW::Phanfare::Class::Section;
 
+has album_id => ( is=>'ro', isa=>'Int', required=>1 );
+has album_name => ( is=>'ro', isa=>'Str', required=>1 );
+
 method subnodelist { 'Main Section' }
 method subnodetype { 'WWW::Phanfare::Class::Album' }
 

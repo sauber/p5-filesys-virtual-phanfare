@@ -3,13 +3,43 @@ use Moose;
 use MooseX::Method::Signatures;
 use WWW::Phanfare::Class::Album;
 
+# List of album_id=>album_name pairs
+#
+method albumid {
+  my $albumlist = $self->api->GetAlbumList(target_uid=>$self->uid);
+  my %node = 
+    map { $_->{album_id} => $_->{album_name} }
+    @{ $albumlist->{albums}{album} };
+  #x('albumid', \%node);
+  return %node;
+}
+
 method subnodetype { 'WWW::Phanfare::Class::Album' };
 method subnodelist {
-  my $albumlist = $self->api->GetAlbumList(target_uid=>$self->uid);
-  return (
-    map "$_->{album_name}.$_->{album_id}",
-    @{ $albumlist->{albums}{album} }
-  );
+  my @albums;
+  my %node = $self->albumid;
+  while ( my($id,$name) = each %node ) {
+    # XXX: If there are more than one album with same name,
+    #        then append ID
+    #        otherwise don't append ID
+    push @albums, "$name.$id";
+  }
+  return @albums;
+}
+
+# Specify ID, Name or Name.ID
+method buildnode ( $nodename ) {
+  my %node = $self->albumid;
+  while ( my($id,$name) = each %node ) {
+    if ( "$name.$id" eq $nodename or $name eq $nodename or "$id" eq "$nodename" ) {
+      return WWW::Phanfare::Class::Album->new(
+        parent     => $self,
+        nodename   => $nodename,
+        album_id   => $id,
+        album_name => $name,
+      );
+    }
+  }
 }
 
 method albumlist { $self->subnodelist }
