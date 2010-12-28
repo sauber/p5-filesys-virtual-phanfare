@@ -1,7 +1,8 @@
 package WWW::Phanfare::Class;
 use Moose;
 use MooseX::Method::Signatures;
-use WWW::Phanfare::API;
+use WWW::Phanfare::Class::CacheAPI;
+#use WWW::Phanfare::API;
 use WWW::Phanfare::Class::Account;
 use WWW::Phanfare::Class::Site;
 
@@ -32,6 +33,9 @@ sub _build_account {
     $session = $api->AuthenticateGuest();
   }
 
+  #use Data::Dumper;
+  #warn '*** _build_account' . Dumper $session;
+
   # Create account object with session data
   my $account = WWW::Phanfare::Class::Account->new(
     uid => $session->{session}{uid},
@@ -53,7 +57,7 @@ sub _build_api {
   my $self = shift;
 
   # Create an API Agent
-  WWW::Phanfare::API->new(
+  WWW::Phanfare::Class::CacheAPI->new(
     api_key     => $self->api_key,
     private_key => $self->private_key,
   );

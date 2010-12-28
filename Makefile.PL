@@ -15,6 +15,7 @@ requires 'WWW::Phanfare::API';
 requires 'Filesys::Virtual::Plain';
 requires 'MooseX::Method::Signatures';
 requires 'Devel::Size';
+requires 'Cache::Memory';
 
 auto_install;
 
