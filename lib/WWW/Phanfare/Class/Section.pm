@@ -7,7 +7,7 @@ has section_id   => ( is=>'ro', isa=>'Int', required=>1 );
 has section_name => ( is=>'ro', isa=>'Str', required=>1 );
 
 method subnodetype { 'WWW::Phanfare::Class::Rendition' }
-method subnodelist { qw(Full WebLarge Web WebSmall Thumbnail ThumbnailSmall) }
+method subnodelist { qw(Full WebLarge Web WebSmall Thumbnail ThumbnailSmall Caption ) }
 
 method renditionlist { $self->subnodelist }
 method rendition ( Str $renditionname ) { $self->getnode( $renditionname ) }

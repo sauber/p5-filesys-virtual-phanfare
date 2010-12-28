@@ -82,6 +82,12 @@ isa_ok( $section, 'WWW::Phanfare::Class::Section' );
 # Verify there are renditions
 ok( my($renditionname) = $class->renditionlist($albumname,$sectionname), "Class has renditions" );
 diag "*** rendition is " . $renditionname;
+ok( my $rendition = $class->rendition($albumname,$sectionname,$renditionname), "Class has section object" );
+isa_ok( $rendition, 'WWW::Phanfare::Class::Rendition' );
+
+# Verify there are images
+ok( my($imagename) = $class->imagelist($albumname,$sectionname,$renditionname), "Class has images" );
+diag "*** image is " . $imagename;
 
 
 done_testing();

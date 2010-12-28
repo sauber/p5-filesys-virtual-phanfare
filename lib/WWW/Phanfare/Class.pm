@@ -87,6 +87,16 @@ method rendition ( Str $albumname, Str $sectionname, Str $renditionname ) {
   $section->rendition( $renditionname );
 }
 
+# IMAGES
+method imagelist ( Str $albumname, Str $sectionname, $renditionname ) {
+  my $section = $self->album( $albumname )->section( $sectionname );
+  $section->rendition( $renditionname )->imagelist;
+}
+method image ( Str $albumname, Str $sectionname, $renditionname, Str $imagename ) {
+  my $section = $self->album( $albumname )->section( $sectionname );
+  $section->rendition( $renditionname )->image->( $imagename );
+}
+
 =head1 NAME
 
 WWW::Phanfare::Class - Object interface to Phanfare library
