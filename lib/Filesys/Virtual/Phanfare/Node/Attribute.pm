@@ -21,7 +21,7 @@ method close_read {
   return close $fh;
 }
 
-with 'Filesys::Virtual::Phanfare::Role::File';
+with 'Filesys::Virtual::Phanfare::Role::Leaf';
 
 =head1 NAME
 

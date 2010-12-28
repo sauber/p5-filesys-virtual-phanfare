@@ -97,7 +97,7 @@ method login ( Str :$api_key, Str :$private_key, Str :$email_address?, Str :$pas
 #  );
 #}
 
-with 'Filesys::Virtual::Phanfare::Role::Subnodes';
+with 'Filesys::Virtual::Phanfare::Role::Branch';
 with 'Filesys::Virtual::Phanfare::Role::Attributes';
 
 1;

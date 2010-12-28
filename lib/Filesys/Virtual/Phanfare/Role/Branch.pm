@@ -1,4 +1,4 @@
-package Filesys::Virtual::Phanfare::Role::Subnodes;
+package Filesys::Virtual::Phanfare::Role::Branch;
 use Moose::Role;
 use MooseX::Method::Signatures;
 

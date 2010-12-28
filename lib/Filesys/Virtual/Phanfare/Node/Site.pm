@@ -51,8 +51,8 @@ method list {
   );
 }
 
+with 'Filesys::Virtual::Phanfare::Role::Branch';
 with 'Filesys::Virtual::Phanfare::Role::Attributes';
-with 'Filesys::Virtual::Phanfare::Role::Dir';
 
 =head1 NAME
 

@@ -59,9 +59,8 @@ method subnodetype {
   'Filesys::Virtual::Phanfare::Node::Album';
 }
 
-with 'Filesys::Virtual::Phanfare::Role::Node';
+with 'Filesys::Virtual::Phanfare::Role::Branch';
 with 'Filesys::Virtual::Phanfare::Role::Attributes';
-with 'Filesys::Virtual::Phanfare::Role::Subnodes';
 
 =head1 NAME
 
