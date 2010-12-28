@@ -1,39 +1,40 @@
-package Filesys::Virtual::Phanfare::Node::Dir;
+package Filesys::Virtual::Phanfare::Role::File;
 use Moose::Role;
 use POSIX qw(ceil);
-use Devel::Size qw(size);
 
 our $BLOCKSIZE = 1024;
 
-requires 'getnode';
 has 'uid' => ( is=>'ro', isa=>'Int', required=>1 );
 has 'gid' => ( is=>'ro', isa=>'Int', required=>1 );
 
+sub size {
+  my $self = shift;
+  length $self->value;
+}
+
 sub stat {
   my $self = shift;
-  my $size = size($self);
-  #my $size = 26565;
-  #warn "*** stat $self size $size\n";
+  #warn sprintf "*** stat $self size %s\n", $self->size;
   return (
     0 + $self,                  # dev
     42,         # ino
-    042555,                     # mode
+    0100444,                     # mode
     1,                          # nlink
     $self->uid,              # uid
     $self->gid,              # gid
     0,                          # rdev
-    $size                ,       # size
+    $self->size                ,       # size
     0,                          # atime
     0,                          # mtime
     time,                       # ctime
     $BLOCKSIZE,                 # blksize
-    ceil($size/$BLOCKSIZE),     # blocks
+    ceil($self->size/$BLOCKSIZE)                           # blocks
   );
 }
 
 =head1 NAME
 
-Filesys::Virtual::Phanfare::Node::Dir - Dir Node
+Filesys::Virtual::Phanfare::Node::Account - File Node
 
 =head1 SUBROUTINES/METHODS
   
@@ -43,7 +44,11 @@ Create object
 
 =head2 stat
 
-posix stat values for a dir.
+posix stat values for a file.
+
+=head2 size
+
+Calculate size of file.
 
 =head1 SEE ALSO
 

@@ -2,8 +2,6 @@ package Filesys::Virtual::Phanfare::Node::Attribute;
 use Moose;
 use MooseX::Method::Signatures;
 
-with 'Filesys::Virtual::Phanfare::Node::File';
-
 has 'value' => ( isa => 'Str', is=>'rw', );
 
 # Size of attribute
@@ -22,6 +20,8 @@ method close_read {
   warn "*** close_read fh: $fh\n";
   return close $fh;
 }
+
+with 'Filesys::Virtual::Phanfare::Role::File';
 
 =head1 NAME
 

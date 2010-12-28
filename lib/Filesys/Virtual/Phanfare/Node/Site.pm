@@ -3,6 +3,7 @@ use Moose;
 use MooseX::Method::Signatures;
 use WWW::Phanfare::API;
 use Carp;
+use Filesys::Virtual::Phanfare::Node::Album;
 
 has 'uid'      => ( is=>'rw', isa=>'Int', required=>1 );
 has 'gid'      => ( is=>'rw', isa=>'Int', required=>1 );
@@ -50,8 +51,8 @@ method list {
   );
 }
 
-with 'Filesys::Virtual::Phanfare::Node::Attributes';
-with 'Filesys::Virtual::Phanfare::Node::Dir';
+with 'Filesys::Virtual::Phanfare::Role::Attributes';
+with 'Filesys::Virtual::Phanfare::Role::Dir';
 
 =head1 NAME
 
