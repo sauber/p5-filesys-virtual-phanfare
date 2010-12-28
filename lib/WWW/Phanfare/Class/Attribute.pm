@@ -35,7 +35,7 @@ Create object
 
 =head1 SEE ALSO
 
-L<Filesys::Virtual::Phanfare>
+L<WWW::Phanfare::Class>
 
 =cut
 

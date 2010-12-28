@@ -12,6 +12,8 @@ has 'gid'   => ( is=>'rw', isa=>'Int' );
 #has 'private_key'   => ( is=>'ro' );
 #has 'email_address' => ( is=>'ro' );
 #has 'password'      => ( is=>'ro' );
+has parent => ( is=>'ro', required=>1, lazy_build=>1 );
+sub _build_parent { shift }
 
 #has 'sitelist' => ( is=>'ro', isa=>'HashRef', lazy_build=>1 );
 #has subnodetype => ( is=>'ro', isa=>'Str', default => 'Filesys::Virtual::Phanfare::Node::Site' );
@@ -21,7 +23,7 @@ has 'gid'   => ( is=>'rw', isa=>'Int' );
 #
 method subnodelist { $self->attribute('primary_site_name')->value }
 
-method subnodetype { 'Filesys::Virtual::Phanfare::Node::Site' }
+method subnodetype { 'WWW::Phanfare::Class::Site' }
 
 # List of available sites
 #method _build_nodes {
@@ -109,6 +111,8 @@ method subnodetype { 'Filesys::Virtual::Phanfare::Node::Site' }
 #  );
 #}
 
+method site ( Str $sitename ) { $self->getnode( $sitename ) }
+
 with 'WWW::Phanfare::Class::Role::Branch';
 with 'WWW::Phanfare::Class::Role::Attributes';
 
@@ -126,6 +130,6 @@ Create object
 
 =head1 SEE ALSO
 
-L<Filesys::Virtual::Phanfare>
+L<WWW::Phanfare::Class>
 
 =cut

@@ -52,9 +52,21 @@ plan skip_all => "Local config not found: $@" if $@;
 #ok( scalar @sitestat == 13, "stat $sitename has 13 values" );
 #ok( $sitestat[2] eq 042555, "$sitename is dir" );
 
+# Create an object
 my $class = new_ok( 'WWW::Phanfare::Class' => [ %config ] );
 isa_ok( $class, 'WWW::Phanfare::Class' );
+
+# Verify there is account
 ok( my $account = $class->account, "Class has account" );
 isa_ok( $account, 'WWW::Phanfare::Class::Account' );
+
+diag "*** site is " . $class->sitelist;
+
+# Verify there is a site
+ok( my ($sitename) = $class->sitelist, "Class has sites" );
+ok( my $site = $class->site($sitename), "Class has site object" );
+isa_ok( $site, 'WWW::Phanfare::Class::Site' );
+
+# Verify there is a site
 
 done_testing();

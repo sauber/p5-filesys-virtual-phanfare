@@ -18,6 +18,7 @@ method setattributes ( HashRef $data ) {
     $attr{$key} = WWW::Phanfare::Class::Attribute->new(
       value => $value,
       parent => $self,
+      nodename => $key,
     );
   }
   $self->_attr( \%attr );
@@ -33,6 +34,7 @@ method attribute ( Str $key, Str $value? ) {
     $attr->{$key} = WWW::Phanfare::Class::Attribute->new(
       value => $value,
       parent => $self,
+      nodename => $key,
     );
     $self->_attr( $attr );
   }
@@ -71,7 +73,7 @@ List of all attribute keys.
 
 =head1 SEE ALSO
 
-L<Filesys::Virtual::Phanfare>
+L<WWW::Phanfare::Class>
 
 =cut
 

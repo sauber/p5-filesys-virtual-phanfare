@@ -20,7 +20,9 @@ method buildnode ( Str $nodename ) {
   $type->new( parent => $self, nodename=>$nodename );
 }
 
-method getnode ( Str $nodename ) { $self->buildnode( $nodename ) }
+#method getnode ( Str $nodename ) { $self->buildnode( $nodename ) }
+
+with 'WWW::Phanfare::Class::Role::Node';
 
 =head1 NAME
 
