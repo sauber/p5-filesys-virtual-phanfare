@@ -1,9 +1,9 @@
-package Filesys::Virtual::Phanfare::Node::Album;
+package Class::Phanfare::Node::Album;
 use Moose;
 use MooseX::Method::Signatures;
-use WWW::Phanfare::API;
-use Carp;
-#use Filesys::Virtual::Phanfare::Node::Section;
+#use WWW::Phanfare::API;
+#use Carp;
+#use Class::Phanfare::Node::Section;
 
 #has 'uid'      => ( is=>'rw', isa=>'Int', required=>1 );
 #has 'gid'      => ( is=>'rw', isa=>'Int', required=>1 );
@@ -52,15 +52,13 @@ use Carp;
 #}
 
 method subnodelist { 'Main Section' }
-
-method subnodetype { 'Filesys::Virtual::Phanfare::Node::Album' }
-
-with 'Filesys::Virtual::Phanfare::Role::Branch';
-with 'Filesys::Virtual::Phanfare::Role::Attributes';
+method subnodetype { 'WWW::Phanfare::Class::Album' }
+with 'WWW::Phanfare::Class::Role::Branch';
+with 'WWW::Phanfare::Class::Role::Attributes';
 
 =head1 NAME
 
-Filesys::Virtual::Phanfare::Node::Account - Album Node
+WWW::Phanfare::Class::Account - Album Node
 
 =head1 SUBROUTINES/METHODS
 

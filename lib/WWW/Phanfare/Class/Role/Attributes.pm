@@ -1,11 +1,11 @@
-package Filesys::Virtual::Phanfare::Role::Attributes;
+package WWW::Phanfare::Class::Role::Attributes;
 use Moose::Role;
-use Filesys::Virtual::Phanfare::Node::Attribute;
 use MooseX::Method::Signatures;
+use WWW::Phanfare::Class::Attribute;
 
 has '_attr' => (
   is => 'rw',
-  isa => 'HashRef[Filesys::Virtual::Phanfare::Node::Attribute]',
+  isa => 'HashRef[WWW::Phanfare::Class::Attribute]',
 );
 
 # Set list of attributes
@@ -15,7 +15,7 @@ method setattributes ( HashRef $data ) {
   while ( my($key,$value) = each %$data ) {
     # XXX: For now only handle strings
     next if ref $value;
-    $attr{$key} = Filesys::Virtual::Phanfare::Node::Attribute->new(
+    $attr{$key} = WWW::Phanfare::Class::Attribute->new(
       value => $value,
       parent => $self,
     );
@@ -30,7 +30,7 @@ method attribute ( Str $key, Str $value? ) {
   # Set value
   if ( $value ) {
     my $attr = $self->_attr || {};
-    $attr->{$key} = Filesys::Virtual::Phanfare::Node::Attribute->new(
+    $attr->{$key} = WWW::Phanfare::Class::Attribute->new(
       value => $value,
       parent => $self,
     );
@@ -49,7 +49,7 @@ method attributelist {
 
 =head1 NAME
 
-Filesys::Virtual::Phanfare::Node::Attributes - Node Attributes
+WWW::Phanfare::Class::Role::Attributes - Node Attributes
 
 =head1 SUBROUTINES/METHODS
   
@@ -74,6 +74,5 @@ List of all attribute keys.
 L<Filesys::Virtual::Phanfare>
 
 =cut
-
 
 1;

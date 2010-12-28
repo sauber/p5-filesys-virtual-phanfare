@@ -5,7 +5,7 @@ use strict;
 use POSIX qw(ceil);
 use Carp;
 #use WWW::Phanfare::API;
-use Filesys::Virtual::Phanfare::Node::Account;
+use WWW::Phanfare::Class::Account;
 use Filesys::Virtual::Plain;
 #use base qw( Filesys::Virtual Class::Accessor::Fast );
 use base qw( Filesys::Virtual Moose::Object );
@@ -24,11 +24,11 @@ has 'api_key' => ( is => 'ro' );
 has 'private_key' => ( is => 'ro' );
 has 'email_address' => ( is => 'ro' );
 has 'password' => ( is => 'ro' );
-has 'account' => ( isa=>'Filesys::Virtual::Phanfare::Node::Account', is=>'ro', lazy_build => 1 );
+has 'account' => ( isa=>'WWW::Phanfare::Class::Account', is=>'ro', lazy_build => 1 );
 sub _build_account {
   my $self = shift;
 
-  return Filesys::Virtual::Phanfare::Node::Account->new(
+  return WWW::Phanfare::Class::Account->new(
     api_key       => $self->api_key,
     private_key   => $self->private_key,
     email_address => $self->email_address,

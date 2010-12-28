@@ -1,9 +1,9 @@
-package Filesys::Virtual::Phanfare::Node::Account;
+package WWW::Phanfare::Class::Account;
 use Moose;
 use MooseX::Method::Signatures;
 use WWW::Phanfare::API;
 use Carp;
-use Filesys::Virtual::Phanfare::Node::Site;
+use WWW::Phanfare::Class::Site;
 
 has 'agent' => ( is=>'rw', required=>1, isa=>'WWW::Phanfare::API' );
 has 'uid'   => ( is=>'rw', required=>1, isa=>'Int' );
@@ -97,14 +97,14 @@ method login ( Str :$api_key, Str :$private_key, Str :$email_address?, Str :$pas
 #  );
 #}
 
-with 'Filesys::Virtual::Phanfare::Role::Branch';
-with 'Filesys::Virtual::Phanfare::Role::Attributes';
+with 'WWW::Phanfare::Class::Role::Branch';
+with 'WWW::Phanfare::Class::Role::Attributes';
 
 1;
 
 =head1 NAME
 
-Filesys::Virtual::Phanfare::Node::Account - Account Node
+WWW::Phanfare::Class::Account - Account Node
 
 =head1 SUBROUTINES/METHODS
 

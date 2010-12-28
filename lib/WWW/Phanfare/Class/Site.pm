@@ -1,9 +1,9 @@
-package Filesys::Virtual::Phanfare::Node::Site;
+package WWW::Phanfare::Class::Site;
 use Moose;
 use MooseX::Method::Signatures;
-use WWW::Phanfare::API;
-use Carp;
-use Filesys::Virtual::Phanfare::Node::Album;
+#use WWW::Phanfare::API;
+#use Carp;
+#use Filesys::Virtual::Phanfare::Node::Album;
 
 #has 'uid'      => ( is=>'rw', isa=>'Int', required=>1 );
 #has 'gid'      => ( is=>'rw', isa=>'Int', required=>1 );
@@ -51,24 +51,27 @@ use Filesys::Virtual::Phanfare::Node::Album;
 #  );
 #}
 
-method subnodetype { 'Filesys::Virtual::Phanfare::Node::Album' };
+method subnodetype { 'WWW::Phanfare::Class::Album' };
 method subnodelist { 'Sample: Skiing' };
-
-with 'Filesys::Virtual::Phanfare::Role::Branch';
-with 'Filesys::Virtual::Phanfare::Role::Attributes';
+with 'WWW::Phanfare::Class::Role::Branch';
+with 'WWW::Phanfare::Class::Role::Attributes';
 
 =head1 NAME
 
-Filesys::Virtual::Phanfare::Node::Account - Site Node
+WWW::Phanfare::Class::Site - Site Node
 
 =head1 SUBROUTINES/METHODS
 
-=head2 new
+=head2 subnodetype
 
-Create object
+Class type of sub nodes.
+
+=head2 subnodelist
+
+Names of subnodes.
 
 =head1 SEE ALSO
 
-L<Filesys::Virtual::Phanfare>
+L<WWW::Phanfare::Class>
 
 =cut

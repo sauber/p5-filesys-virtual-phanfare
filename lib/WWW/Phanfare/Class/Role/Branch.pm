@@ -1,26 +1,17 @@
-package Filesys::Virtual::Phanfare::Role::Branch;
+package WWW::Phanfare::Class::Role::Branch;
 use Moose::Role;
 use MooseX::Method::Signatures;
 
-# 
-#has nodes (
-#  is => 'ro',
-#  isa => 'HashRef[Filesys::Virtual::Phanfare::Role::Node]',
-#  lazy_build => 1,
-#);
-
-# Of what type are subnodes
-# #
-
 requires 'subnodetype';
+requires 'subnodelist';
 
 # List of names of subnodes
 #
-has subnodelist => (
-  is => 'rw',
-  isa => 'ArrayRef',
-  auto_deref => 1,
-);
+#has subnodelist => (
+#  is => 'rw',
+#  isa => 'ArrayRef',
+#  auto_deref => 1,
+#);
 
 # Create a named subnode
 #
@@ -31,6 +22,10 @@ method buildnode ( Str $nodename ) {
 
 method getnode ( Str $nodename ) { $self->buildnode( $nodename ) }
 
-with 'Filesys::Virtual::Phanfare::Role::Dir';
+=head1 NAME
+
+WWW::Phanfare::Class::Role::Branch - Node wtih sub nodes.
+
+=cut
 
 1;

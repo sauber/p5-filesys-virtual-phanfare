@@ -1,6 +1,6 @@
-package Filesys::Virtual::Phanfare::Role::Leaf;
-use Moose::Role;
+package WWW::Phanfare::Class::Role::Leaf;
 use MooseX::Method::Signatures;
+use Moose::Role;
 
 # All nodes in the tree must have a parent
 #
@@ -20,8 +20,8 @@ has nodename => (
 
 # Get attributes and agent from parent
 method uid   { $self->parent->uid   }
-method gid   { $self->parent->gid   }
-method agent { $self->parent->agent }
+#method gid   { $self->parent->gid   }
+method api { $self->parent->api }
 
 # If this node has subnodes or attributes, scan them for a match
 #
@@ -44,6 +44,20 @@ method nodelist {
   return @list;
 }
 
-with 'Filesys::Virtual::Phanfare::Role::File';
+=head1 NAME
+
+WWW::Phanfare::Class::Role::Leaf - End node in object tree representing value
+
+=head1 SUBROUTINES/METHODS
+
+=head2 new
+
+Create object
+
+=head1 SEE ALSO
+
+L<WWW::Phanfare::Class>
+
+=cut
 
 1;
