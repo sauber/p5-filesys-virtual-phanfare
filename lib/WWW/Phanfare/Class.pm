@@ -10,6 +10,7 @@ has 'api_key'       => ( is=>'ro', isa=>'Str', required=>1 );
 has 'private_key'   => ( is=>'ro', isa=>'Str', required=>1 );
 has 'email_address' => ( is=>'ro', isa=>'Str' );
 has 'password'      => ( is=>'ro', isa=>'Str' );
+method subnodetype { 'WWW::Phanfare::Class::Account' }
 
 # Initialize account
 has 'account' => (
@@ -37,7 +38,9 @@ sub _build_account {
   #warn '*** _build_account' . Dumper $session;
 
   # Create account object with session data
-  my $account = WWW::Phanfare::Class::Account->new(
+  #my $account = WWW::Phanfare::Class::Account->new(
+  my $type = $self->subnodetype;
+  my $account = $type->new(
     uid => $session->{session}{uid},
     gid => $session->{session}{public_group_id},
     parent => $self,
@@ -62,6 +65,8 @@ sub _build_api {
     private_key => $self->private_key,
   );
 }
+
+
 
 # SITES
 method sitelist { $self->account->sitelist }

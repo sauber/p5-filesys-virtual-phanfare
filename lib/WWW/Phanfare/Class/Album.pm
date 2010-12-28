@@ -17,7 +17,8 @@ method sectionid {
 method buildnode ( $nodename ) {
   my %node = $self->sectionid;
   my($id,$name) = $self->_idnamematch( \%node, $nodename );
-  return WWW::Phanfare::Class::Section->new(
+  my $type = $self->subnodetype;
+  $type->new(
     parent       => $self,
     nodename     => $nodename,
     section_id   => $id,

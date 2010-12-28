@@ -2,10 +2,10 @@ package Filesys::Virtual::Phanfare;
 
 use warnings;
 use strict;
-#use POSIX qw(ceil);
-#use Carp;
+use POSIX qw(ceil);
+use Carp;
 #use WWW::Phanfare::API;
-use WWW::Phanfare::Class;
+use WWW::Phanfare::Class::Account;
 use Filesys::Virtual::Plain;
 #use base qw( Filesys::Virtual Class::Accessor::Fast );
 use base qw( Filesys::Virtual Moose::Object );
@@ -20,16 +20,15 @@ has 'cwd' => ( is => 'rw', isa => 'Str', default => '/' );
 has 'root_path' => ( is => 'ro', isa => 'Str', default => '' );
 has 'home_path' => ( is => 'ro', isa => 'Str', default => '/' );
 #has 'host' => ( is => 'ro' );
-has 'api_key' => ( is => 'ro', required=>1 );
-has 'private_key' => ( is => 'ro', required=>1 );
+has 'api_key' => ( is => 'ro' );
+has 'private_key' => ( is => 'ro' );
 has 'email_address' => ( is => 'ro' );
 has 'password' => ( is => 'ro' );
-
-has 'phanfare' => ( isa=>'WWW::Phanfare::Class', is=>'ro', required=>1, lazy_build => 1 );
-sub _build_phanfare {
+has 'account' => ( isa=>'WWW::Phanfare::Class::Account', is=>'ro', lazy_build => 1 );
+sub _build_account {
   my $self = shift;
 
-  return WWW::Phanfare::Class->new(
+  return WWW::Phanfare::Class::Account->new(
     api_key       => $self->api_key,
     private_key   => $self->private_key,
     email_address => $self->email_address,
@@ -49,7 +48,7 @@ Version 0.01
 =cut
 
 our $VERSION = '0.01';
-#our $BLOCKSIZE = 1024;
+our $BLOCKSIZE = 1024;
 our $AUTOLOAD;
 
 sub AUTOLOAD {
@@ -113,32 +112,31 @@ method opnode ( Str $operation, Str $path, ArrayRef $args ) {
     = split '/', $pathfromroot;
 
   # Determine which node to do operation on
-  my $phanfare = $self->phanfare;
   my $node;
   if ( $image ) {
-    $node = $phanfare->image($album,$section,$rendition,$image);
+    $node = $self->account->getnode($site)->getnode($album)->getnode($section)->getnode->($rendition)->getnode($image);
   } elsif ( $rendition ) {
-    $node = $phanfare->rendition($album,$section,$rendition);
+    $node = $self->account->getnode($site)->getnode($album)->getnode($section)->getnode->($rendition);
   } elsif ( $section ) {
-    $node = $phanfare->section($album, $section);
+    $node = $self->account->getnode($site)->getnode($album)->getnode($section);
   } elsif ( $album ) {
-    $node = $phanfare->album($album);
+    $node = $self->account->getnode($site)->getnode($album);
   } elsif ( $site ) {
-    $node = $phanfare->site($site);
+    $node = $self->account->getnode($site);
   } else {
-    $node = $phanfare->account;
+    $node = $self->account;
   }
 
   # Perform the operation if node exists and has the capability
   if ( $node ) {
     if ( $node->can($operation) ) {
-      warn "fsop $operation $node @$args\n";
+      #warn "fsop $operation $node @$args\n";
       return $node->$operation(@$args) if $node and $node->can($operation);
     } else {
-      warn "fsop $node $node @$args not implemented\n";
+      #warn "fsop $node $node @$args not implemented\n";
     }
   } else {
-    warn "fsop $operation $path does not exist\n";
+    #warn "fsop $operation $path does not exist\n";
   }
   return undef;
 }
@@ -264,42 +262,7 @@ by the Free Software Foundation; or the Artistic License.
 
 See http://dev.perl.org/licenses/ for more information.
 
+
 =cut
 
-package Filesys::Virtual::Phanfare::Node::Account;
-use Moose;
-extends 'WWW::Phanfare::Class::Account';
-with 'Filesys::Virtual::Phanfare::Role::Dir';
-sub subnodetype { 'Filesys::Virtual::Phanfare::Node::Site' }
-
-package Filesys::Virtual::Phanfare::Node::Site;
-use Moose;
-extends 'WWW::Phanfare::Class::Site';
-with 'Filesys::Virtual::Phanfare::Role::Dir';
-sub subnodetype { 'Filesys::Virtual::Phanfare::Node::Album' }
-
-package Filesys::Virtual::Phanfare::Node::Album;
-use Moose;
-extends 'WWW::Phanfare::Class::Album';
-with 'Filesys::Virtual::Phanfare::Role::Dir';
-sub subnodetype { 'Filesys::Virtual::Phanfare::Node::Section' }
-
-package Filesys::Virtual::Phanfare::Node::Section;
-use Moose;
-extends 'WWW::Phanfare::Class::Section';
-with 'Filesys::Virtual::Phanfare::Role::Dir';
-sub subnodetype { 'Filesys::Virtual::Phanfare::Node::Rendition' }
-
-package Filesys::Virtual::Phanfare::Node::Rendition;
-use Moose;
-extends 'WWW::Phanfare::Class::Rendition';
-with 'Filesys::Virtual::Phanfare::Role::Dir';
-sub subnodetype { 'Filesys::Virtual::Phanfare::Node::Image' }
-
-package Filesys::Virtual::Phanfare::Node::Image;
-use Moose;
-extends 'WWW::Phanfare::Class::Image';
-with 'Filesys::Virtual::Phanfare::Role::File';
-
 1; # End of Filesys::Virtual::Phanfare
-

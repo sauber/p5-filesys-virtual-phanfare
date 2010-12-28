@@ -18,7 +18,8 @@ method subnodelist { $self->_idnamestrings({ $self->albumid }) }
 method buildnode ( $nodename ) {
   my %node = $self->albumid;
   my($id,$name) = $self->_idnamematch( \%node, $nodename );
-  return WWW::Phanfare::Class::Album->new(
+  my $type = $self->subnodetype;
+  $type->new(
     parent     => $self,
     nodename   => $nodename,
     album_id   => $id,
