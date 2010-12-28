@@ -1,13 +1,18 @@
 package WWW::Phanfare::Class::Account;
 use Moose;
 use MooseX::Method::Signatures;
-use WWW::Phanfare::API;
+#use WWW::Phanfare::API;
 use Carp;
 use WWW::Phanfare::Class::Site;
 
-has 'agent' => ( is=>'rw', required=>1, isa=>'WWW::Phanfare::API' );
-has 'uid'   => ( is=>'rw', required=>1, isa=>'Int' );
-has 'gid'   => ( is=>'rw', required=>1, isa=>'Int' );
+#has 'agent' => ( is=>'rw', required=>1, isa=>'WWW::Phanfare::API' );
+has 'uid'   => ( is=>'rw', isa=>'Int' );
+has 'gid'   => ( is=>'rw', isa=>'Int' );
+#has 'api_key'       => ( is=>'ro' );
+#has 'private_key'   => ( is=>'ro' );
+#has 'email_address' => ( is=>'ro' );
+#has 'password'      => ( is=>'ro' );
+
 #has 'sitelist' => ( is=>'ro', isa=>'HashRef', lazy_build=>1 );
 #has subnodetype => ( is=>'ro', isa=>'Str', default => 'Filesys::Virtual::Phanfare::Node::Site' );
 
@@ -31,35 +36,42 @@ method subnodetype { 'Filesys::Virtual::Phanfare::Node::Site' }
 
 # When object is created, log into Phanfare right away
 # XXX: Don't have new method - instead use builder
-method login ( Str :$api_key, Str :$private_key, Str :$email_address?, Str :$password? ) {
-  # Create new Phanfare API agent
-  my $agent;
-  if ( $api_key and $private_key ) {
-    $agent = WWW::Phanfare::API->new(
-      api_key     => $api_key,
-      private_key => $private_key,
-    );
-  } else {
-    croak "api_key and private_key are required for Phanfare API";
-  }
-  $self->agent( $agent );
-
-  # Authenticate as user or guest
-  my $session;
-  if ( $email_address and $password ) {
-    $session = $agent->Authenticate(
-      email_address => $email_address,
-      password      => $password,
-    );
-    $self->uid( $session->{session}{uid} );
-    $self->gid( $session->{session}{public_group_id} );
-  } else {
-    $session = $agent->AuthenticateGuest();
-  }
-  $self->attributes( $session->{session} );
-
-  return $self;
-}
+#method login ( Str :$api_key?, Str :$private_key?, Str :$email_address?, Str :$password? ) {
+## Use parameters if specified, otherwise use object attributes
+#$api_key       ||= $self->api_key;
+#$private_key   ||= $self->private_key;
+#$email_address ||= $self->email_address;
+#$password      ||= $self->password;
+#
+## Create new Phanfare API agent
+#my $agent;
+#if ( $api_key and $private_key ) {
+#$agent = WWW::Phanfare::API->new(
+#api_key     => $api_key,
+#private_key => $private_key,
+#);
+#} else {
+#croak "api_key and private_key are required for Phanfare API";
+#}
+#  $self->agent( $agent );
+#
+#  # Authenticate as user or guest
+#  my $session;
+#  if ( $email_address and $password ) {
+#    $session = $agent->Authenticate(
+#      email_address => $email_address,
+#      password      => $password,
+#    );
+#    $self->uid( $session->{session}{uid} );
+#    $self->gid( $session->{session}{public_group_id} );
+#  } else {
+#    $session = $agent->AuthenticateGuest();
+#  }
+#  $self->attributes( $session->{session} );
+#  # XXX: Clear password
+#
+#  return $self;
+#}
 
 # Size of account dir
 #method size {
