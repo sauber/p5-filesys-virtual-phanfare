@@ -29,6 +29,8 @@ method buildnode ( Str $nodename ) {
   $type->new( parent => $self, nodename=>$nodename );
 }
 
+method getnode ( Str $nodename ) { $self->buildnode( $nodename ) }
+
 with 'Filesys::Virtual::Phanfare::Role::Dir';
 
 1;

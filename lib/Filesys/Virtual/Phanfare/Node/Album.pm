@@ -51,13 +51,9 @@ use Carp;
 #  );
 #}
 
-method subnodelist {
-  'Main Section';
-}
+method subnodelist { 'Main Section' }
 
-method subnodetype {
-  'Filesys::Virtual::Phanfare::Node::Album';
-}
+method subnodetype { 'Filesys::Virtual::Phanfare::Node::Album' }
 
 with 'Filesys::Virtual::Phanfare::Role::Branch';
 with 'Filesys::Virtual::Phanfare::Role::Attributes';

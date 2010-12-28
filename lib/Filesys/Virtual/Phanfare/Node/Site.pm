@@ -5,22 +5,22 @@ use WWW::Phanfare::API;
 use Carp;
 use Filesys::Virtual::Phanfare::Node::Album;
 
-has 'uid'      => ( is=>'rw', isa=>'Int', required=>1 );
-has 'gid'      => ( is=>'rw', isa=>'Int', required=>1 );
-has '_agent'   => ( is=>'ro', isa=>'WWW::Phanfare::API', required=>1 );
-has 'albumlist' => ( is=>'ro', isa=>'ArrayRef', lazy_build=>1 );
+#has 'uid'      => ( is=>'rw', isa=>'Int', required=>1 );
+#has 'gid'      => ( is=>'rw', isa=>'Int', required=>1 );
+#has '_agent'   => ( is=>'ro', isa=>'WWW::Phanfare::API', required=>1 );
+#has 'albumlist' => ( is=>'ro', isa=>'ArrayRef', lazy_build=>1 );
 
 # List of available sites
-sub _build_albumlist {
-  my $self = shift;
-
-  #my $sitename = $self->attribute('primary_site_name')->value;
-  my $albumlist = $self->{_agent}->GetAlbumList(target_uid=>$self->{uid});
-  return [ 
-    map "$_->{album_name}.$_->{album_id}",
-    @{ $albumlist->{albums}{album} }
-  ];
-}
+#sub _build_albumlist {
+#  my $self = shift;
+#
+#  #my $sitename = $self->attribute('primary_site_name')->value;
+#  my $albumlist = $self->{_agent}->GetAlbumList(target_uid=>$self->{uid});
+#  return [ 
+#    map "$_->{album_name}.$_->{album_id}",
+#    @{ $albumlist->{albums}{album} }
+#  ];
+#}
 
 # Size of account dir
 #method size {
@@ -29,27 +29,30 @@ sub _build_albumlist {
 #}
 
 # And attribute or a site
-method getnode ( Str $nodename ) {
-  if ( grep $nodename, $self->attributelist ) {
-    return $self->attribute( $nodename );
-  #} elsif ( grep $nodename, @{ $self->sitelist } ) {
-  #  $self->{_site}{$nodename} ||= Filesys::Virtual::Phanfare::Node::Site->new(
-  #    sitename => $nodename
-  #  );
-  #  return $self->{_site}{$nodename};
-  } else {
-    return undef;
-  }
-}
+#method getnode ( Str $nodename ) {
+#  if ( grep $nodename, $self->attributelist ) {
+#    return $self->attribute( $nodename );
+#  #} elsif ( grep $nodename, @{ $self->sitelist } ) {
+#  #  $self->{_site}{$nodename} ||= Filesys::Virtual::Phanfare::Node::Site->new(
+#  #    sitename => $nodename
+#  #  );
+#  #  return $self->{_site}{$nodename};
+#  } else {
+#    return undef;
+#  }
+#}
 
 # List of sites and properties
 #
-method list {
-  return (
-    @{ $self->albumlist },
-    keys %{ $self->attributes }
-  );
-}
+#method list {
+#  return (
+#    @{ $self->albumlist },
+#    keys %{ $self->attributes }
+#  );
+#}
+
+method subnodetype { 'Filesys::Virtual::Phanfare::Node::Album' };
+method subnodelist { 'Sample: Skiing' };
 
 with 'Filesys::Virtual::Phanfare::Role::Branch';
 with 'Filesys::Virtual::Phanfare::Role::Attributes';

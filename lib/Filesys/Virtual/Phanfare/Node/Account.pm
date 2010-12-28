@@ -9,14 +9,14 @@ has 'agent' => ( is=>'rw', required=>1, isa=>'WWW::Phanfare::API' );
 has 'uid'   => ( is=>'rw', required=>1, isa=>'Int' );
 has 'gid'   => ( is=>'rw', required=>1, isa=>'Int' );
 #has 'sitelist' => ( is=>'ro', isa=>'HashRef', lazy_build=>1 );
-has subnodetype => ( is=>'ro', isa=>'Str', default => 'Filesys::Virtual::Phanfare::Node::Site' );
+#has subnodetype => ( is=>'ro', isa=>'Str', default => 'Filesys::Virtual::Phanfare::Node::Site' );
 
 # We have just one subnode - the primary site name
 # XXX: Can we access other sites somehow?
 #
-method subnodelist {
-  $self->attribute('primary_site_name')->value;
-}
+method subnodelist { $self->attribute('primary_site_name')->value }
+
+method subnodetype { 'Filesys::Virtual::Phanfare::Node::Site' }
 
 # List of available sites
 #method _build_nodes {
