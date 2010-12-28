@@ -2,6 +2,12 @@ package WWW::Phanfare::Class::Role::Node;
 use Moose::Role;
 use MooseX::Method::Signatures;
 
+# For debug
+sub x {
+  use Data::Dumper;
+  warn Data::Dumper->Dump([$_[1]], ["*** $_[0]"]);
+}
+
 # All nodes in the tree must have a parent
 #
 has parent => (

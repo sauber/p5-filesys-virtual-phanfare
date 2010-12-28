@@ -111,7 +111,9 @@ method subnodetype { 'WWW::Phanfare::Class::Site' }
 #  );
 #}
 
+method sitelist { $self->subnodelist }
 method site ( Str $sitename ) { $self->getnode( $sitename ) }
+
 
 with 'WWW::Phanfare::Class::Role::Branch';
 with 'WWW::Phanfare::Class::Role::Attributes';
