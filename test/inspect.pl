@@ -25,5 +25,16 @@ print Dumper $session;
 my $albumlist = $agent->GetAlbumList(
   target_uid => $uid,
 );
+my %album =
+  map { $_->{album_id} => $_->{album_name} }
+  @{ $albumlist->{albums}{album} };
+#print Dumper $albumlist;
 
-print Dumper $albumlist;
+# A random album is
+my ($albumid) = keys %album;
+my $albuminfo = $agent->GetAlbum(
+  target_uid => $uid,
+  album_id   => $albumid,
+);
+print Dumper $albuminfo;
+

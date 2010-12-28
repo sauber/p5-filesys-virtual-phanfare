@@ -7,39 +7,23 @@ use WWW::Phanfare::Class::Album;
 #
 method albumid {
   my $albumlist = $self->api->GetAlbumList(target_uid=>$self->uid);
-  my %node = 
-    map { $_->{album_id} => $_->{album_name} }
-    @{ $albumlist->{albums}{album} };
-  #x('albumid', \%node);
-  return %node;
+  $self->_idnamepair( $albumlist->{albums}{album}, 'album' );
 }
 
 method subnodetype { 'WWW::Phanfare::Class::Album' };
-method subnodelist {
-  my @albums;
-  my %node = $self->albumid;
-  while ( my($id,$name) = each %node ) {
-    # XXX: If there are more than one album with same name,
-    #        then append ID
-    #        otherwise don't append ID
-    push @albums, "$name.$id";
-  }
-  return @albums;
-}
+method subnodelist { $self->_idnamestrings({ $self->albumid }) }
 
-# Specify ID, Name or Name.ID
+# Specify ID, Name or Name.ID to get an Album object
+#
 method buildnode ( $nodename ) {
   my %node = $self->albumid;
-  while ( my($id,$name) = each %node ) {
-    if ( "$name.$id" eq $nodename or $name eq $nodename or "$id" eq "$nodename" ) {
-      return WWW::Phanfare::Class::Album->new(
-        parent     => $self,
-        nodename   => $nodename,
-        album_id   => $id,
-        album_name => $name,
-      );
-    }
-  }
+  my($id,$name) = $self->_idnamematch( \%node, $nodename );
+  return WWW::Phanfare::Class::Album->new(
+    parent     => $self,
+    nodename   => $nodename,
+    album_id   => $id,
+    album_name => $name,
+  );
 }
 
 method albumlist { $self->subnodelist }

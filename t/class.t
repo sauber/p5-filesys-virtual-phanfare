@@ -72,4 +72,9 @@ diag "*** album is " . $albumname;
 ok( my $album = $class->album($albumname), "Class has album object" );
 #diag Dumper $album;
 
+# Verify there are sections
+ok( my @sections = $class->sectionlist($albumname), "Class has sections" );
+my $sectionname = shift @sections;
+diag "*** section is " . $sectionname;
+
 done_testing();

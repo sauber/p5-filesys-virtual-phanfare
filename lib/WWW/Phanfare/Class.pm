@@ -59,13 +59,23 @@ sub _build_api {
   );
 }
 
+# SITES
 method sitelist { $self->account->sitelist }
 method site ( Str $sitename ) { $self->account->site( $sitename ) }
 
+# ALBUMDS
 # XXX: For now assume there is only one site
 method albumlist { $self->site($self->sitelist)->albumlist }
 method album ( Str $albumname ) {
   $self->site($self->sitelist)->album( $albumname )
+}
+
+# SECTIONS
+method sectionlist ( Str $albumname ){
+  $self->album( $albumname )->sectionlist
+}
+method section ( Str $albumname, Str $sectionname ) {
+  $self->album( $albumname )->section( $sectionname );
 }
 
 =head1 NAME
