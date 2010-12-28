@@ -61,20 +61,27 @@ ok( my $account = $class->account, "Class has account" );
 isa_ok( $account, 'WWW::Phanfare::Class::Account' );
 
 # Verify there is a site
-ok( my ($sitename) = $class->sitelist, "Class has sites" );
+ok( my($sitename) = $class->sitelist, "Class has sites" );
 diag "*** site is " . $sitename;
 ok( my $site = $class->site($sitename), "Class has site object" );
 isa_ok( $site, 'WWW::Phanfare::Class::Site' );
 
 # Verify there are albums
-ok( my ($albumname) = $class->albumlist, "Class has an album" );
+ok( my($albumname) = $class->albumlist, "Class has an album" );
 diag "*** album is " . $albumname;
 ok( my $album = $class->album($albumname), "Class has album object" );
+isa_ok( $album, 'WWW::Phanfare::Class::Album' );
 #diag Dumper $album;
 
 # Verify there are sections
-ok( my @sections = $class->sectionlist($albumname), "Class has sections" );
-my $sectionname = shift @sections;
+ok( my($sectionname) = $class->sectionlist($albumname), "Class has sections" );
 diag "*** section is " . $sectionname;
+ok( my $section = $class->section($albumname,$sectionname), "Class has section object" );
+isa_ok( $section, 'WWW::Phanfare::Class::Section' );
+
+# Verify there are renditions
+ok( my($renditionname) = $class->renditionlist($albumname,$sectionname), "Class has renditions" );
+diag "*** rendition is " . $renditionname;
+
 
 done_testing();

@@ -78,6 +78,15 @@ method section ( Str $albumname, Str $sectionname ) {
   $self->album( $albumname )->section( $sectionname );
 }
 
+# RENDITIONS
+method renditionlist ( Str $albumname, Str $sectionname ) {
+  $self->album( $albumname )->section( $sectionname )->renditionlist;
+}
+method rendition ( Str $albumname, Str $sectionname, Str $renditionname ) {
+  my $section = $self->album( $albumname )->section( $sectionname );
+  $section->rendition( $renditionname );
+}
+
 =head1 NAME
 
 WWW::Phanfare::Class - Object interface to Phanfare library

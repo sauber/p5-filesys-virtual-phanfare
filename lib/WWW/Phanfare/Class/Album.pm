@@ -1,7 +1,7 @@
 package WWW::Phanfare::Class::Album;
 use Moose;
 use MooseX::Method::Signatures;
-#use WWW::Phanfare::Class::Section;
+use WWW::Phanfare::Class::Section;
 
 has album_id => ( is=>'ro', isa=>'Int', required=>1 );
 has album_name => ( is=>'ro', isa=>'Str', required=>1 );
@@ -11,29 +11,32 @@ method sectionid {
     target_uid => $self->uid,
     album_id   => $self->album_id,
   );
-  #my $sl = $sectionlist->{album}{sections}{section};
-  #$sl = [ $sl ] unless 'ARRAY' eq ref $sl; # There is only one section
-  ##x('sectionlist', $sl);
-  #my %node =
-  #  map { $_->{section_id} => $_->{section_name} }
-  #  @$sl;
-  #x('sectionid', \%node);
-  #return %node;
   $self->_idnamepair( $sectionlist->{album}{sections}{section}, 'section' );
 }
 
-method subnodetype { 'WWW::Phanfare::Class::Album' }
+method buildnode ( $nodename ) {
+  my %node = $self->sectionid;
+  my($id,$name) = $self->_idnamematch( \%node, $nodename );
+  return WWW::Phanfare::Class::Section->new(
+    parent       => $self,
+    nodename     => $nodename,
+    section_id   => $id,
+    section_name => $name,
+  );
+}
+
+method subnodetype { 'WWW::Phanfare::Class::Section' }
 method subnodelist { $self->_idnamestrings({ $self->sectionid }) }
 
 method sectionlist { $self->subnodelist }
-#method section ( Str $sectionname ) { $self->getnode( $sectionname ) }
+method section ( Str $sectionname ) { $self->getnode( $sectionname ) }
 
 with 'WWW::Phanfare::Class::Role::Branch';
 with 'WWW::Phanfare::Class::Role::Attributes';
 
 =head1 NAME
 
-WWW::Phanfare::Class::Account - Album Node
+WWW::Phanfare::Class::Album - Album Node
 
 =head1 SUBROUTINES/METHODS
 
