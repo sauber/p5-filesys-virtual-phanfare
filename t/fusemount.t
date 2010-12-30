@@ -1,7 +1,7 @@
 #!perl -T
 
-#use Test::More;
-use Test::More skip_all => 'Building up Class tree first';
+use Test::More;
+#use Test::More skip_all => 'Building up Class tree first';
 
 use_ok( 'Filesys::Virtual::Phanfare' );
 use_ok( 'Fuse::Filesys::Virtual' );

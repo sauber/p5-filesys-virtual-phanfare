@@ -13,6 +13,7 @@ use base qw( Filesys::Virtual Moose::Object );
 
 use Moose;
 use MooseX::Method::Signatures;
+#use Filesys::Virtual::Phanfare::Node;
 
 #extends 'Filesys::Virtual';
 
@@ -104,38 +105,59 @@ Initialize new virtual filesystem
 *_path_from_root = \&Filesys::Virtual::Plain::_path_from_root;
 *_resolve_path   = \&Filesys::Virtual::Plain::_resolve_path;
 
+# Identify Phanfare node that matches path
+#
+method phnode ( Str $path ) {
+  my($account,$site,$album,$section,$rendition,$image) = split '/', $path;
+
+  return $self->phanfare->image    ($album,$section,$rendition,$image)
+                                                                if $image;
+  return $self->phanfare->rendition($album,$section,$rendition) if $rendition;
+  return $self->phanfare->section  ($album,$section           ) if $section;
+  return $self->phanfare->album    ($album                    ) if $album;
+  return $self->phanfare->site     ($site                     ) if $site;
+  return $self->phanfare->account;
+}
+
+# Convert a phanfare node to a filesystem node
+# ie. add inode and fs operations
+#
+method fsnode ( Str $path, Ref $phnode ) {
+  my $type = 'Filesys::Virtual::Phanfare::Node';
+  for my $nodetype (qw(Account Site Album Section Rendition Image Attribute)){
+    $type .= "::$nodetype" if $phnode ~~ /$nodetype/;
+  }
+  
+  # XXX: Keep a cache of already created fsnodes
+  #      to make sure same fsnode always uses same inode
+  my $node = $type->new(
+    uid      => $phnode->uid,
+    gid      => $phnode->gid,
+    parent   => $phnode->parent,
+    nodename => $phnode->nodename,
+  );
+
+  # Convert phanfare object to fs object
+  $node->meta->rebless_instance($phnode);
+  return $phnode;
+}
+
 # Is requested file op on account, site, album, section, rendition or image?
 # Run file operation on node
 #
 method opnode ( Str $operation, Str $path, ArrayRef $args ) {
-  my $pathfromroot = $self->_path_from_root( $path );
-  my($account,$site,$album,$section,$rendition,$image)
-    = split '/', $pathfromroot;
-
-  # Determine which node to do operation on
-  my $phanfare = $self->phanfare;
-  my $node;
-  if ( $image ) {
-    $node = $phanfare->image($album,$section,$rendition,$image);
-  } elsif ( $rendition ) {
-    $node = $phanfare->rendition($album,$section,$rendition);
-  } elsif ( $section ) {
-    $node = $phanfare->section($album, $section);
-  } elsif ( $album ) {
-    $node = $phanfare->album($album);
-  } elsif ( $site ) {
-    $node = $phanfare->site($site);
-  } else {
-    $node = $phanfare->account;
+  unless ( length $operation ) {
+    return warn "fsop NOOP $path @$args\n";
   }
-
+  my $fullpath  = $self->_path_from_root( $path );
+  my $node = $self->fsnode( $fullpath, $self->phnode($fullpath) );
   # Perform the operation if node exists and has the capability
   if ( $node ) {
     if ( $node->can($operation) ) {
       warn "fsop $operation $node @$args\n";
       return $node->$operation(@$args) if $node and $node->can($operation);
     } else {
-      warn "fsop $node $node @$args not implemented\n";
+      warn "fsop $operation $node @$args not implemented\n";
     }
   } else {
     warn "fsop $operation $path does not exist\n";

@@ -32,6 +32,8 @@ sub stat {
   );
 }
 
+with 'Filesys::Virtual::Phanfare::Role::Node';
+
 =head1 NAME
 
 Filesys::Virtual::Phanfare::Node::Account - File Node

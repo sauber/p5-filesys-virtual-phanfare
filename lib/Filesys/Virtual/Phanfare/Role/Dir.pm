@@ -31,6 +31,13 @@ sub stat {
   );
 }
 
+sub list {
+  my $self = shift;
+  return $self->subnodelist();
+}
+
+with 'Filesys::Virtual::Phanfare::Role::Node';
+
 =head1 NAME
 
 Filesys::Virtual::Phanfare::Node::Dir - Dir Node
