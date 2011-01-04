@@ -33,7 +33,7 @@ sub stat {
 
 sub list {
   my $self = shift;
-  return $self->subnodelist();
+  return $self->nodelist();
 }
 
 #    -r  File is readable by effective uid/gid.

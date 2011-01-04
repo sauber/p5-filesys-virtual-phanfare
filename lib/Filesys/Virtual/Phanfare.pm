@@ -352,5 +352,10 @@ use Moose;
 extends 'WWW::Phanfare::Class::Image';
 with 'Filesys::Virtual::Phanfare::Role::File';
 
+package Filesys::Virtual::Phanfare::Node::Attribute;
+use Moose;
+extends 'WWW::Phanfare::Class::Attribute';
+with 'Filesys::Virtual::Phanfare::Role::File';
+
 1; # End of Filesys::Virtual::Phanfare
 
