@@ -8,6 +8,9 @@ use Class::MOP;
 has inode => ( is=>'ro', isa=>'Int', lazy_build=>1 );
 method _build_inode { return 0+$self }
 
+# Files/Dirs need gid
+method gid { $self->parent->gid }
+
 #has parent => ( is=>'ro', isa=>'Any' );
 
 #with 'WWW::Phanfare::Class::Role::Node';

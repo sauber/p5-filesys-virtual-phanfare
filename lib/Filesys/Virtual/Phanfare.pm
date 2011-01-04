@@ -121,24 +121,46 @@ method phnode ( Str $path ) {
 
 # Convert a phanfare node to a filesystem node
 # ie. add inode and fs operations
+# XXX: Seriously messy below. Need cleanup.
 #
 method fsnode ( Str $path, Ref $phnode ) {
   my $type = 'Filesys::Virtual::Phanfare::Node';
   for my $nodetype (qw(Account Site Album Section Rendition Image Attribute)){
     $type .= "::$nodetype" if $phnode ~~ /$nodetype/;
   }
+
+  my $gid = $self->phanfare->account->attribute('public_group_id')->value;
+  #warn "*** gid for $path is $gid\n";
+  my $uid = $self->phanfare->account->attribute('uid')->value;
+  #warn "*** uid for $path is $uid\n";
   
   # XXX: Keep a cache of already created fsnodes
   #      to make sure same fsnode always uses same inode
   my $node = $type->new(
-    uid      => $phnode->uid,
-    gid      => $phnode->gid,
+    uid      => $uid,
+    gid      => $gid,
     parent   => $phnode->parent,
     nodename => $phnode->nodename,
   );
 
-  # Convert phanfare object to fs object
-  $node->meta->rebless_instance($phnode);
+  #warn "*** new node created: " .Dumper $node;
+
+  if ( $type =~ /Account/ ) {
+    # Clone and convert
+    #warn "*** fsnode $phnode clone and converting...\n";
+    #warn "***   via $node...\n";
+    my $phnode2 = $phnode->meta->clone_object($phnode);
+    $node->meta->rebless_instance($phnode2);
+    $phnode = $phnode2;
+    #warn "***   to $phnode\n";
+  } else {
+    # Convert phanfare object to fs object
+    # Although uid/gid was given at $node init, it needs to be here again
+    #warn "*** fsnode $phnode converting...\n";
+    #warn "***   via $node...\n";
+    $node->meta->rebless_instance($phnode, uid=>$uid, gid=>$gid);
+    #warn "***   to $phnode\n";
+  }
   return $phnode;
 }
 
@@ -147,20 +169,22 @@ method fsnode ( Str $path, Ref $phnode ) {
 #
 method opnode ( Str $operation, Str $path, ArrayRef $args ) {
   unless ( length $operation ) {
-    return warn "fsop NOOP $path @$args\n";
+    return warn "*** fsop NOOP $path @$args\n";
   }
   my $fullpath  = $self->_path_from_root( $path );
+  #warn "*** Lookup node for $fullpath\n";
   my $node = $self->fsnode( $fullpath, $self->phnode($fullpath) );
+  #warn "***   found $node...\n";
   # Perform the operation if node exists and has the capability
   if ( $node ) {
     if ( $node->can($operation) ) {
-      warn "fsop $operation $node @$args\n";
+      warn "*** fsop $operation $node @$args\n";
       return $node->$operation(@$args) if $node and $node->can($operation);
     } else {
-      warn "fsop $operation $node @$args not implemented\n";
+      warn "*** fsop $operation $node @$args not implemented\n";
     }
   } else {
-    warn "fsop $operation $path does not exist\n";
+    warn "*** fsop $operation $path does not exist\n";
   }
   return undef;
 }
