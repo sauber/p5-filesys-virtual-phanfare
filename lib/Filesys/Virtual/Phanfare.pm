@@ -179,7 +179,12 @@ method opnode ( Str $operation, Str $path, ArrayRef $args ) {
   if ( $node ) {
     if ( $node->can($operation) ) {
       warn "*** fsop $operation $node @$args\n";
-      return $node->$operation(@$args) if $node and $node->can($operation);
+      #return $node->$operation(@$args) if $node and $node->can($operation);
+      if ( $node and $node->can($operation) ) {
+        my @result = $node->$operation(@$args);
+        warn "*** result is @result\n";
+        return @result;
+      }
     } else {
       warn "*** fsop $operation $node @$args not implemented\n";
     }
