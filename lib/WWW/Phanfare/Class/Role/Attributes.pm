@@ -46,6 +46,7 @@ method attribute ( Str $key, Str $value? ) {
 # List of attribute names
 #
 method attributelist {
+  return () unless $self->_attr;
   keys %{ $self->_attr };
 }
 

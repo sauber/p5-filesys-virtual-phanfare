@@ -13,6 +13,7 @@ use base qw( Filesys::Virtual Moose::Object );
 
 use Moose;
 use MooseX::Method::Signatures;
+use Moose::Util qw( apply_all_roles does_role );
 #use Filesys::Virtual::Phanfare::Node;
 
 #extends 'Filesys::Virtual';
@@ -123,7 +124,7 @@ method phnode ( Str $path ) {
 # ie. add inode and fs operations
 # XXX: Seriously messy below. Need cleanup.
 #
-method fsnode ( Str $path, Ref $phnode ) {
+method old_fsnode ( Str $path, Ref $phnode ) {
   my $type = 'Filesys::Virtual::Phanfare::Node';
   for my $nodetype (qw(Account Site Album Section Rendition Image Attribute)){
     $type .= "::$nodetype" if $phnode ~~ /$nodetype/;
@@ -164,6 +165,26 @@ method fsnode ( Str $path, Ref $phnode ) {
   return $phnode;
 }
 
+method fsnode ( Str $path, Ref $phnode ) {
+  warn sprintf "*** $phnode uid is %s". $phnode->uid;
+  if ( does_role($phnode, 'WWW::Phanfare::Class::Role::Leaf') ) {
+    if ( does_role($phnode, 'Filesys::Virtual::Phanfare::Role::File') ) {
+      warn "*** Already applied File role to $phnode\n";
+    } else {
+      warn "*** Applying File role to $phnode\n";
+      apply_all_roles( $phnode, 'Filesys::Virtual::Phanfare::Role::File' );
+     }
+  } else {
+    if ( does_role($phnode, 'Filesys::Virtual::Phanfare::Role::Dir') ) {
+      warn "*** Already applied Dir role to $phnode\n";
+    } else {
+      warn "*** Applying Dir role to $phnode\n";
+      apply_all_roles( $phnode, 'Filesys::Virtual::Phanfare::Role::Dir' );
+    }
+  }
+  return $phnode;
+}
+
 # Is requested file op on account, site, album, section, rendition or image?
 # Run file operation on node
 #
@@ -196,7 +217,7 @@ method opnode ( Str $operation, Str $path, ArrayRef $args ) {
 
 =head2 File operations
 
-Implemented functions
+Implemented functions, partially, or not at all
 
 =over
 
@@ -246,18 +267,6 @@ sub open_write   { shift->opnode('open_write',   shift, [shift]) }
 #sub close_write  { shift->opnode('close_write',  shift, [     ]) }
 sub close_write  { close shift }
 
-#=head2 test
-#
-#File test
-#
-#=cut
-#
-#sub test {
-#  my $self = shift;
-#  my $test = shift;
-#
-#  return 1;
-#}
 
 =head1 AUTHOR
 

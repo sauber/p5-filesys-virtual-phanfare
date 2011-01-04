@@ -26,7 +26,6 @@ my $fuse = new_ok( 'Fuse::Filesys::Virtual'     => [ $fs, { debug=>1} ] );
 
 ok( my @dir = $fuse->getdir('/'), 'list /' );
 ok( scalar @dir >= 4, 'At least 4 entries in /' );
-diag "\@dir: @dir";
 ok( my @stat = $fuse->getattr('/'), 'Stat stat /' );
 ok( scalar @stat == 13, 'stat for / has 13 entries' );
 
