@@ -7,6 +7,7 @@ method subnodetype { 'WWW::Phanfare::Class::Image' }
 method subnodelist { qw(IMG1.jpg IMG2.png) } # XXX: Todo
 
 method imagelist { $self->subnodelist }
+#method image ( Str $imagename ) { $self->getnode( $imagename ) }
 method image ( Str $imagename ) { $self->getnode( $imagename ) }
 
 with 'WWW::Phanfare::Class::Role::Branch';

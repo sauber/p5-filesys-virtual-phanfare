@@ -169,22 +169,22 @@ method fsnode ( Str $path, Ref $phnode ) {
   #warn sprintf "*** $phnode uid is %s", $phnode->uid;
   if ( does_role($phnode, 'WWW::Phanfare::Class::Role::Leaf') ) {
     if ( does_role($phnode, 'Filesys::Virtual::Phanfare::Role::File') ) {
-      warn "*** Already applied File role to $phnode\n";
+      #warn "*** Already applied File role to $phnode\n";
     } else {
-      warn "*** Applying File role to $phnode\n";
+      #warn "*** Applying File role to $phnode\n";
       apply_all_roles( $phnode, 'Filesys::Virtual::Phanfare::Role::File' );
      }
   } else {
     if ( does_role($phnode, 'Filesys::Virtual::Phanfare::Role::Dir') ) {
-      warn "*** Already applied Dir role to $phnode\n";
+      #warn "*** Already applied Dir role to $phnode\n";
     } else {
       if ( $phnode =~ /Account/ ) {
-        warn "*** Applying Top role to $phnode\n";
+        #warn "*** Applying Top role to $phnode\n";
         apply_all_roles( $phnode, 'Filesys::Virtual::Phanfare::Role::Top' );
         my $gid = $self->phanfare->account->attribute('public_group_id')->value;
         $phnode->gid( $gid );
       } else {
-        warn "*** Applying Dir role to $phnode\n";
+        #warn "*** Applying Dir role to $phnode\n";
         apply_all_roles( $phnode, 'Filesys::Virtual::Phanfare::Role::Dir' );
       }
     }
@@ -197,7 +197,7 @@ method fsnode ( Str $path, Ref $phnode ) {
 #
 method opnode ( Str $operation, Str $path, ArrayRef $args ) {
   unless ( length $operation ) {
-    return warn "*** fsop NOOP $path @$args\n";
+    #return warn "*** fsop NOOP $path @$args\n";
   }
   my $fullpath  = $self->_path_from_root( $path );
   #warn "*** Lookup node for $fullpath\n";
@@ -206,18 +206,18 @@ method opnode ( Str $operation, Str $path, ArrayRef $args ) {
   # Perform the operation if node exists and has the capability
   if ( $node ) {
     if ( $node->can($operation) ) {
-      warn "*** fsop $operation $node @$args\n";
+      #warn "*** fsop $operation $node @$args\n";
       #return $node->$operation(@$args) if $node and $node->can($operation);
       if ( $node and $node->can($operation) ) {
         my @result = $node->$operation(@$args);
-        warn "*** result is @result\n";
+        #warn "*** result is @result\n";
         return @result;
       }
     } else {
-      warn "*** fsop $operation $node @$args not implemented\n";
+      #warn "*** fsop $operation $node @$args not implemented\n";
     }
   } else {
-    warn "*** fsop $operation $path does not exist\n";
+    #warn "*** fsop $operation $path does not exist\n";
   }
   return undef;
 }
