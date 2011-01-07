@@ -8,22 +8,6 @@ use_ok( 'Filesys::Virtual::Phanfare' );
 use lib 't';
 use_ok( 'FakeAgent' );
 
-#my %config;
-#eval '
-#  use Config::General;
-#  use File::HomeDir;
-#  use WWW::Phanfare::API;
-#
-#  my $rcfile = File::HomeDir->my_home . "/.phanfarerc";
-#  %config = Config::General->new( $rcfile )->getall;
-#  die unless $config{api_key}
-#         and $config{private_key}
-#         and $config{email_address}
-#         and $config{password};
-#';
-#plan skip_all => "Local config not found: $@" if $@;
-#
-#my $fs   = new_ok( 'Filesys::Virtual::Phanfare' => [ %config ] );
 my $fs   = new_ok( 'Filesys::Virtual::Phanfare' => [ 
   api_key       => 'secret',
   private_key   => 'secret',

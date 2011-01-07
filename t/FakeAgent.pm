@@ -11,15 +11,15 @@ sub AUTOLOAD {
 }
 
 sub Authenticate {
-  warn "*** FakeAgent Authenticate\n";
+  #warn "*** FakeAgent Authenticate\n";
   LoadFile 't/data/session.yaml';
 }
 sub GetAlbumList {
-  warn "*** FakeAgent GetAlbumList\n";
+  #warn "*** FakeAgent GetAlbumList\n";
   LoadFile 't/data/albumlist.yaml';
 }
 sub GetAlbum     {
-  warn "*** FakeAgent GetAlbum\n";
+  #warn "*** FakeAgent GetAlbum\n";
   LoadFile 't/data/albuminfo.yaml';
 }
 

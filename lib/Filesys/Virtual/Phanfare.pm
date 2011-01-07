@@ -165,7 +165,9 @@ method old_fsnode ( Str $path, Ref $phnode ) {
   return $phnode;
 }
 
-method fsnode ( Str $path, Ref $phnode ) {
+#method fsnode ( Str $path, Ref $phnode ) {
+method fsnode ( Str $path ) {
+  my $phnode = $self->phnode( $path );
   #warn sprintf "*** $phnode uid is %s", $phnode->uid;
   if ( does_role($phnode, 'WWW::Phanfare::Class::Role::Leaf') ) {
     if ( does_role($phnode, 'Filesys::Virtual::Phanfare::Role::File') ) {
@@ -201,7 +203,8 @@ method opnode ( Str $operation, Str $path, ArrayRef $args ) {
   }
   my $fullpath  = $self->_path_from_root( $path );
   #warn "*** Lookup node for $fullpath\n";
-  my $node = $self->fsnode( $fullpath, $self->phnode($fullpath) );
+  #my $node = $self->fsnode( $fullpath, $self->phnode($fullpath) );
+  my $node = $self->fsnode( $fullpath );
   #warn "***   found $node...\n";
   # Perform the operation if node exists and has the capability
   if ( $node ) {
