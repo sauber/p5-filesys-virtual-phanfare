@@ -178,8 +178,15 @@ method fsnode ( Str $path, Ref $phnode ) {
     if ( does_role($phnode, 'Filesys::Virtual::Phanfare::Role::Dir') ) {
       warn "*** Already applied Dir role to $phnode\n";
     } else {
-      warn "*** Applying Dir role to $phnode\n";
-      apply_all_roles( $phnode, 'Filesys::Virtual::Phanfare::Role::Dir' );
+      if ( $phnode =~ /Account/ ) {
+        warn "*** Applying Top role to $phnode\n";
+        apply_all_roles( $phnode, 'Filesys::Virtual::Phanfare::Role::Top' );
+        my $gid = $self->phanfare->account->attribute('public_group_id')->value;
+        $phnode->gid( $gid );
+      } else {
+        warn "*** Applying Dir role to $phnode\n";
+        apply_all_roles( $phnode, 'Filesys::Virtual::Phanfare::Role::Dir' );
+      }
     }
   }
   return $phnode;

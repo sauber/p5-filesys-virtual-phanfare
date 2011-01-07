@@ -4,7 +4,7 @@ use MooseX::Method::Signatures;
 use WWW::Phanfare::Class::Site;
 
 has 'uid'   => ( is=>'rw', isa=>'Int' );
-has 'gid'   => ( is=>'rw', isa=>'Int' );
+#has 'gid'   => ( is=>'rw', isa=>'Int' );
 has parent => ( is=>'ro', required=>1, lazy_build=>1 );
 sub _build_parent { shift }
 

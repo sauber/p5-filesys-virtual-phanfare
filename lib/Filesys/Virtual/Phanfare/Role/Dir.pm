@@ -6,8 +6,8 @@ use Devel::Size qw(size);
 our $BLOCKSIZE = 1024;
 
 requires 'getnode';
-has 'uid' => ( is=>'ro', isa=>'Int', required=>1 );
-has 'gid' => ( is=>'ro', isa=>'Int', required=>1 );
+#has 'uid' => ( is=>'ro', isa=>'Int', required=>1 );
+#has 'gid' => ( is=>'ro', isa=>'Int', required=>1 );
 
 sub stat {
   my $self = shift;

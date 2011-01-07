@@ -4,8 +4,8 @@ use POSIX qw(ceil);
 
 our $BLOCKSIZE = 1024;
 
-has 'uid' => ( is=>'ro', isa=>'Int', required=>1 );
-has 'gid' => ( is=>'ro', isa=>'Int', required=>1 );
+#has 'uid' => ( is=>'ro', isa=>'Int', required=>1 );
+#has 'gid' => ( is=>'ro', isa=>'Int', required=>1 );
 
 sub size {
   my $self = shift;
