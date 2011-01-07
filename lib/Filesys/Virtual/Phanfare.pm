@@ -166,7 +166,7 @@ method old_fsnode ( Str $path, Ref $phnode ) {
 }
 
 method fsnode ( Str $path, Ref $phnode ) {
-  warn sprintf "*** $phnode uid is %s". $phnode->uid;
+  #warn sprintf "*** $phnode uid is %s", $phnode->uid;
   if ( does_role($phnode, 'WWW::Phanfare::Class::Role::Leaf') ) {
     if ( does_role($phnode, 'Filesys::Virtual::Phanfare::Role::File') ) {
       warn "*** Already applied File role to $phnode\n";

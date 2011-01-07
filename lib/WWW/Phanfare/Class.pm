@@ -53,7 +53,7 @@ sub _build_account {
 # Initialize API  
 has 'api' => (
   isa        => 'WWW::Phanfare::API',
-  is         => 'ro',
+  is         => 'rw',
   lazy_build => 1,
 );
 sub _build_api {

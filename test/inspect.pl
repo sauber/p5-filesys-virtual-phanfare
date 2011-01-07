@@ -6,6 +6,7 @@ use WWW::Phanfare::API;
 use File::HomeDir;
 use Config::General;
 use Data::Dumper;
+use YAML::Syck;
 
 my $rcfile = File::HomeDir->my_home . "/.phanfarerc";
 my %config = Config::General->new( $rcfile )->getall;
@@ -20,7 +21,8 @@ my $session = $agent->Authenticate(
   password      => $config{password},
 );
 my $uid = $session->{session}{uid};
-print Dumper $session;
+#print Dump $session;
+#exit;
 
 my $albumlist = $agent->GetAlbumList(
   target_uid => $uid,
@@ -28,7 +30,8 @@ my $albumlist = $agent->GetAlbumList(
 my %album =
   map { $_->{album_id} => $_->{album_name} }
   @{ $albumlist->{albums}{album} };
-#print Dumper $albumlist;
+#print Dump $albumlist;
+#exit;
 
 # A random album is
 my ($albumid) = keys %album;
@@ -36,5 +39,5 @@ my $albuminfo = $agent->GetAlbum(
   target_uid => $uid,
   album_id   => $albumid,
 );
-print Dumper $albuminfo;
+print Dump $albuminfo;
 
