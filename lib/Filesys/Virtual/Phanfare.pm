@@ -122,7 +122,9 @@ method createpath ( Str $path ) {
       my $parentpath = join '/', @part[0..$#part-1];
       $parentpath ||= '/';
       my $parent = $self->createpath( $parentpath );
+      return unless $parent;
       $node = $parent->getnode( $part[-1] );
+      return unless $node;
       $self->rebless($node);
     }
     $self->nodecache->{$path} = $node;

@@ -16,11 +16,21 @@ method buildnode ( Str $nodename ) {
 
 # Extract id=>name pairs from a data structure
 #
-method _idnamepair ( Ref $data, Str $label ) {
+method _idnamepair ( Ref $data, Str $label, HashRef $filter? ) {
   # If data only has one element we get a hashref. Convert it to array.
   $data = [ $data ] unless 'ARRAY' eq ref $data; 
+  my($key,$value) = each %$filter if $filter;
+  #warn "*** Use filter $key=$value\n";
   # Pairs of id=>name
-  map { $_->{"${label}_id"} => $_->{"${label}_name"} } @$data;
+  map { $_->{"${label}_id"} => $_->{"${label}_name"} }
+    grep {
+      if ( $key and $value and $_->{$key} ) {
+        1 if $_->{$key} =~ /^$value/;
+      } else {
+        1
+      }
+    }
+    @$data;
 }
 
 # Get list of names from hashref.

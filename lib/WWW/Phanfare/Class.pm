@@ -2,9 +2,7 @@ package WWW::Phanfare::Class;
 use Moose;
 use MooseX::Method::Signatures;
 use WWW::Phanfare::Class::CacheAPI;
-#use WWW::Phanfare::API;
 use WWW::Phanfare::Class::Account;
-use WWW::Phanfare::Class::Site;
 
 has 'api_key'       => ( is=>'ro', isa=>'Str', required=>1 );
 has 'private_key'   => ( is=>'ro', isa=>'Str', required=>1 );
@@ -72,37 +70,43 @@ sub _build_api {
 method sitelist { $self->account->sitelist }
 method site ( Str $sitename ) { $self->account->site( $sitename ) }
 
-# ALBUMS
+# YEARS
 # XXX: For now assume there is only one site
-method albumlist { $self->site($self->sitelist)->albumlist }
-method album ( Str $albumname ) {
-  $self->site($self->sitelist)->album( $albumname )
+method yearlist { $self->site($self->sitelist)->yearlist }
+method year ( Str $yearname ) {
+  $self->site($self->sitelist)->year( $yearname )
+}
+
+# ALBUMS
+method albumlist ( Int $year ) { $self->year( $year )->albumlist }
+method album ( Int $year, Str $albumname ) {
+  $self->year($year)->album( $albumname )
 }
 
 # SECTIONS
-method sectionlist ( Str $albumname ){
-  $self->album( $albumname )->sectionlist
+method sectionlist ( Int $year, Str $albumname ){
+  $self->year($year)->album( $albumname )->sectionlist
 }
-method section ( Str $albumname, Str $sectionname ) {
-  $self->album( $albumname )->section( $sectionname );
+method section ( Int $year, Str $albumname, Str $sectionname ) {
+  $self->year($year)->album( $albumname )->section( $sectionname );
 }
 
 # RENDITIONS
-method renditionlist ( Str $albumname, Str $sectionname ) {
-  $self->album( $albumname )->section( $sectionname )->renditionlist;
+method renditionlist ( Int $year, Str $albumname, Str $sectionname ) {
+  $self->year($year)->album( $albumname )->section( $sectionname )->renditionlist;
 }
-method rendition ( Str $albumname, Str $sectionname, Str $renditionname ) {
-  my $section = $self->album( $albumname )->section( $sectionname );
+method rendition ( Int $year, Str $albumname, Str $sectionname, Str $renditionname ) {
+  my $section = $self->year($year)->album( $albumname )->section( $sectionname );
   $section->rendition( $renditionname );
 }
 
 # IMAGES
-method imagelist ( Str $albumname, Str $sectionname, $renditionname ) {
-  my $section = $self->album( $albumname )->section( $sectionname );
+method imagelist ( Int $year, Str $albumname, Str $sectionname, $renditionname ) {
+  my $section = $self->year($year)->album( $albumname )->section( $sectionname );
   $section->rendition( $renditionname )->imagelist;
 }
-method image ( Str $albumname, Str $sectionname, $renditionname, Str $imagename ) {
-  my $section = $self->album( $albumname )->section( $sectionname );
+method image ( Int $year, Str $albumname, Str $sectionname, $renditionname, Str $imagename ) {
+  my $section = $self->year($year)->album( $albumname )->section( $sectionname );
   $section->rendition( $renditionname )->image( $imagename );
 }
 

@@ -19,28 +19,31 @@ $fs->phanfare->api( FakeAgent->new() );
 
 # Determine name of dirs and files to test
 my($sitename) = grep { $fs->test('d', "/$_") } $fs->list('/');
-my($albumname) = grep { $fs->test('d', "/$sitename/$_") }
+my($yearname) = grep { $fs->test('d', "/$sitename/$_") }
                  $fs->list("/$sitename");
-my($sectionname) = grep { $fs->test('d', "/$sitename/$albumname/$_") }
-                   $fs->list("/$sitename/$albumname");
+my($albumname) = grep { $fs->test('d', "/$sitename/$yearname/$_") }
+                 $fs->list("/$sitename/$yearname");
+my($sectionname) = grep { $fs->test('d', "/$sitename/$yearname/$albumname/$_") }
+                   $fs->list("/$sitename/$yearname/$albumname");
 my($renditionname) = 'Full';
 my($imagename) = grep {
-  $fs->test('f', "/$sitename/$albumname/$sectionname/$renditionname/$_")
-} $fs->list("/$sitename/$albumname/$sectionname/$renditionname");
+  $fs->test('f', "/$sitename/$yearname/$albumname/$sectionname/$renditionname/$_")
+} $fs->list("/$sitename/$yearname/$albumname/$sectionname/$renditionname");
 
 # List of dirs to test with
 my @testdirs = (
   '/',
   "/$sitename",
-  "/$sitename/$albumname",
-  "/$sitename/$albumname/$sectionname",
-  "/$sitename/$albumname/$sectionname/$renditionname",
+  "/$sitename/$yearname",
+  "/$sitename/$yearname/$albumname",
+  "/$sitename/$yearname/$albumname/$sectionname",
+  "/$sitename/$yearname/$albumname/$sectionname/$renditionname",
 );
 
 # List of files to test with
 my @testfiles = (
   '/cookie',
-  "/$sitename/$albumname/$sectionname/$renditionname/$imagename",
+  "/$sitename/$yearname/$albumname/$sectionname/$renditionname/$imagename",
 );
 
 for my $dir ( @testdirs ) {

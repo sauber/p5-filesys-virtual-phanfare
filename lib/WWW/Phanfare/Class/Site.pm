@@ -1,34 +1,25 @@
 package WWW::Phanfare::Class::Site;
 use Moose;
 use MooseX::Method::Signatures;
-use WWW::Phanfare::Class::Album;
+use WWW::Phanfare::Class::Year;
 
-# List of album_id=>album_name pairs
+# List of years in start dates
 #
-method albumid {
-  my $albumlist = $self->api->GetAlbumList(target_uid=>$self->uid);
-  $self->_idnamepair( $albumlist->{albums}{album}, 'album' );
+method yearid {
+  my $albumlist = $self->api->GetAlbumList(target_uid=>$self->uid)->{albums}{album};;
+  my %year;
+  for my $album ( @$albumlist ) {
+    my $num = substr $album->{album_start_date}, 0, 4;
+    ++$year{$num};
+  }
+  return keys %year;
 }
 
-method subnodetype { 'WWW::Phanfare::Class::Album' };
-method subnodelist { $self->_idnamestrings({ $self->albumid }) }
+method subnodetype { 'WWW::Phanfare::Class::Year' };
+method subnodelist { $self->yearid }
 
-# Specify ID, Name or Name.ID to get an Album object
-#
-method buildnode ( $nodename ) {
-  my %node = $self->albumid;
-  my($id,$name) = $self->_idnamematch( \%node, $nodename );
-  my $type = $self->subnodetype;
-  $type->new(
-    parent     => $self,
-    nodename   => $nodename,
-    album_id   => $id,
-    album_name => $name,
-  );
-}
-
-method albumlist { $self->subnodelist }
-method album ( Str $albumname ) { $self->getnode( $albumname ) }
+method yearlist { $self->subnodelist }
+method year ( Str $yearname ) { $self->getnode( $yearname ) }
 
 with 'WWW::Phanfare::Class::Role::Branch';
 

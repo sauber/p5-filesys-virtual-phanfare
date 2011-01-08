@@ -21,37 +21,6 @@ eval '
 ';
 plan skip_all => "Local config not found: $@" if $@;
 
-#my $fs = new_ok( 'Filesys::Virtual::Phanfare' => [ %config ] );
-#my $fuse = new_ok( 'Fuse::Filesys::Virtual'     => [ $fs, { debug=>1} ] );
-
-#ok( my @dir = $fuse->getdir('/'), 'list /' );
-#ok( scalar @dir >= 4, 'At least 4 entries in /' );
-#ok( my @stat = $fuse->getattr('/'), 'Stat stat /' );
-#ok( scalar @stat == 13, 'stat for / has 13 entries' );
-
-# Verify account properties
-#
-#my %accountproperties =
-#  map {($_=>1)}
-#  qw(pro uid primary_site_id cookie website_title timeless_header
-#     public_group_id primary_site_name family_group_id friend_group_id
-#     premium timeless_first);
-#my %dir = map {($_=>1)} $fs->list('/');
-#for my $key ( keys %accountproperties ) {
-#  ok( $dir{$key}, "account property $key" );
-#  my @stat = $fs->stat( $key );
-#  #warn "*** stat $key: " . Dumper \@stat;
-#  ok( scalar @stat == 13, "stat $key has 13 values" );
-#  ok( $stat[2] eq 0100444, "$key is file" );
-#}
-#
-## Verify there is a site
-#my($sitename) = grep ! $accountproperties{$_}, keys %dir;
-#ok( $sitename, 'There is a site' );
-#my @sitestat = $fs->stat( $sitename );
-#ok( scalar @sitestat == 13, "stat $sitename has 13 values" );
-#ok( $sitestat[2] eq 042555, "$sitename is dir" );
-
 # Create an object
 my $class = new_ok( 'WWW::Phanfare::Class' => [ %config ] );
 isa_ok( $class, 'WWW::Phanfare::Class' );
@@ -66,27 +35,33 @@ diag "*** site is " . $sitename;
 ok( my $site = $class->site($sitename), "Class has site object" );
 isa_ok( $site, 'WWW::Phanfare::Class::Site' );
 
+# Verify there are years
+ok( my($yearname) = $class->yearlist, "Class has years" );
+diag "*** year is " . $yearname;
+ok( my $year = $class->year($yearname), "Class has year object" );
+isa_ok( $year, 'WWW::Phanfare::Class::Year' );
+
 # Verify there are albums
-ok( my($albumname) = $class->albumlist, "Class has an album" );
+ok( my($albumname) = $class->albumlist($yearname), "Class has an album" );
 diag "*** album is " . $albumname;
-ok( my $album = $class->album($albumname), "Class has album object" );
+ok( my $album = $class->album($yearname,$albumname), "Class has album object" );
 isa_ok( $album, 'WWW::Phanfare::Class::Album' );
 #diag Dumper $album;
 
 # Verify there are sections
-ok( my($sectionname) = $class->sectionlist($albumname), "Class has sections" );
+ok( my($sectionname) = $class->sectionlist($yearname,$albumname), "Class has sections" );
 diag "*** section is " . $sectionname;
-ok( my $section = $class->section($albumname,$sectionname), "Class has section object" );
+ok( my $section = $class->section($yearname,$albumname,$sectionname), "Class has section object" );
 isa_ok( $section, 'WWW::Phanfare::Class::Section' );
 
 # Verify there are renditions
-ok( my($renditionname) = $class->renditionlist($albumname,$sectionname), "Class has renditions" );
+ok( my($renditionname) = $class->renditionlist($yearname,$albumname,$sectionname), "Class has renditions" );
 diag "*** rendition is " . $renditionname;
-ok( my $rendition = $class->rendition($albumname,$sectionname,$renditionname), "Class has section object" );
+ok( my $rendition = $class->rendition($yearname,$albumname,$sectionname,$renditionname), "Class has section object" );
 isa_ok( $rendition, 'WWW::Phanfare::Class::Rendition' );
 
 # Verify there are images
-ok( my($imagename) = $class->imagelist($albumname,$sectionname,$renditionname), "Class has images" );
+ok( my($imagename) = $class->imagelist($yearname,$albumname,$sectionname,$renditionname), "Class has images" );
 diag "*** image is " . $imagename;
 
 
