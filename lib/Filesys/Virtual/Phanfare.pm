@@ -169,6 +169,7 @@ method createpath ( Str $path ) {
         $parentpath ||= '/';
         #warn "*** parentpath is $parentpath\n";
         my $parent = $self->nodecache->{$parentpath};
+        return unless $parent;
         #warn "*** buildnode is $part[$d]\n";
         my $node = $parent->getnode( $part[$d] );
         #warn "*** rebless $node\n";

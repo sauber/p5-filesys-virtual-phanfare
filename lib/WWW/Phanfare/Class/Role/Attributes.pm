@@ -39,6 +39,9 @@ method attribute ( Str $key, Str $value? ) {
     $self->_attr( $attr );
   }
 
+  # Try to build attributes if not already done
+  $self->buildattributes if not $self->_attr and $self->can('buildattributes');
+
   # Get value
   return $self->_attr->{$key}; # Object reference
 }
@@ -46,6 +49,9 @@ method attribute ( Str $key, Str $value? ) {
 # List of attribute names
 #
 method attributelist {
+  # Try to build attributes if not already done
+  $self->buildattributes if not $self->_attr and $self->can('buildattributes');
+
   return () unless $self->_attr;
   keys %{ $self->_attr };
 }

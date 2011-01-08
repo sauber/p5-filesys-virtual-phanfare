@@ -6,6 +6,15 @@ use WWW::Phanfare::Class::Section;
 has album_id => ( is=>'ro', isa=>'Int', required=>1 );
 has album_name => ( is=>'ro', isa=>'Str', required=>1 );
 
+method buildattributes {
+  $self->setattributes(
+    $self->api->GetAlbum(
+      target_uid => $self->uid,
+      album_id   => $self->album_id,
+    )->{album}
+  );
+}
+
 method sectionid {
   my $sectionlist = $self->api->GetAlbum(
     target_uid => $self->uid,

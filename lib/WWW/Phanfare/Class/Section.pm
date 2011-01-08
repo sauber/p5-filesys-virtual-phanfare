@@ -12,6 +12,23 @@ method subnodelist { qw(Full WebLarge Web WebSmall Thumbnail ThumbnailSmall Capt
 method renditionlist { $self->subnodelist }
 method rendition ( Str $renditionname ) { $self->getnode( $renditionname ) }
 
+# Extract section attributes from albuminfo
+#
+method buildattributes {
+  my $sections = $self->api->GetAlbum(
+    target_uid => $self->uid,
+    album_id   => $self->parent->album_id,
+  )->{album}{sections}{section};
+  $sections = [ $sections ] unless 'ARRAY' eq ref $sections;
+  # Find the matching section
+  for my $section ( @$sections ) {
+    if ( $section->{section_name} eq $self->{section_name} ) {
+      $self->setattributes( $section );
+      last;
+    }
+  }
+}
+
 with 'WWW::Phanfare::Class::Role::Branch';
 with 'WWW::Phanfare::Class::Role::Attributes';
 

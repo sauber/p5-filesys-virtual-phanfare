@@ -31,7 +31,6 @@ method albumlist { $self->subnodelist }
 method album ( Str $albumname ) { $self->getnode( $albumname ) }
 
 with 'WWW::Phanfare::Class::Role::Branch';
-with 'WWW::Phanfare::Class::Role::Attributes';
 
 =head1 NAME
 
