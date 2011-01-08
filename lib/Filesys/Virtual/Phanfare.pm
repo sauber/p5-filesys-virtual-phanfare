@@ -1,33 +1,27 @@
 package Filesys::Virtual::Phanfare;
 
-use warnings;
-use strict;
-##use POSIX qw(ceil);
-#use Carp;
-#use WWW::Phanfare::API;
-use WWW::Phanfare::Class;
-use Filesys::Virtual::Plain;
-#use base qw( Filesys::Virtual Class::Accessor::Fast );
-use base qw( Filesys::Virtual Moose::Object );
-#__PACKAGE__->mk_accessors(qw( cwd root_path home_path host ));
-
 use Moose;
 use MooseX::Method::Signatures;
 use Moose::Util qw( apply_all_roles does_role );
-#use Filesys::Virtual::Phanfare::Node;
 
-#extends 'Filesys::Virtual';
+use WWW::Phanfare::Class;
+use Filesys::Virtual::Plain;
+use base qw( Filesys::Virtual Moose::Object );
 
 has 'cwd' => ( is => 'rw', isa => 'Str', default => '/' );
 has 'root_path' => ( is => 'ro', isa => 'Str', default => '' );
 has 'home_path' => ( is => 'ro', isa => 'Str', default => '/' );
-#has 'host' => ( is => 'ro' );
 has 'api_key' => ( is => 'ro', required=>1 );
 has 'private_key' => ( is => 'ro', required=>1 );
 has 'email_address' => ( is => 'ro' );
 has 'password' => ( is => 'ro' );
 
-has 'phanfare' => ( isa=>'WWW::Phanfare::Class', is=>'ro', required=>1, lazy_build => 1 );
+has 'phanfare' => (
+  isa=>'WWW::Phanfare::Class',
+  is=>'ro',
+  required=>1,
+  lazy_build=>1
+);
 sub _build_phanfare {
   my $self = shift;
 
@@ -53,20 +47,6 @@ Version 0.01
 =cut
 
 our $VERSION = '0.01';
-#our $BLOCKSIZE = 1024;
-#our $AUTOLOAD;
-
-#sub AUTOLOAD {
-#  my $self = shift;
-#
-#  my $field = $AUTOLOAD;
-#  $field =~ s/.*:://;
-#	
-#  return if $field eq 'DESTROY';
-#
-#  croak("No such property or method '$AUTOLOAD'");
-#}
-
 
 =head1 SYNOPSIS
 
@@ -108,22 +88,6 @@ Initialize new virtual filesystem
 *_path_from_root = \&Filesys::Virtual::Plain::_path_from_root;
 *_resolve_path   = \&Filesys::Virtual::Plain::_resolve_path;
 
-# Identify Phanfare node that matches path
-# XXX: Don't let end nodes create parent nodes, because the will miss gid/inode
-#      properties. Instead make sure to create fs nodes the whole way down.
-#
-#method old_phnode ( Str $path ) {
-#  my($account,$site,$album,$section,$rendition,$image) = split '/', $path;
-#
-#  return $self->phanfare->image    ($album,$section,$rendition,$image)
-#                                                                if $image;
-#  return $self->phanfare->rendition($album,$section,$rendition) if $rendition;
-#  return $self->phanfare->section  ($album,$section           ) if $section;
-#  return $self->phanfare->album    ($album                    ) if $album;
-#  return $self->phanfare->site     ($site                     ) if $site;
-#  return $self->phanfare->account;
-#}
-
 # Convert Phanfare object to Filesys object
 #
 method rebless ( Ref $object ) {
@@ -143,129 +107,29 @@ method createpath ( Str $path ) {
   #my($account,$site,$album,$section,$rendition,$image) = split '/', $path;
   my @part = split '/', $path;
 
-  #warn "*** create path for $path\n";
-
-  if ( $path eq '/' ) {
-    unless ( $self->nodecache->{$path} ) {
-      #warn "*** Create account node\n";
-      my $node = $self->phanfare->account;
-      #warn "*** rebless $node\n";
-      $self->rebless($node);
-      #warn "***      to $node\n";
-      my $gid = $node->attribute('public_group_id')->value;
-      $node->gid( $gid );
-      #warn "*** set gid to $gid\n";
-      $self->nodecache->{$path} = $node;
-    } else {
-      #warn "*** Reusing account node\n";
-    }
+  if ( $self->nodecache->{$path} ) {
+    # XXX: Refresh content
   } else {
-    for my $d ( 1 .. $#part ) {
-      my $nodepath = join '/', @part[0..$d];
-      #warn "*** Check if $nodepath exists.\n";
-      unless ( $self->nodecache->{$nodepath} ) {
-        #warn "*** $nodepath does not exist.\n";
-        my $parentpath = join '/', @part[0..$d-1];
-        $parentpath ||= '/';
-        #warn "*** parentpath is $parentpath\n";
-        my $parent = $self->nodecache->{$parentpath};
-        return unless $parent;
-        #warn "*** buildnode is $part[$d]\n";
-        my $node = $parent->getnode( $part[$d] );
-        #warn "*** rebless $node\n";
-        $self->rebless($node);
-        #warn "***      to $node\n";
-        $self->nodecache->{$nodepath} = $node;
-      } else {
-        #warn "*** $nodepath exists. Skipping.\n";
-      }
+    # Create new node
+    my $node;
+    if ( $path eq '/' ) {
+      # Create Top Node
+      $node = $self->phanfare->account;
+      $self->rebless($node);
+      $node->gid( $node->attribute('public_group_id')->value );
+    } else {
+      # Create child of parent node
+      my $parentpath = join '/', @part[0..$#part-1];
+      $parentpath ||= '/';
+      my $parent = $self->createpath( $parentpath );
+      $node = $parent->getnode( $part[-1] );
+      $self->rebless($node);
     }
+    $self->nodecache->{$path} = $node;
   }
 
   return $self->nodecache->{$path};
 }
-
-# Convert a phanfare node to a filesystem node
-# ie. add inode and fs operations
-# XXX: Seriously messy below. Need cleanup.
-#
-#method old_fsnode ( Str $path, Ref $phnode ) {
-#  my $type = 'Filesys::Virtual::Phanfare::Node';
-#  for my $nodetype (qw(Account Site Album Section Rendition Image Attribute)){
-#    $type .= "::$nodetype" if $phnode ~~ /$nodetype/;
-#  }
-#
-#  my $gid = $self->phanfare->account->attribute('public_group_id')->value;
-#  #warn "*** gid for $path is $gid\n";
-#  my $uid = $self->phanfare->account->attribute('uid')->value;
-#  #warn "*** uid for $path is $uid\n";
-#  
-#  # XXX: Keep a cache of already created fsnodes
-#  #      to make sure same fsnode always uses same inode
-#  my $node = $type->new(
-#    uid      => $uid,
-#    gid      => $gid,
-#    parent   => $phnode->parent,
-#    nodename => $phnode->nodename,
-#  );
-#
-#  #warn "*** new node created: " .Dumper $node;
-#
-#  if ( $type =~ /Account/ ) {
-#    # Clone and convert
-#    #warn "*** fsnode $phnode clone and converting...\n";
-#    #warn "***   via $node...\n";
-#    my $phnode2 = $phnode->meta->clone_object($phnode);
-#    $node->meta->rebless_instance($phnode2);
-#    $phnode = $phnode2;
-#    #warn "***   to $phnode\n";
-#  } else {
-#    # Convert phanfare object to fs object
-#    # Although uid/gid was given at $node init, it needs to be here again
-#    #warn "*** fsnode $phnode converting...\n";
-#    #warn "***   via $node...\n";
-#    $node->meta->rebless_instance($phnode, uid=>$uid, gid=>$gid);
-#    #warn "***   to $phnode\n";
-#  }
-#  return $phnode;
-#}
-
-# Convert a phanfare class node to a fs node which will add gid and inode
-# Need to convert parent nodes as well.
-#
-#method old2_fsnode ( Str $path ) {
-#  # Check if node has already been created
-#  if ( $self->nodecache and my $node = $self->nodecache->{$path} ) {
-#    #warn "*** Reusing cached $node for $path\n";
-#    return $node;
-#  }
-#  my $phnode = $self->phnode( $path );
-#  #warn sprintf "*** $phnode uid is %s", $phnode->uid;
-#  if ( does_role($phnode, 'WWW::Phanfare::Class::Role::Leaf') ) {
-#    if ( does_role($phnode, 'Filesys::Virtual::Phanfare::Role::File') ) {
-#      #warn "*** Already applied File role to $phnode\n";
-#    } else {
-#      #warn "*** Applying File role to $phnode\n";
-#      apply_all_roles( $phnode, 'Filesys::Virtual::Phanfare::Role::File' );
-#     }
-#  } else {
-#    if ( does_role($phnode, 'Filesys::Virtual::Phanfare::Role::Dir') ) {
-#      #warn "*** Already applied Dir role to $phnode\n";
-#    } else {
-#      if ( $phnode =~ /Account/ ) {
-#        #warn "*** Applying Top role to $phnode\n";
-#        apply_all_roles( $phnode, 'Filesys::Virtual::Phanfare::Role::Top' );
-#        my $gid = $self->phanfare->account->attribute('public_group_id')->value;
-#        $phnode->gid( $gid );
-#      } else {
-#        #warn "*** Applying Dir role to $phnode\n";
-#        apply_all_roles( $phnode, 'Filesys::Virtual::Phanfare::Role::Dir' );
-#      }
-#    }
-#  }
-#  $self->nodecache->{$path} = $phnode;
-#  return $phnode;
-#}
 
 # Is requested file op on account, site, album, section, rendition or image?
 # Run file operation on node

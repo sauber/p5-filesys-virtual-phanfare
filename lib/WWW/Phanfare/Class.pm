@@ -72,7 +72,7 @@ sub _build_api {
 method sitelist { $self->account->sitelist }
 method site ( Str $sitename ) { $self->account->site( $sitename ) }
 
-# ALBUMDS
+# ALBUMS
 # XXX: For now assume there is only one site
 method albumlist { $self->site($self->sitelist)->albumlist }
 method album ( Str $albumname ) {
