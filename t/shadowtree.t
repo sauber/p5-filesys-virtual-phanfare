@@ -28,19 +28,42 @@ my($imagename) = grep {
   $fs->test('f', "/$sitename/$albumname/$sectionname/$renditionname/$_")
 } $fs->list("/$sitename/$albumname/$sectionname/$renditionname");
 
-# Build list of dirs to test with
+# List of dirs to test with
 my @testdirs = (
   '/',
   "/$sitename",
   "/$sitename/$albumname",
   "/$sitename/$albumname/$sectionname",
-  "/$sitename/$albumname/$sectionname/$renditionname"
+  "/$sitename/$albumname/$sectionname/$renditionname",
+);
+
+# List of files to test with
+my @testfiles = (
+  '/cookie',
+  "/$sitename/$albumname/$sectionname/$renditionname/$imagename",
 );
 
 for my $dir ( @testdirs ) {
-  diag "shadowtree test $dir";
-  my $node = $fs->fsnode($dir);
+  diag "shadowtree test dir $dir";
+  ok( my $node = $fs->createpath($dir), "Node for $dir" );
+  ok ( $node->uid, "uid for $dir" );
+  ok ( $node->gid, "gid for $dir" );
+  ok ( $node->parent, "parent for $dir" );
+  ok ( $node->test('d'), "$dir is dir" );
+  ok ( ! $node->test('f'), "$dir is not file" );
 }
 
+for my $file ( @testfiles ) {
+  diag "shadowtree test file $file";
+  ok( my $node = $fs->createpath($file), "Node for $file" );
+  ok ( $node->test('f'), "$file is file" );
+  ok ( ! $node->test('d'), "$file is not dir" );
+  ok ( $node->uid, "uid for $file" );
+  ok ( $node->gid, "gid for $file" );
+  ok ( my $parent = $node->parent, "parent for $file" );
+  ok ( $parent->uid, "uid for parent of $file" );
+  ok ( $parent->gid, "gid for parent of $file" );
+  ok ( $parent->test('d'), "parent of $file is dir" );
+}
 
 done_testing();
