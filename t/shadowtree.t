@@ -47,22 +47,25 @@ my @testfiles = (
 );
 
 for my $dir ( @testdirs ) {
-  diag "shadowtree test dir $dir";
+  #diag "shadowtree test dir $dir";
   ok( my $node = $fs->createpath($dir), "Node for $dir" );
   ok ( $node->uid, "uid for $dir" );
   ok ( $node->gid, "gid for $dir" );
   ok ( $node->parent, "parent for $dir" );
+  ok ( $node->inode, "inode for $dir" );
+  #diag "inode for $dir: " . $node->inode;
   ok ( $node->test('d'), "$dir is dir" );
   ok ( ! $node->test('f'), "$dir is not file" );
 }
 
 for my $file ( @testfiles ) {
-  diag "shadowtree test file $file";
+  #diag "shadowtree test file $file";
   ok( my $node = $fs->createpath($file), "Node for $file" );
   ok ( $node->test('f'), "$file is file" );
   ok ( ! $node->test('d'), "$file is not dir" );
   ok ( $node->uid, "uid for $file" );
   ok ( $node->gid, "gid for $file" );
+  ok ( $node->inode, "inode for $file" );
   ok ( my $parent = $node->parent, "parent for $file" );
   ok ( $parent->uid, "uid for parent of $file" );
   ok ( $parent->gid, "gid for parent of $file" );
