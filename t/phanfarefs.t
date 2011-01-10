@@ -37,65 +37,70 @@ for my $entry ( @dir ) {
 ok( $sitename, "sitename" );
 #diag "sitename: $sitename";
 
+# List years in site
+ok( @dir = $fs->list("/$sitename"), 'list years' );
+ok( scalar @dir >= 1, 'At least 1 year' );
+my $yearname = shift @dir;
+
 # List albums in site
-ok( @dir = $fs->list("/$sitename"), 'list albums' );
+ok( @dir = $fs->list("/$sitename/$yearname"), 'list albums' );
 ok( scalar @dir >= 1, 'At least 1 album' );
 
 # Which entry is an album
 my $albumname;
 for my $entry ( @dir ) {
-  if ( $fs->test('d', "/$sitename/$entry" ) ) {
+  if ( $fs->test('d', "/$sitename/$yearname/$entry" ) ) {
     $albumname = $entry;
     last;
   }
 }
 ok( $albumname, "albumname" );
-diag "albumname: $albumname";
+#diag "albumname: $albumname";
 
 # List sections in album
-ok( @dir = $fs->list("/$sitename/$albumname"), 'list sections' );
+ok( @dir = $fs->list("/$sitename/$yearname/$albumname"), 'list sections' );
 ok( scalar @dir >= 1, 'At least 1 section' );
 
 # Which entry is a section
 my $sectionname;
 for my $entry ( @dir ) {
-  if ( $fs->test('d', "/$sitename/$albumname/$entry" ) ) {
+  if ( $fs->test('d', "/$sitename/$yearname/$albumname/$entry" ) ) {
     $sectionname = $entry;
     last;
   }
 }
 ok( $sectionname, "sectionname" );
-diag "sectionname: $sectionname";
+#diag "sectionname: $sectionname";
 
 # List renditions in section
-ok( @dir = $fs->list("/$sitename/$albumname/$sectionname"), 'list renditions' );
+ok( @dir = $fs->list("/$sitename/$yearname/$albumname/$sectionname"), 'list renditions' );
 ok( scalar @dir >= 1, 'At least 1 rendition' );
 
 # Which entry is a rendition
 my $renditionname;
 for my $entry ( @dir ) {
-  if ( $fs->test('d', "/$sitename/$albumname/$sectionname/$entry" ) ) {
+  if ( $fs->test('d', "/$sitename/$yearname/$albumname/$sectionname/$entry" ) ) {
     $renditionname = $entry;
     last;
   }
 }
 ok( $renditionname, "renditionname" );
-diag "renditionname: $renditionname";
+#diag "renditionname: $renditionname";
 
 # List images in rendition
-ok( @dir = $fs->list("/$sitename/$albumname/$sectionname/$renditionname"), 'list images' );
+ok( @dir = $fs->list("/$sitename/$yearname/$albumname/$sectionname/$renditionname"), 'list images' );
 ok( scalar @dir >= 1, 'At least 1 image' );
 
 # Which entry is an image
 my $imagename;
 for my $entry ( @dir ) {
-  if ( $fs->test('f', "/$sitename/$albumname/$sectionname/$renditionname/$entry" ) ) {
+  if ( $fs->test('f', "/$sitename/$yearname/$albumname/$sectionname/$renditionname/$entry" ) ) {
     $imagename = $entry;
     last;
   }
 }
 ok( $imagename, "imagename" );
-diag "imagename: $imagename";
+#diag "imagename: $imagename";
 
 
 
