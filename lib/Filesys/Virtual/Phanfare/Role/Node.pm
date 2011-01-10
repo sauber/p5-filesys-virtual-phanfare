@@ -53,7 +53,8 @@ method mtime {
   } elsif ( $self->isa($class . "::Rendition") ) {
     $epoch = phanfaretime $self->parent->parent->attribute('album_last_modified')->value;
   } elsif ( $self->isa($class . "::Image") ) {
-    $epoch = phanfaretime $self->parent->parent->parent->attribute('album_last_modified')->value;
+    #$epoch = phanfaretime $self->parent->parent->parent->attribute('album_last_modified')->value;
+    $epoch = phanfaretime $self->imageinfo->{image_date};
   }
   #warn "*** mtime for $self is $epoch\n";
   return $epoch;

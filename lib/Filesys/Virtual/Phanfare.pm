@@ -147,6 +147,7 @@ method opnode ( Str $operation, Str $path, ArrayRef $args ) {
   my $node = $self->createpath( $fullpath );
   #warn "***   found $node...\n";
   # Perform the operation if node exists and has the capability
+  #warn "*** fsop $operation $path @$args\n";
   if ( $node ) {
     if ( $node->can($operation) ) {
       #warn "*** fsop $operation $node @$args\n";
@@ -162,7 +163,7 @@ method opnode ( Str $operation, Str $path, ArrayRef $args ) {
   } else {
     #warn "*** fsop $operation $path does not exist\n";
   }
-  return undef;
+  return ();
 }
 
 =head2 File operations

@@ -8,13 +8,19 @@ has nodename     => ( is=>'ro', isa=>'Str', required=>0, lazy_build=>1 );
 method _build_nodename { $self->filename }
 
 has filename     => ( is=>'ro', isa=>'Str', required=>0, lazy_build=>1 );
-method _build_filename { ( split /[\/\\]/, $self->imageinfo->{filename})[-1] }
+method _build_filename {
+  my $basename = ( split /[\/\\]/, $self->imageinfo->{filename})[-1];
+  if ( $self->parent->nodename eq 'Caption' ) {
+    # Caption uses .txt extension
+    $basename =~ s/(.*)\..+?$/$1\.txt/ or $basename .= '.txt';
+  }
+  return $basename;
+}
 
 has caption      => ( is=>'ro', isa=>'Str', required=>0, lazy_build=>1 );
 method _build_caption { $self->imageinfo->{caption} }
 
 # XXX: Probably all are required
-#has caption      => ( is=>'ro', isa=>'Str', required=>0 );
 #has image_date   => ( is=>'ro', isa=>'Str', required=>0 );
 #has is_video     => ( is=>'ro', isa=>'Int', required=>0 );
 #has hidden       => ( is=>'ro', isa=>'Int', required=>0 );
@@ -44,17 +50,31 @@ method imageinfo {
 }
 
 method renditioninfo {
-  my $info = $self->treesearch(
+  # Manually created informtion for Caption rendition type
+  if ( $self->parent->nodename eq 'Caption' ) {
+    my $date = $self->treesearch(
+      $self->imageinfo->{renditions}{rendition},
+      [ { rendition_type => 'Full' } ]
+    )->{created_date};
+    return {
+      filesize => length $self->caption,
+      created_date => $date,
+    }
+  }
+  
+  # All other valid rendition types
+  return $self->treesearch(
     $self->imageinfo->{renditions}{rendition},
     [ { rendition_type => $self->parent->nodename } ]
   );
+
   #use Data::Dumper;
   #warn sprintf "*** renditioninfo for id %s rendition %s: %s", $self->image_id, $self->parent->nodename, Dumper $info;
-  unless ( ref $info eq 'HASH' ) {
-    use Data::Dumper;
-    warn "*** renditioninfo for $self is not HASH: " . Dumper $info;
-  }
-  return $info;
+  #unless ( ref $info eq 'HASH' ) {
+  #  use Data::Dumper;
+  #  warn "*** renditioninfo for $self is not HASH: " . Dumper $info;
+  #}
+  #return $info;
 }
 
 with 'WWW::Phanfare::Class::Role::Leaf';

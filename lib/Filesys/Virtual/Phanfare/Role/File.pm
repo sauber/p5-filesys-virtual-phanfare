@@ -21,7 +21,7 @@ sub _size {
 sub stat {
   my $self = shift;
   #warn sprintf "*** stat $self size %s\n", $self->size;
-  return (
+  my @stat = (
     0 + $self,                  # dev
     42,         # ino
     0100444,                     # mode
@@ -36,6 +36,12 @@ sub stat {
     $BLOCKSIZE,                 # blksize
     ceil($self->_size/$BLOCKSIZE)                           # blocks
   );
+
+  #if ( $self->nodename =~ /\..txt/ ) {
+  #  use Data::Dumper;
+  #  warn sprintf "*** stat %s: %s", $self->nodename, Dumper \@stat;
+  #}
+  return @stat;
 }
 
 #    -r  File is readable by effective uid/gid.

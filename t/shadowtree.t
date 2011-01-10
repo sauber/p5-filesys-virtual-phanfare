@@ -26,10 +26,11 @@ my($albumname) = grep { $fs->test('d', "/$sitename/$yearname/$_") }
                  $fs->list("/$sitename/$yearname");
 my($sectionname) = grep { $fs->test('d', "/$sitename/$yearname/$albumname/$_") }
                    $fs->list("/$sitename/$yearname/$albumname");
-my($renditionname) = 'Full';
-my($imagename) = grep {
-  $fs->test('f', "/$sitename/$yearname/$albumname/$sectionname/$renditionname/$_")
-} $fs->list("/$sitename/$yearname/$albumname/$sectionname/$renditionname");
+my($renditionname) = 'Web';
+my($imagename) = 
+  $fs->list("/$sitename/$yearname/$albumname/$sectionname/$renditionname");
+my($captionname) =
+  $fs->list("/$sitename/$yearname/$albumname/$sectionname/Caption");
 
 # List of dirs to test with
 my @testdirs = (
@@ -86,12 +87,8 @@ ok( my $yearnode = $fs->createpath("/$sitename/$yearname") );
 ok( $ye == $yearnode->mtime, "mtime matches year" );
 ok( $ye == $yearnode->ctime, "ctime matches year" );
 
-# Timestamps of albums
-ok( my $albumnode = $fs->createpath("/$sitename/$yearname/$albumname") );
-ok( $albumnode->atime > 0, "album atime" );
-ok( $albumnode->mtime > 0, "album mtime" );
-ok( $albumnode->ctime > 0, "album ctime" );
-#diag "*** album mtime: " . $albumnode->mtime;
-#diag "*** album ctime: " . $albumnode->ctime;
+# Caption
+ok( $captionname =~ /\.txt$/, "$captionnode ends with txt" );
+
 
 done_testing();

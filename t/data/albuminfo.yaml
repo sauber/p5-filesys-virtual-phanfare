@@ -21,7 +21,7 @@ album:
         imageinfo: 
           - 
             album_id: 4966289
-            caption: ''
+            caption: 'Test Caption'
             filename: C:\phanfare\SampleAlbums\Arizona Vacation\File.1132037.jpg
             hidden: 0
             image_date: 2009-09-15T00:00:00
