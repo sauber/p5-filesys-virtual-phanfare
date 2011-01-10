@@ -39,5 +39,24 @@ my $albuminfo = $agent->GetAlbum(
   target_uid => $uid,
   album_id   => $albumid,
 );
-print Dump $albuminfo;
+#print Dump $albuminfo;
+#exit;
 
+# Find a random section with random image
+my $sections = $albuminfo->{album}{sections}{section};
+$sections = [ $sections] unless ref $sections eq 'ARRAY';
+my $section = shift @$sections;
+my $sectionid = $section->{section_id};
+my $images = $section->{images}{imageinfo};
+$images = [ $images] unless ref $images eq 'ARRAY';
+my $image = shift @$images;
+my $imageid = $image->{image_id};
+
+my $imageinfo = $agent->GetImageInfo(
+  target_uid => $uid,
+  album_id   => $albumid,
+  section_id   => $sectionid,
+  image_id   => $imageid,
+);
+print Dump $imageinfo;
+exit;

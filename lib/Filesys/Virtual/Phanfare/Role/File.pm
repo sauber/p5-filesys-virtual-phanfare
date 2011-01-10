@@ -7,9 +7,15 @@ our $BLOCKSIZE = 1024;
 #has 'uid' => ( is=>'ro', isa=>'Int', required=>1 );
 #has 'gid' => ( is=>'ro', isa=>'Int', required=>1 );
 
-sub size {
+sub _size {
   my $self = shift;
-  length $self->value;
+  if ( $self->can('size') ) {
+    return $self->size;
+  } elsif ( $self->can('value') ) {
+    return length $self->value;
+  } else {
+    0
+  }
 }
 
 sub stat {
@@ -23,12 +29,12 @@ sub stat {
     $self->uid,              # uid
     $self->gid,              # gid
     0,                          # rdev
-    $self->size                ,       # size
+    $self->_size                ,       # size
     0,                          # atime
     0,                          # mtime
     time,                       # ctime
     $BLOCKSIZE,                 # blksize
-    ceil($self->size/$BLOCKSIZE)                           # blocks
+    ceil($self->_size/$BLOCKSIZE)                           # blocks
   );
 }
 

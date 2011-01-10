@@ -7,24 +7,22 @@ has album_id => ( is=>'ro', isa=>'Int', required=>1 );
 has album_name => ( is=>'ro', isa=>'Str', required=>1 );
 
 method buildattributes {
-  $self->setattributes(
-    $self->api->GetAlbum(
-      target_uid => $self->uid,
-      album_id   => $self->album_id,
-    )->{album}
-  );
+  $self->setattributes( $self->albuminfo ) ;
 }
 
-method sectionid {
-  my $sectionlist = $self->api->GetAlbum(
+method albuminfo {
+  $self->api->GetAlbum(
     target_uid => $self->uid,
     album_id   => $self->album_id,
-  );
-  $self->_idnamepair( $sectionlist->{album}{sections}{section}, 'section' );
+  )->{album};
+}
+
+method section_nameids {
+  $self->_idnamepair( $self->albuminfo->{sections}{section}, 'section' );
 }
 
 method buildnode ( $nodename ) {
-  my %node = $self->sectionid;
+  my %node = $self->section_nameids;
   my($id,$name) = $self->_idnamematch( \%node, $nodename );
   my $type = $self->subnodetype;
   $type->new(
@@ -36,7 +34,7 @@ method buildnode ( $nodename ) {
 }
 
 method subnodetype { 'WWW::Phanfare::Class::Section' }
-method subnodelist { $self->_idnamestrings({ $self->sectionid }) }
+method subnodelist { $self->_idnamestrings({ $self->section_nameids }) }
 
 method sectionlist { $self->subnodelist }
 method section ( Str $sectionname ) { $self->getnode( $sectionname ) }

@@ -3,42 +3,37 @@ use Moose;
 use MooseX::Method::Signatures;
 use WWW::Phanfare::Class::Image;
 
-# Get list of images
-#   filename
-method imageid {
-  # Get sections from album
-  my $sections = $self->api->GetAlbum(
-    target_uid => $self->uid,
-    album_id   => $self->parent->parent->album_id,
-  )->{album}{sections}{section};
-  $sections = [ $sections ] unless 'ARRAY' eq ref $sections;
-
-  # Find the matching section
-  my $section;
-  for my $s ( @$sections ) {
-    if ( $s->{section_name} eq $self->parent->nodename ) {
-      $section = $s;
-      last;
-    }
-  }
-
-  # Find images in section
-  #x("section", $section);
-  my $images = $section->{images}{imageinfo};
+# list of image IDs
+method image_ids {
+  my $images = $self->parent->sectioninfo->{images}{imageinfo};
   $images = [ $images ] unless 'ARRAY' eq ref $images;
-  my @imagenames;
-  for my $image ( @$images ) {
-    #x('image', $image);
-    #warn "*** Imagename $image->{filename}\n";
-    my @part = split /[\/\\]/, $image->{filename};
-    my $file = $part[-1];
-    push @imagenames, $file;
-  }
-  return @imagenames;
+  return map $_->{image_id}, @$images;
 }
 
 method subnodetype { 'WWW::Phanfare::Class::Image' }
-method subnodelist { $self->imageid } # XXX: Todo
+#method subnodelist { $self->imageid } # XXX: Todo
+method subnodelist {
+  my $type = $self->subnodetype;
+  # Create each node to extract its filename
+  return
+    map {
+      #warn "*** Creating new image subnode id=$_\n";
+      my $node = $type->new( image_id => $_, parent => $self );
+      #warn sprintf "*** image nodename is %s\n", $node->filename;
+      $node->filename;
+    }
+    $self->image_ids;
+}
+
+method buildnode ( $nodename ) {
+  my $type = $self->subnodetype;
+  # Build each node until the one with the correct filename is found
+  for my $id ( $self->image_ids ) {
+    #warn "*** Rendition buildnode id=$id\n";
+    my $node = $type->new( image_id => $id, parent => $self );
+    return $node if $node->nodename eq $nodename;
+  }
+}
 
 method imagelist { $self->subnodelist }
 method image ( Str $imagename ) { $self->getnode( $imagename ) }

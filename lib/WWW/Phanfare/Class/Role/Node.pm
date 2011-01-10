@@ -50,6 +50,30 @@ method nodelist {
   return @list;
 }
 
+# Search through a data tree parsed from xml to find substructures or attributes
+#
+method treesearch ( Ref $tree, ArrayRef $path ) {
+  my @part = @$path;
+  my $node = $tree;
+  for my $part ( @$path ) {
+    if ( ref $part eq 'HASH' ) {
+      # Pick element from list
+      my($key,$value) = each %$part;
+      $node = [ $node ] unless ref $node eq 'ARRAY';
+      for my $subnode ( @$node ) {
+        if ( $value eq substr $subnode->{$key}, 0, length $value ) {
+          $node = $subnode;
+          last;
+        }
+      }
+    } else {
+      # Pick attribute
+      $node = $node->{$part};
+    }
+  }
+  return $node;
+}
+
 =head1 NAME
 
 =cut
