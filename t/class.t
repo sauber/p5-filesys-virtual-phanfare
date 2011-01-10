@@ -80,9 +80,26 @@ isa_ok( $image, 'WWW::Phanfare::Class::Image' );
 #diag "*** image url is " . $image->url;
 ok( 'http://' eq substr $image->url, 0, 7, "url starts with http" );
 
-# Make sure all filenames are different
+# Make sure all image filenames are different
 my %U;
 my @uniqnames = grep { ! $U{$_}++ } @imagenames;
 ok( scalar @uniqnames == scalar @imagenames, "All image names are unique: @imagenames" );
+
+# Create, read and delete a year
+my $newyear = '1999';
+ok( ! grep(/$newyear/, $site->yearlist), "Year $newyear doesn't yet exist" );
+ok( $site->create( $newyear ), "Year $newyear created" );
+ok( grep(/$newyear/, $site->yearlist), "Year $newyear now exists" );
+ok( $site->delete( $newyear ), "Year $newyear created" );
+ok( ! grep(/$newyear/, $site->yearlist), "Year $newyear no longer exists" );
+
+# Create, read and delete and album
+my $newalbum = "New Album";
+ok( ! grep(/$newalbum/, $year->albumlist), "Album $newalbum doesn't yet exist" );
+$year->create( $newalbum );
+#ok( grep(/$newalbum/, $year->albumlist), "Album $newalbum now exists" );
+$year->delete( $newalbum );
+ok( ! grep(/$newalbum/, $year->albumlist), "Album $newalbum no longer exists" );
+
 
 done_testing();

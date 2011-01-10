@@ -64,7 +64,7 @@ for my $dir ( @testdirs ) {
 }
 
 for my $file ( @testfiles ) {
-  diag "shadowtree test file $file";
+  #diag "shadowtree test file $file";
   ok( my $node = $fs->createpath($file), "Node for $file" );
   ok ( $node->test('f'), "$file is file" );
   ok ( ! $node->test('d'), "$file is not dir" );

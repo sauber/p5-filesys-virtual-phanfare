@@ -23,6 +23,9 @@ sub GetAlbum     {
   LoadFile 't/data/albuminfo.yaml';
 }
 
+sub NewAlbum {}
+sub DeleteAlbum {}
+
 # Make sure not caught by AUTOLOAD
 sub DESTROY {}
 

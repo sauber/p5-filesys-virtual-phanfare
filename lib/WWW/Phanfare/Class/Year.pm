@@ -35,6 +35,24 @@ method buildnode ( $nodename ) {
 method albumlist { $self->subnodelist }
 method album ( Str $albumname ) { $self->getnode( $albumname ) }
 
+method create ( Str $nodename ) {
+  $self->api->NewAlbum(
+     target_uid => $self->uid,
+     album_name => $nodename,
+     album_start_date => sprintf("%04s-01-01T00:00:00", $self->nodename),
+     album_end_date => sprintf("%04s-12-31T23:59:59", $self->nodename),
+  )
+}
+
+method delete ( Str $nodename ) {
+  my %node = $self->albumid;
+  my($id,$name) = $self->_idnamematch( \%node, $nodename );
+  $self->api->DeleteAlbum(
+     target_uid => $self->uid,
+     album_id => $id,
+  );
+}
+
 with 'WWW::Phanfare::Class::Role::Branch';
 
 =head1 NAME

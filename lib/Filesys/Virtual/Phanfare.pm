@@ -213,7 +213,7 @@ sub stat         { shift->opnode('stat',         shift, [     ]) }
 sub test         { shift->opnode('test',         pop  , [shift]) }
 sub open_read    { my @r = shift->opnode('open_read',    shift, [ @_  ]); return $r[0]; }
 #sub close_read   { shift->opnode('close_read',   shift, [     ]) }
-sub close_read   { shift; my $fh = shift; warn "*** close_read $fh\n"; close $fh; }
+sub close_read   { shift; my $fh = shift; close $fh; }
 sub open_write   { shift->opnode('open_write',   shift, [shift]) }
 #sub close_write  { shift->opnode('close_write',  shift, [     ]) }
 sub close_write  { close shift }
