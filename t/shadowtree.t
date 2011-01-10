@@ -64,16 +64,21 @@ for my $dir ( @testdirs ) {
 }
 
 for my $file ( @testfiles ) {
-  #diag "shadowtree test file $file";
+  diag "shadowtree test file $file";
   ok( my $node = $fs->createpath($file), "Node for $file" );
   ok ( $node->test('f'), "$file is file" );
   ok ( ! $node->test('d'), "$file is not dir" );
   ok ( $node->uid, "uid for $file" );
   ok ( $node->gid, "gid for $file" );
   ok ( $node->inode, "inode for $file" );
+
   ok( $node->atime > 0, "$file atime" );
   ok( $node->mtime > 0, "$file mtime" );
   ok( $node->ctime > 0, "$file ctime" );
+
+  ok( my $fh = $node->open_read, "$file open_read" );
+  ok( <$fh>, "$file read" );
+  ok( $fs->close_read( $fh ), "$file close_read" );
 
   ok ( my $parent = $node->parent, "parent for $file" );
   ok ( $parent->uid, "uid for parent of $file" );
@@ -88,7 +93,7 @@ ok( $ye == $yearnode->mtime, "mtime matches year" );
 ok( $ye == $yearnode->ctime, "ctime matches year" );
 
 # Caption
-ok( $captionname =~ /\.txt$/, "$captionnode ends with txt" );
+ok( $captionname =~ /\.txt$/, "$captionname ends with txt" );
 
 
 done_testing();

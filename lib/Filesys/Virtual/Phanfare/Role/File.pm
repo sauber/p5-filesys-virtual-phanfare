@@ -99,6 +99,35 @@ sub test {
   return ( ref($self)=~/Attribute/ ? 0 : 1 ) if $testname =~ /[B]/; # Binary
 }
 
+# Get content of file
+sub open_read {
+  my $self = shift;
+
+  my $class = 'WWW::Phanfare::Class::';
+  my $content = '';
+  if ( $self->isa($class . "Attribute" ) ) {
+    $content = $self->value;
+  } elsif ( $self->isa($class . "Image" ) ) {
+    if ( $self->parent->nodename eq 'Caption' ) {
+      $content = $self->caption;
+    } else {
+      # XXX: Use WWW::Phanfare::API module
+      warn sprintf "*** Fetching %s\n", $self->url;
+      use REST::Client;
+      my $rest = new REST::Client;
+      $rest->GET( $self->url );
+      $content = $rest->responseContent;
+      warn sprintf "*** Fetched image size is %s\n", length $content;
+      $self->size( length $content );
+    }
+  }
+  #$content .= "\n";
+  warn sprintf "*** Content size is %s\n", length $content;
+  open( my $fh, '<', \$content );
+  warn "*** create file handler $fh\n";
+  return $fh;
+}
+
 
 with 'Filesys::Virtual::Phanfare::Role::Node';
 

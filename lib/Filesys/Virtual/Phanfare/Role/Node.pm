@@ -39,20 +39,20 @@ method atime { time }
 
 method mtime {
   my $epoch = time;
-  my $class = 'WWW::Phanfare::Class';
-  if ( $self->isa($class . "::Account") ) {
-  } elsif ( $self->isa($class . "::Site") ) {
-  } elsif ( $self->isa($class . "::Year") ) {
+  my $class = 'WWW::Phanfare::Class::';
+  if ( $self->isa($class . 'Account') ) {
+  } elsif ( $self->isa($class . 'Site') ) {
+  } elsif ( $self->isa($class . 'Year') ) {
     $epoch = str2time sprintf "%04s-01-01T00:00:00", $self->nodename;
     #warn sprintf "*** mtime for year %s is %s\n", $self->nodename, $epoch;
-  } elsif ( $self->isa($class . "::Album") ) {
+  } elsif ( $self->isa($class . 'Album') ) {
     $epoch = phanfaretime $self->attribute('album_start_date')->value;
     #warn sprintf "*** mtime for album %s date %s is %s\n", $self->nodename, $self->attribute('album_start_date')->value, $epoch;
-  } elsif ( $self->isa($class . "::Section") ) {
+  } elsif ( $self->isa($class . 'Section') ) {
     $epoch = phanfaretime $self->parent->attribute('album_last_modified')->value;
-  } elsif ( $self->isa($class . "::Rendition") ) {
+  } elsif ( $self->isa($class . 'Rendition') ) {
     $epoch = phanfaretime $self->parent->parent->attribute('album_last_modified')->value;
-  } elsif ( $self->isa($class . "::Image") ) {
+  } elsif ( $self->isa($class . 'Image') ) {
     #$epoch = phanfaretime $self->parent->parent->parent->attribute('album_last_modified')->value;
     $epoch = phanfaretime $self->imageinfo->{image_date};
   }
@@ -62,18 +62,18 @@ method mtime {
 
 method ctime {
   my $epoch = time;
-  my $class = 'WWW::Phanfare::Class';
-  if ( $self->isa($class . "::Account") ) {
-  } elsif ( $self->isa($class . "::Site") ) {
-  } elsif ( $self->isa($class . "::Year") ) {
+  my $class = 'WWW::Phanfare::Class::';
+  if ( $self->isa($class . 'Account') ) {
+  } elsif ( $self->isa($class . 'Site') ) {
+  } elsif ( $self->isa($class . 'Year') ) {
     $epoch = str2time sprintf "%04s-01-01T00:00:00", $self->nodename;
-  } elsif ( $self->isa($class . "::Album") ) {
+  } elsif ( $self->isa($class . 'Album') ) {
     $epoch = phanfaretime $self->attribute('album_creation_date')->value;
-  } elsif ( $self->isa($class . "::Section") ) {
+  } elsif ( $self->isa($class . 'Section') ) {
     $epoch = phanfaretime $self->parent->attribute('album_creation_date')->value;
-  } elsif ( $self->isa($class . "::Rendition") ) {
+  } elsif ( $self->isa($class . 'Rendition') ) {
     $epoch = phanfaretime $self->parent->parent->attribute('album_creation_date')->value;
-  } elsif ( $self->isa($class . "::Image") ) {
+  } elsif ( $self->isa($class . 'Image') ) {
     $epoch = phanfaretime $self->renditioninfo->{created_date};
   }
   #warn "*** ctime for $self is $epoch\n";

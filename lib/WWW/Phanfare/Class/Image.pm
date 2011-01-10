@@ -35,8 +35,8 @@ has url          => ( is=>'ro', isa=>'Str', required=>0, lazy_build=>1 );
 method _build_url { $self->renditioninfo->{url} } 
 
 # Overwrite size method from Leaf Role
-has size         => ( is=>'ro', isa=>'Int', required=>0, lazy_build=>1 );
-method _build_size { ref $self->renditioninfo eq 'HASH' ? $self->renditioninfo->{filesize} : 0 } 
+has size         => ( is=>'rw', isa=>'Int', required=>0, lazy_build=>1 );
+method _build_size { $self->renditioninfo->{filesize} } 
 
 method imageinfo {
   my $info = $self->treesearch(
