@@ -4,7 +4,7 @@ use MooseX::Method::Signatures;
 use WWW::Phanfare::Class::Section;
 
 has album_id => ( is=>'ro', isa=>'Int', required=>1 );
-has album_name => ( is=>'ro', isa=>'Str', required=>1 );
+#has album_name => ( is=>'ro', isa=>'Str', required=>1 );
 
 method buildattributes {
   $self->setattributes( $self->albuminfo ) ;
@@ -29,7 +29,7 @@ method buildnode ( $nodename ) {
     parent       => $self,
     nodename     => $nodename,
     section_id   => $id,
-    section_name => $name,
+    #section_name => $name,
   );
 }
 

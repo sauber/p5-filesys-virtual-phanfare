@@ -28,6 +28,9 @@ method setattributes ( HashRef $data ) {
 # Get or set an attributes
 #
 method attribute ( Str $key, Str $value? ) {
+  # Try to build attributes if not already done
+  $self->buildattributes if not $self->_attr and $self->can('buildattributes');
+
   # Set value
   if ( $value ) {
     my $attr = $self->_attr || {};
@@ -38,9 +41,6 @@ method attribute ( Str $key, Str $value? ) {
     );
     $self->_attr( $attr );
   }
-
-  # Try to build attributes if not already done
-  $self->buildattributes if not $self->_attr and $self->can('buildattributes');
 
   # Get value
   return $self->_attr->{$key}; # Object reference

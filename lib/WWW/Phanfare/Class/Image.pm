@@ -44,10 +44,17 @@ method imageinfo {
 }
 
 method renditioninfo {
-  $self->treesearch(
+  my $info = $self->treesearch(
     $self->imageinfo->{renditions}{rendition},
     [ { rendition_type => $self->parent->nodename } ]
   );
+  #use Data::Dumper;
+  #warn sprintf "*** renditioninfo for id %s rendition %s: %s", $self->image_id, $self->parent->nodename, Dumper $info;
+  unless ( ref $info eq 'HASH' ) {
+    use Data::Dumper;
+    warn "*** renditioninfo for $self is not HASH: " . Dumper $info;
+  }
+  return $info;
 }
 
 with 'WWW::Phanfare::Class::Role::Leaf';

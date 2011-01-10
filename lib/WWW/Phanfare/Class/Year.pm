@@ -28,7 +28,7 @@ method buildnode ( $nodename ) {
     parent     => $self,
     nodename   => $nodename,
     album_id   => $id,
-    album_name => $name,
+    #album_name => $name,
   );
 }
 

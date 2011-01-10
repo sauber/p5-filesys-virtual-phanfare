@@ -23,9 +23,9 @@ sub stat {
     $self->gid,              # gid
     0,                          # rdev
     $size                ,       # size
-    0,                          # atime
-    0,                          # mtime
-    time,                       # ctime
+    $self->atime,                          # atime
+    $self->mtime,                          # mtime
+    $self->ctime,                       # ctime
     $BLOCKSIZE,                 # blksize
     ceil($size/$BLOCKSIZE),     # blocks
   );

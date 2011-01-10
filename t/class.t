@@ -40,44 +40,45 @@ isa_ok( $account, 'WWW::Phanfare::Class::Account' );
 
 # Verify there is a site
 ok( my($sitename) = $class->sitelist, "Class has sites" );
-diag "*** site is " . $sitename;
+#diag "*** site is " . $sitename;
 ok( my $site = $class->site($sitename), "Class has site object" );
 isa_ok( $site, 'WWW::Phanfare::Class::Site' );
 
 # Verify there are years
 ok( my($yearname) = $class->yearlist, "Class has years" );
-diag "*** year is " . $yearname;
+#diag "*** year is " . $yearname;
 ok( my $year = $class->year($yearname), "Class has year object" );
 isa_ok( $year, 'WWW::Phanfare::Class::Year' );
 
 # Verify there are albums
 ok( my($albumname) = $class->albumlist($yearname), "Class has an album" );
-diag "*** album is " . $albumname;
+#diag "*** album is " . $albumname;
 ok( my $album = $class->album($yearname,$albumname), "Class has album object" );
 isa_ok( $album, 'WWW::Phanfare::Class::Album' );
 #diag Dumper $album;
 
 # Verify there are sections
 ok( my($sectionname) = $class->sectionlist($yearname,$albumname), "Class has sections" );
-diag "*** section is " . $sectionname;
+#diag "*** section is " . $sectionname;
 ok( my $section = $class->section($yearname,$albumname,$sectionname), "Class has section object" );
 isa_ok( $section, 'WWW::Phanfare::Class::Section' );
 
 # Verify there are renditions
 ok( my($renditionname) = $class->renditionlist($yearname,$albumname,$sectionname), "Class has renditions" );
-diag "*** rendition is " . $renditionname;
+#diag "*** rendition is " . $renditionname;
 ok( my $rendition = $class->rendition($yearname,$albumname,$sectionname,$renditionname), "Class has section object" );
 isa_ok( $rendition, 'WWW::Phanfare::Class::Rendition' );
 
 # Verify there are images
 ok( my @imagenames = $class->imagelist($yearname,$albumname,$sectionname,$renditionname), "Class has images" );
 my $imagename = shift @imagenames;
-diag "*** image is " . $imagename;
+#diag "*** image is " . $imagename;
 ok( my $image = $class->image($yearname,$albumname,$sectionname,$renditionname,$imagename), 'Class has image object' );
 isa_ok( $image, 'WWW::Phanfare::Class::Image' );
 
 # URL of image
-diag "*** image url is " . $image->url;
+#diag "*** image url is " . $image->url;
+ok( 'http://' eq substr $image->url, 0, 7, "url starts with http" );
 
 # Make sure all filenames are different
 my %U;

@@ -16,6 +16,7 @@ requires 'Filesys::Virtual::Plain';
 requires 'MooseX::Method::Signatures';
 requires 'Devel::Size';
 requires 'Cache::Memory';
+requires 'Date::Parse';
 
 auto_install;
 

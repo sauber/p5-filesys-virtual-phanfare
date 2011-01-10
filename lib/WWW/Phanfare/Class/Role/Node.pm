@@ -60,12 +60,17 @@ method treesearch ( Ref $tree, ArrayRef $path ) {
       # Pick element from list
       my($key,$value) = each %$part;
       $node = [ $node ] unless ref $node eq 'ARRAY';
+      my $notfound = {};
       for my $subnode ( @$node ) {
+        #warn sprintf "*** Compare %s to %s\n", $value, substr $subnode->{$key}, 0, length $value;
         if ( $value eq substr $subnode->{$key}, 0, length $value ) {
+          #warn "***   It matches\n";
           $node = $subnode;
+          undef $notfound;
           last;
         }
       }
+      $node = $notfound if $notfound;
     } else {
       # Pick attribute
       $node = $node->{$part};
