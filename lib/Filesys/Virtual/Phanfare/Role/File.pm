@@ -111,20 +111,16 @@ sub open_read {
     if ( $self->parent->nodename eq 'Caption' ) {
       $content = $self->caption;
     } else {
-      # XXX: Use WWW::Phanfare::API module
-      warn sprintf "*** Fetching %s\n", $self->url;
-      use REST::Client;
-      my $rest = new REST::Client;
-      $rest->GET( $self->url );
-      $content = $rest->responseContent;
-      warn sprintf "*** Fetched image size is %s\n", length $content;
+      #warn sprintf "*** Fetching %s\n", $self->url;
+      $content = $self->api->geturl( $self->url );
+      #warn sprintf "*** Fetched image size is %s\n", length $content;
       $self->size( length $content );
     }
   }
   #$content .= "\n";
-  warn sprintf "*** Content size is %s\n", length $content;
+  #warn sprintf "*** Content size is %s\n", length $content;
   open( my $fh, '<', \$content );
-  warn "*** create file handler $fh\n";
+  #warn "*** create file handler $fh\n";
   return $fh;
 }
 
