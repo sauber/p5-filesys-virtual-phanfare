@@ -17,7 +17,7 @@ sub stat {
   return (
     0 + $self,                  # dev
     42,         # ino
-    042555,                     # mode
+    042755,                     # mode
     1,                          # nlink
     $self->uid,              # uid
     $self->gid,              # gid
@@ -88,6 +88,22 @@ sub test {
   return 0 if $testname =~ /[MAC]/;     # Age XXX
   return $self->size if $testname =~ /[s]/;
   return ( $self->size ? 0 : 1 ) if $testname =~ /[z]/;
+}
+
+# Create a sub directory
+#
+sub mkdir {
+  my $self = shift;
+  my $dirname = shift;
+
+  #my $class = 'WWW::Phanfare::Class::';
+  #warn sprintf "*** Create in dir %s subdir %s\n", $self->nodename, $dirname;
+  if ( $self->can('create') ) {
+    $self->create($dirname);
+    return 1;
+  } else {
+    return undef;
+  }
 }
 
 with 'Filesys::Virtual::Phanfare::Role::Node';

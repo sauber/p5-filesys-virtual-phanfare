@@ -27,6 +27,8 @@ method subnodelist { $self->yearid }
 method yearlist { $self->subnodelist }
 method year ( Str $yearname ) { $self->getnode( $yearname ) }
 
+# Create a year that does not yet have albums
+#
 method create ( Int $nodename ) {
   my $years = $self->extrayear();
   ++$years->{$nodename};
@@ -35,6 +37,8 @@ method create ( Int $nodename ) {
   $self->extrayear( $years );
 }
 
+# Delete year that has no albums
+#
 method delete ( Int $nodename ) {
   #use Data::Dumper;
   my $years = $self->extrayear();

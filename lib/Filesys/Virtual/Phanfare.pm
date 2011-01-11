@@ -141,13 +141,19 @@ method opnode ( Str $operation, Str $path, ArrayRef $args ) {
     #return warn "*** fsop NOOP $path @$args\n";
   }
   my $fullpath  = $self->_path_from_root( $path );
+
+  if ( $operation eq 'mkdir' ) {
+    my $subpath;
+    $fullpath =~ s/^(.*)[\/\\](.+?)$/$1/ and $subpath = $2;
+    unshift @$args, $subpath;
+  }
   #warn "*** Lookup node for $fullpath\n";
   #my $node = $self->fsnode( $fullpath, $self->phnode($fullpath) );
   #my $node = $self->fsnode( $fullpath );
   my $node = $self->createpath( $fullpath );
   #warn "***   found $node...\n";
   # Perform the operation if node exists and has the capability
-  #warn "*** fsop $operation $path @$args\n";
+  #warn "*** fsop $operation $fullpath @$args\n";
   if ( $node ) {
     if ( $node->can($operation) ) {
       #warn "*** fsop $operation $node @$args\n";
@@ -158,10 +164,10 @@ method opnode ( Str $operation, Str $path, ArrayRef $args ) {
         return @result;
       }
     } else {
-      #warn "*** fsop $operation $node @$args not implemented\n";
+      #warn "*** fsop $operation $fullpath @$args not implemented\n";
     }
   } else {
-    #warn "*** fsop $operation $path does not exist\n";
+    #warn "*** fsop $operation $fullpath @$args does not exist\n";
   }
   return ();
 }
