@@ -100,6 +100,7 @@ sub mkdir {
   #warn sprintf "*** Create in dir %s subdir %s\n", $self->nodename, $dirname;
   if ( $self->can('create') ) {
     $self->create($dirname);
+    # XXX: Expire self and parent from cache to make results immediately visible
     return 1;
   } else {
     return undef;
