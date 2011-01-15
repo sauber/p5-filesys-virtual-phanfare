@@ -125,6 +125,15 @@ sub rmdir {
   }
 }
 
+# Create a file object for writing to
+#
+sub open_write {
+  my $self = shift;
+  my $dirname = shift;
+
+  # XXX: TODO
+}
+
 with 'Filesys::Virtual::Phanfare::Role::Node';
 
 =head1 NAME
