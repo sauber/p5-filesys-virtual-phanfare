@@ -48,6 +48,16 @@ method create ( Str $nodename ) {
   )
 }
 
+method delete ( Str $nodename ) {
+  my %node = $self->section_nameids;
+  my($id,$name) = $self->_idnamematch( \%node, $nodename );
+  $self->api->DeleteSection(
+     target_uid => $self->uid,
+     album_id => $self->album_id,
+     section_id => $id,
+  );
+}
+
 
 with 'WWW::Phanfare::Class::Role::Branch';
 with 'WWW::Phanfare::Class::Role::Attributes';

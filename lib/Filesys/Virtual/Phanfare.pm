@@ -142,7 +142,7 @@ method opnode ( Str $operation, Str $path, ArrayRef $args ) {
   }
   my $fullpath  = $self->_path_from_root( $path );
 
-  if ( $operation eq 'mkdir' ) {
+  if ( $operation eq 'mkdir' or $operation eq 'rmdir' ) {
     my $subpath;
     $fullpath =~ s/^(.*)[\/\\](.+?)$/$1/ and $subpath = $2;
     unshift @$args, $subpath;

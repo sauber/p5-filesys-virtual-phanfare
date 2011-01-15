@@ -9,6 +9,11 @@ requires 'getnode';
 #has 'uid' => ( is=>'ro', isa=>'Int', required=>1 );
 #has 'gid' => ( is=>'ro', isa=>'Int', required=>1 );
 
+sub mode {
+  my $self = shift;
+  return $self->can('create') ? 042755 : 042555 ;
+}
+
 sub stat {
   my $self = shift;
   my $size = size($self);
@@ -17,7 +22,7 @@ sub stat {
   return (
     0 + $self,                  # dev
     42,         # ino
-    042755,                     # mode
+    $self->mode,                     # mode
     1,                          # nlink
     $self->uid,              # uid
     $self->gid,              # gid
@@ -100,7 +105,20 @@ sub mkdir {
   #warn sprintf "*** Create in dir %s subdir %s\n", $self->nodename, $dirname;
   if ( $self->can('create') ) {
     $self->create($dirname);
-    # XXX: Expire self and parent from cache to make results immediately visible
+    return 1;
+  } else {
+    return undef;
+  }
+}
+
+# Delete a sub directory
+#
+sub rmdir {
+  my $self = shift;
+  my $dirname = shift;
+
+  if ( $self->can('delete') ) {
+    $self->delete($dirname);
     return 1;
   } else {
     return undef;
