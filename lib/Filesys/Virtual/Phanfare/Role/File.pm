@@ -125,20 +125,25 @@ sub open_read {
   return $fh;
 }
 
-sub open_write {
-  my $self = shift;
-
-  my $class = 'WWW::Phanfare::Class::';
-  my $content = '';
-  if ( $self->isa($class . "Attribute" ) ) {
-    warn "*** open_write Attribute\n";
-  } elsif ( $self->isa($class . "Image" ) ) {
-    warn "*** open_write Image\n";
-  } else {
-    warn "*** open_write Something Else\n";
-  }
-  return undef;
-}
+#sub open_write {
+#  my $self = shift;
+#
+#  #my $class = 'WWW::Phanfare::Class::';
+#  #my $content = '';
+#  #if ( $self->isa($class . "Attribute" ) ) {
+#  #  warn "*** open_write Attribute\n";
+#  #} elsif ( $self->isa($class . "Image" ) ) {
+#  #  warn "*** open_write Image\n";
+#  #} else {
+#  #  warn "*** open_write Something Else\n";
+#  #}
+#  #return undef;
+#
+#  my $content = $self->setvalue;
+#  open( my $fh, '>', \$content );
+#  warn "*** create write file handler $fh\n";
+#  return $fh;
+#}
 
 with 'Filesys::Virtual::Phanfare::Role::Node';
 

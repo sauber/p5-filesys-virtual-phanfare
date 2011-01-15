@@ -78,7 +78,7 @@ method renditioninfo {
   #return $info;
 }
 
-# Get binary image or caption
+# Get binary image or caption text
 method value {
   if ( $self->parent->nodename eq 'Caption' ) {
     return $self->caption;
@@ -90,6 +90,13 @@ method value {
     $self->size( length $content );
     return $content;
   }
+}
+
+method setvalue ( Str $content ) {
+  if ( $self->parent->nodename eq 'Caption' ) {
+  } else {
+  }
+  warn sprintf "*** Wrote %s bytes to value%s\n", length $content;
 }
 
 with 'WWW::Phanfare::Class::Role::Leaf';

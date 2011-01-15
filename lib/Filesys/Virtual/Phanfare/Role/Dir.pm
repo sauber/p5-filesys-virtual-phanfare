@@ -129,9 +129,16 @@ sub rmdir {
 #
 sub open_write {
   my $self = shift;
-  my $dirname = shift;
+  my $filename = shift;
 
   # XXX: TODO
+  warn sprintf "*** Create in dir %s file %s\n", $self->nodename, $filename;
+  if ( $self->can('create') ) {
+    return $self->create($filename);
+    #return 1;
+  } else {
+    return undef;
+  }
 }
 
 with 'Filesys::Virtual::Phanfare::Role::Node';
