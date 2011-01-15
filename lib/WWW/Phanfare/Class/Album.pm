@@ -39,6 +39,16 @@ method subnodelist { $self->_idnamestrings({ $self->section_nameids }) }
 method sectionlist { $self->subnodelist }
 method section ( Str $sectionname ) { $self->getnode( $sectionname ) }
 
+# Create a section of album
+method create ( Str $nodename ) {
+  $self->api->NewSection(
+     target_uid => $self->uid,
+     album_id => $self->album_id,
+     section_name => $nodename,
+  )
+}
+
+
 with 'WWW::Phanfare::Class::Role::Branch';
 with 'WWW::Phanfare::Class::Role::Attributes';
 

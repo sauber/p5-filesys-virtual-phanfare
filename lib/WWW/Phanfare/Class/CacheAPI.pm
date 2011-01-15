@@ -39,11 +39,19 @@ sub AUTOLOAD {
     # Delete cached parent results when creating new objects
     # *** Caching NewAlbum,target_uid,9497612,album_name,Test2,album_start_date,1999-01-01T00:00:00,album_end_date,1999-12-31T23:59:59
     # *** Reusing GetAlbumList,target_uid,9497612
+    my $parent;
     if ( $method eq 'NewAlbum' ) {
-      my $parent = join ',', 'GetAlbumList', @_[0..1];
+      $parent = join ',', 'GetAlbumList', @_[0..1];
+    } elsif ( $method eq 'NewSection' ) {
+      $parent = join ',', 'GetAlbum', @_[0..3];
+    }
+    if ( $parent ) {
       warn "*** Expiring $parent\n";
       $CACHE->remove( $parent );
-      $CACHE->purge();  # Also take the opportunity to remove all expired objects
+      # Also take the opportunity to remove all expired objects
+      # to reduce overall size of cache.
+      # XXX: Need to happen regularly even when there are only Get requests.
+      $CACHE->purge();
     }
   } else {
     warn "*** Reusing $cachestring\n";

@@ -6,6 +6,7 @@ use WWW::Phanfare::Class::Image;
 # list of image IDs
 method image_ids {
   my $images = $self->parent->sectioninfo->{images}{imageinfo};
+  return () unless $images;
   $images = [ $images ] unless 'ARRAY' eq ref $images;
   return map $_->{image_id}, @$images;
 }
