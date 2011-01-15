@@ -19,6 +19,22 @@ our $CACHE = Cache::Memory->new(
   default_expires => '30 sec',
 );
 
+sub geturl {
+  my($self,$url,$post) = @_;
+
+  my $cachestring = join ',', 'geturl', $url, $post;
+  my $result = $CACHE->get( $cachestring );
+  unless ( $result ) {
+    #warn "*** Caching $cachestring\n";
+    my $super = "SUPER::geturl";
+    $result = $self->$super( $url, $post );
+    $CACHE->set( $cachestring, $result );
+  } else {
+    #warn "*** Reusing $cachestring\n";
+  }
+  return $result;
+}
+
 sub AUTOLOAD {
   my $self = shift;
   croak "$self is not an object" unless ref($self);
@@ -30,7 +46,7 @@ sub AUTOLOAD {
   my $cachestring = join ',', $method, @_;
   my $result = $CACHE->thaw( $cachestring );
   unless ( $result ) {
-    warn "*** Caching $cachestring\n";
+    #warn "*** Caching $cachestring\n";
     my $super = "SUPER::$method";
     $result = $self->$super( @_ );
     #warn "*** result is " . Dumper $result;
@@ -46,7 +62,7 @@ sub AUTOLOAD {
       $parent = join ',', 'GetAlbum', @_[0..3];
     }
     if ( $parent ) {
-      warn "*** Expiring $parent\n";
+      #warn "*** Expiring $parent\n";
       $CACHE->remove( $parent );
       # Also take the opportunity to remove all expired objects
       # to reduce overall size of cache.
@@ -54,7 +70,7 @@ sub AUTOLOAD {
       $CACHE->purge();
     }
   } else {
-    warn "*** Reusing $cachestring\n";
+    #warn "*** Reusing $cachestring\n";
   }
   return $result;
 }

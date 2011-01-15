@@ -156,18 +156,18 @@ method opnode ( Str $operation, Str $path, ArrayRef $args ) {
   #warn "*** fsop $operation $fullpath @$args\n";
   if ( $node ) {
     if ( $node->can($operation) ) {
-      #warn "*** fsop $operation $node @$args\n";
+      warn "*** fsop $operation $fullpath @$args\n";
       #return $node->$operation(@$args) if $node and $node->can($operation);
       if ( $node and $node->can($operation) ) {
         my @result = $node->$operation(@$args);
-        #warn "*** result is @result\n";
+        warn "*** result is @result\n";
         return @result;
       }
     } else {
-      #warn "*** fsop $operation $fullpath @$args not implemented\n";
+      warn "*** fsop $operation $fullpath @$args not implemented\n";
     }
   } else {
-    #warn "*** fsop $operation $fullpath @$args does not exist\n";
+    warn "*** fsop $operation $fullpath @$args does not exist\n";
   }
   return ();
 }

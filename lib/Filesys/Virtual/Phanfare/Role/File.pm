@@ -103,20 +103,21 @@ sub test {
 sub open_read {
   my $self = shift;
 
-  my $class = 'WWW::Phanfare::Class::';
-  my $content = '';
-  if ( $self->isa($class . "Attribute" ) ) {
-    $content = $self->value;
-  } elsif ( $self->isa($class . "Image" ) ) {
-    if ( $self->parent->nodename eq 'Caption' ) {
-      $content = $self->caption;
-    } else {
-      #warn sprintf "*** Fetching %s\n", $self->url;
-      $content = $self->api->geturl( $self->url );
-      #warn sprintf "*** Fetched image size is %s\n", length $content;
-      $self->size( length $content );
-    }
-  }
+  #my $class = 'WWW::Phanfare::Class::';
+  my $content = $self->value;
+  #if ( $self->isa($class . "Attribute" ) ) {
+  #  $content = $self->value;
+  #} elsif ( $self->isa($class . "Image" ) ) {
+  #  if ( $self->parent->nodename eq 'Caption' ) {
+  #    $content = $self->caption;
+  #  } else {
+  #    # XXX: This belongs in WWW::Phanfare::Class::Image
+  #    #warn sprintf "*** Fetching %s\n", $self->url;
+  #    $content = $self->api->geturl( $self->url );
+  #    #warn sprintf "*** Fetched image size is %s\n", length $content;
+  #    $self->size( length $content );
+  #  }
+  #}
   #$content .= "\n";
   #warn sprintf "*** Content size is %s\n", length $content;
   open( my $fh, '<', \$content );
@@ -124,6 +125,20 @@ sub open_read {
   return $fh;
 }
 
+sub open_write {
+  my $self = shift;
+
+  my $class = 'WWW::Phanfare::Class::';
+  my $content = '';
+  if ( $self->isa($class . "Attribute" ) ) {
+    warn "*** open_write Attribute\n";
+  } elsif ( $self->isa($class . "Image" ) ) {
+    warn "*** open_write Image\n";
+  } else {
+    warn "*** open_write Something Else\n";
+  }
+  return undef;
+}
 
 with 'Filesys::Virtual::Phanfare::Role::Node';
 

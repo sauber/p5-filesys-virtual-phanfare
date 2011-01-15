@@ -6,6 +6,7 @@ has image_id     => ( is=>'ro', isa=>'Int', required=>1 );
 
 has nodename     => ( is=>'ro', isa=>'Str', required=>0, lazy_build=>1 );
 method _build_nodename { $self->filename }
+#method nodename { $self->filename }
 
 has filename     => ( is=>'ro', isa=>'Str', required=>0, lazy_build=>1 );
 method _build_filename {
@@ -75,6 +76,20 @@ method renditioninfo {
   #  warn "*** renditioninfo for $self is not HASH: " . Dumper $info;
   #}
   #return $info;
+}
+
+# Get binary image or caption
+method value {
+  if ( $self->parent->nodename eq 'Caption' ) {
+    return $self->caption;
+  } else {
+    #warn sprintf "*** Fetching %s\n", $self->url;
+    my $content = $self->api->geturl( $self->url );
+    #warn sprintf "*** Fetched image size is %s\n", length $content;
+    # Set size so ls can show accurate value now that it's known
+    $self->size( length $content );
+    return $content;
+  }
 }
 
 with 'WWW::Phanfare::Class::Role::Leaf';
