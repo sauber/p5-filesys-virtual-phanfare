@@ -34,7 +34,8 @@ sub _build_phanfare {
   # XXX: clear password
 }
 
-has 'nodecache' => ( isa=>'HashRef', is=>'rw', default=>sub{{}} );
+has 'nodecache'   => ( isa=>'HashRef', is=>'rw', default=>sub{{}} );
+has 'writehandle' => ( isa=>'HashRef', is=>'rw', default=>sub{{}} );
 
 =head1 NAME
 
@@ -137,9 +138,9 @@ method createpath ( Str $path ) {
 # Run file operation on node
 #
 method opnode ( Str $operation, Str $path, ArrayRef $args ) {
-  unless ( length $operation ) {
-    #return warn "*** fsop NOOP $path @$args\n";
-  }
+  #unless ( length $operation ) {
+  #  #return warn "*** fsop NOOP $path @$args\n";
+  #}
   my $fullpath  = $self->_path_from_root( $path );
 
   if ( $operation eq 'mkdir' or $operation eq 'rmdir' or $operation eq 'open_write' ) {
@@ -147,30 +148,34 @@ method opnode ( Str $operation, Str $path, ArrayRef $args ) {
     $fullpath =~ s/^(.*)[\/\\](.+?)$/$1/ and $subpath = $2;
     unshift @$args, $subpath;
   }
-  #warn "*** Lookup node for $fullpath\n";
-  #my $node = $self->fsnode( $fullpath, $self->phnode($fullpath) );
-  #my $node = $self->fsnode( $fullpath );
   my $node = $self->createpath( $fullpath );
   #warn "***   found $node...\n";
   # Perform the operation if node exists and has the capability
   #warn "*** fsop $operation $fullpath @$args\n";
   if ( $node ) {
     if ( $node->can($operation) ) {
-      #warn "*** fsop $operation $fullpath @$args\n";
+      warn "*** fsop $operation $fullpath @$args\n";
       #return $node->$operation(@$args) if $node and $node->can($operation);
       if ( $node and $node->can($operation) ) {
         my @result = $node->$operation(@$args);
-        #warn "*** result is @result\n";
+        warn "*** result is @result\n";
+        if ( $operation eq 'open_write' ) {
+          my $fh = $result[0];
+          warn "*** Keeping handle $fh node $node for reference for open_write\n";
+          $self->writehandle->{$fh} = $node;
+        }
         return @result;
       }
     } else {
-      #warn "*** fsop $operation $fullpath @$args not implemented\n";
+      warn "*** fsop $operation $fullpath @$args not implemented\n";
     }
   } else {
-    #warn "*** fsop $operation $fullpath @$args does not exist\n";
+    warn "*** fsop $operation $fullpath @$args does not exist\n";
   }
   return ();
 }
+
+
 
 =head2 File operations
 
@@ -217,12 +222,26 @@ sub list         { shift->opnode('list',         shift, [     ]) }
 sub list_details { shift->opnode('list_details', shift, [     ]) }
 sub stat         { shift->opnode('stat',         shift, [     ]) }
 sub test         { shift->opnode('test',         pop  , [shift]) }
-sub open_read    { my @r = shift->opnode('open_read',    shift, [ @_  ]); return $r[0]; }
-#sub close_read   { shift->opnode('close_read',   shift, [     ]) }
+sub open_read    { my @r=shift->opnode('open_read', shift,[@_]); return $r[0] }
+sub open_write   { my @r=shift->opnode('open_write',shift,[@_]); return $r[0] }
 sub close_read   { shift; my $fh = shift; close $fh; }
-sub open_write   { shift->opnode('open_write',   shift, [shift]) }
+#sub close_write  { shift; my $fh = shift; warn "*** Closing write handler $fh\n"; close $fh; }
+#sub close_read   { shift->opnode('close_read',   shift, [     ]) }
 #sub close_write  { shift->opnode('close_write',  shift, [     ]) }
-sub close_write  { close shift }
+#sub close_write  { close shift }
+
+sub close_write {
+  my $self = shift;
+  my $fh = shift;
+
+  # Find object the file belongs to
+  my $node = $self->writehandle->{$fh};
+  delete $self->writehandle->{$fh};
+  warn "*** Closing handle $fh node $node\n";
+  # Call close_write on it
+  $node->close_write($fh);
+}
+
 
 
 =head1 AUTHOR

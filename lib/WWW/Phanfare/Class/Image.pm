@@ -96,7 +96,7 @@ method setvalue ( Str $content ) {
   if ( $self->parent->nodename eq 'Caption' ) {
   } else {
   }
-  warn sprintf "*** Wrote %s bytes to value%s\n", length $content;
+  warn sprintf "*** Wrote %s bytes to value\n", length $content;
 }
 
 with 'WWW::Phanfare::Class::Role::Leaf';

@@ -119,9 +119,9 @@ sub open_read {
   #  }
   #}
   #$content .= "\n";
-  #warn sprintf "*** Content size is %s\n", length $content;
+  warn sprintf "*** Content size is %s\n", length $content;
   open( my $fh, '<', \$content );
-  #warn "*** create file handler $fh\n";
+  warn "*** create read file handler $fh\n";
   return $fh;
 }
 

@@ -9,6 +9,8 @@ requires 'getnode';
 #has 'uid' => ( is=>'ro', isa=>'Int', required=>1 );
 #has 'gid' => ( is=>'ro', isa=>'Int', required=>1 );
 
+has writehandle => ( is=>'ro', isa=>'HashRef', default=>sub{{}} );
+
 sub mode {
   my $self = shift;
   return $self->can('create') ? 042755 : 042555 ;
@@ -133,12 +135,39 @@ sub open_write {
 
   # XXX: TODO
   warn sprintf "*** Create in dir %s file %s\n", $self->nodename, $filename;
-  if ( $self->can('create') ) {
-    return $self->create($filename);
-    #return 1;
-  } else {
-    return undef;
-  }
+  #if ( $self->can('create') ) {
+  #  return $self->create($filename);
+  #  #return 1;
+  #} else {
+  #  return undef;
+  #}
+  my $content = '';
+  my $contentref = \$content;
+  open(my $fh, '>', $contentref);
+  $self->writehandle->{$fh} = { contentref=>$contentref, filename=>$filename };
+  warn "*** Open write file handle $fh using store $contentref\n";
+  return $fh;
+}
+
+sub close_write {
+  my $self = shift;
+  my $fh = shift;
+
+  my $contentref = $self->writehandle->{$fh}{contentref};
+  my $filename   = $self->writehandle->{$fh}{filename};
+  warn "*** Close write file handle $fh using store $contentref filename $filename\n";
+  close $fh;
+  my $content = $$contentref;
+  warn sprintf "*** Content size is %s bytes", length $content;
+  use Data::Dumper;
+  warn "*** Writehandle: " . Dumper $fh;
+  warn "*** Writehandle: " . Dumper $self->writehandle->{$fh};
+  delete $self->writehandle->{$fh};
+
+  my $image = $self->create( $filename, $content );
+  use Data::Dumper;
+  warn "*** Image create result is: " . Dumper $image;
+  #$image->setvalue( $content );
 }
 
 with 'Filesys::Virtual::Phanfare::Role::Node';

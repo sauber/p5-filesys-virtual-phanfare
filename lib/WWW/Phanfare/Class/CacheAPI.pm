@@ -22,7 +22,7 @@ our $CACHE = Cache::Memory->new(
 sub geturl {
   my($self,$url,$post) = @_;
 
-  my $cachestring = join ',', 'geturl', $url, $post;
+  my $cachestring = join ',', 'geturl', grep $_, $url, $post;
   my $result = $CACHE->get( $cachestring );
   unless ( $result ) {
     #warn "*** Caching $cachestring\n";

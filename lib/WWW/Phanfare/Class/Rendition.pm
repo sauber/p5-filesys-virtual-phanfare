@@ -40,20 +40,26 @@ method imagelist { $self->subnodelist }
 method image ( Str $imagename ) { $self->getnode( $imagename ) }
 
 # Write a new image
-method create ( Str $nodename ) {
+method create ( Str $nodename, Str $content ) {
   # Only upload if inside Full dir. Set caption text if in Caption dir.
   return undef
     unless $self->nodename eq 'Full' or $self->nodename eq 'Caption';
 
-  #$self->api->NewImage(
-  #   target_uid => $self->uid,
-  #   album_id => $self->parent->parent->album_id,
-  #   section_id => $self->parent->section_id,
-  #   filename => $nodename,
-  #);
+  $self->api->NewImage(
+     target_uid => $self->uid,
+     album_id => $self->parent->parent->album_id,
+     section_id => $self->parent->section_id,
+     filename => $nodename,
+     content => $content,
+  );
   
+  #open(my $fh, '>', \'');
+  #warn "*** Create write file handler $fh\n";
+  #return $fh;
+
   # XXX: For now we just provide an empty string to write to;
-  return '';
+  #my $content = '';
+  #return $content;
 }
 
 with 'WWW::Phanfare::Class::Role::Branch';
