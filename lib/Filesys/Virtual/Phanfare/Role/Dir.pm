@@ -132,9 +132,11 @@ sub rmdir {
 sub open_write {
   my $self = shift;
   my $filename = shift;
+  my $append = shift;
 
   # XXX: TODO
   warn sprintf "*** Create in dir %s file %s\n", $self->nodename, $filename;
+  warn "***    Append\n", if $append;
   #if ( $self->can('create') ) {
   #  return $self->create($filename);
   #  #return 1;
