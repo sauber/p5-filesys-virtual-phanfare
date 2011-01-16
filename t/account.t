@@ -49,6 +49,6 @@ my($sitename) = grep ! $accountproperties{$_}, keys %dir;
 ok( $sitename, 'There is a site' );
 my @sitestat = $fs->stat( $sitename );
 ok( scalar @sitestat == 13, "stat $sitename has 13 values" );
-ok( $sitestat[2] eq 042555, "$sitename is dir" );
+ok( $sitestat[2] eq 042755, "$sitename is dir" );
 
 done_testing();

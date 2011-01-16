@@ -80,6 +80,12 @@ sub DESTROY {}
 
 =head1 NAME
 
+=head1 SUBROUTINES/METHODS
+
+=head2 geturl
+
+Cache results of direct url fetch method.
+
 =cut
 
 1;

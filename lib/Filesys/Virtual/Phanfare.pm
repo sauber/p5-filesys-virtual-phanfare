@@ -156,18 +156,18 @@ method opnode ( Str $operation, Str $path, ArrayRef $args ) {
   #warn "*** fsop $operation $fullpath @$args\n";
   if ( $node ) {
     if ( $node->can($operation) ) {
-      warn "*** fsop $operation $fullpath @$args\n";
+      #warn "*** fsop $operation $fullpath @$args\n";
       #return $node->$operation(@$args) if $node and $node->can($operation);
       if ( $node and $node->can($operation) ) {
         my @result = $node->$operation(@$args);
-        warn "*** result is @result\n";
+        #warn "*** result is @result\n";
         return @result;
       }
     } else {
-      warn "*** fsop $operation $fullpath @$args not implemented\n";
+      #warn "*** fsop $operation $fullpath @$args not implemented\n";
     }
   } else {
-    warn "*** fsop $operation $fullpath @$args does not exist\n";
+    #warn "*** fsop $operation $fullpath @$args does not exist\n";
   }
   return ();
 }
@@ -282,46 +282,6 @@ by the Free Software Foundation; or the Artistic License.
 See http://dev.perl.org/licenses/ for more information.
 
 =cut
-
-package Filesys::Virtual::Phanfare::Node::Account;
-use Moose;
-extends 'WWW::Phanfare::Class::Account';
-with 'Filesys::Virtual::Phanfare::Role::Dir';
-sub subnodetype { 'Filesys::Virtual::Phanfare::Node::Site' }
-
-package Filesys::Virtual::Phanfare::Node::Site;
-use Moose;
-extends 'WWW::Phanfare::Class::Site';
-with 'Filesys::Virtual::Phanfare::Role::Dir';
-sub subnodetype { 'Filesys::Virtual::Phanfare::Node::Album' }
-
-package Filesys::Virtual::Phanfare::Node::Album;
-use Moose;
-extends 'WWW::Phanfare::Class::Album';
-with 'Filesys::Virtual::Phanfare::Role::Dir';
-sub subnodetype { 'Filesys::Virtual::Phanfare::Node::Section' }
-
-package Filesys::Virtual::Phanfare::Node::Section;
-use Moose;
-extends 'WWW::Phanfare::Class::Section';
-with 'Filesys::Virtual::Phanfare::Role::Dir';
-sub subnodetype { 'Filesys::Virtual::Phanfare::Node::Rendition' }
-
-package Filesys::Virtual::Phanfare::Node::Rendition;
-use Moose;
-extends 'WWW::Phanfare::Class::Rendition';
-with 'Filesys::Virtual::Phanfare::Role::Dir';
-sub subnodetype { 'Filesys::Virtual::Phanfare::Node::Image' }
-
-package Filesys::Virtual::Phanfare::Node::Image;
-use Moose;
-extends 'WWW::Phanfare::Class::Image';
-with 'Filesys::Virtual::Phanfare::Role::File';
-
-package Filesys::Virtual::Phanfare::Node::Attribute;
-use Moose;
-extends 'WWW::Phanfare::Class::Attribute';
-with 'Filesys::Virtual::Phanfare::Role::File';
 
 1; # End of Filesys::Virtual::Phanfare
 
