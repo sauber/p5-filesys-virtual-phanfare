@@ -56,6 +56,7 @@ method mtime {
     #$epoch = phanfaretime $self->parent->parent->parent->attribute('album_last_modified')->value;
     $epoch = phanfaretime $self->imageinfo->{image_date};
   }
+  $epoch ||= time;
   #warn "*** mtime for $self is $epoch\n";
   return $epoch;
 }
@@ -76,6 +77,7 @@ method ctime {
   } elsif ( $self->isa($class . 'Image') ) {
     $epoch = phanfaretime $self->renditioninfo->{created_date};
   }
+  $epoch ||= time;
   #warn "*** ctime for $self is $epoch\n";
   return $epoch;
 }

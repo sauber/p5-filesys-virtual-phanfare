@@ -47,10 +47,11 @@ sub AUTOLOAD {
   my $result = $CACHE->thaw( $cachestring );
   unless ( $result ) {
     #warn "*** Caching $cachestring\n";
+    warn "*** CacheAPI caching for $method\n";
     my $super = "SUPER::$method";
     $result = $self->$super( @_ );
     #warn "*** result is " . Dumper $result;
-    $CACHE->freeze( $cachestring, $result );
+    $CACHE->freeze( $cachestring, $result ) unless $method eq 'NewImage';
 
     # Delete cached parent results when creating/deleting objects
     # *** Caching NewAlbum,target_uid,9497612,album_name,Test2,album_start_date,1999-01-01T00:00:00,album_end_date,1999-12-31T23:59:59
@@ -71,6 +72,7 @@ sub AUTOLOAD {
     }
   } else {
     #warn "*** Reusing $cachestring\n";
+    warn "*** CacheAPI reusing cache for $method\n";
   }
   return $result;
 }

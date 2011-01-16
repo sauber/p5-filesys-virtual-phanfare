@@ -242,7 +242,12 @@ sub close_write {
   $node->close_write($fh);
 }
 
+sub seek {
+  my ($self, $fh, $first, $second) = @_;
 
+  warn "*** op seek $fh, $first. $second\n";
+  return $fh->seek($first, $second);
+}
 
 =head1 AUTHOR
 

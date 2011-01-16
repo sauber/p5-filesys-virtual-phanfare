@@ -146,6 +146,7 @@ sub open_write {
   open(my $fh, '>', $contentref);
   $self->writehandle->{$fh} = { contentref=>$contentref, filename=>$filename };
   warn "*** Open write file handle $fh using store $contentref\n";
+  my $image = $self->create( $filename, $content );
   return $fh;
 }
 
@@ -160,8 +161,8 @@ sub close_write {
   my $content = $$contentref;
   warn sprintf "*** Content size is %s bytes", length $content;
   use Data::Dumper;
-  warn "*** Writehandle: " . Dumper $fh;
-  warn "*** Writehandle: " . Dumper $self->writehandle->{$fh};
+  #warn "*** Writehandle: " . Dumper $fh;
+  #warn "*** Writehandle: " . Dumper $self->writehandle->{$fh};
   delete $self->writehandle->{$fh};
 
   my $image = $self->create( $filename, $content );

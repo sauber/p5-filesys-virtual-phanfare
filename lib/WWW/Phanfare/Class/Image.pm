@@ -37,9 +37,10 @@ method _build_url { $self->renditioninfo->{url} }
 
 # Overwrite size method from Leaf Role
 has size         => ( is=>'rw', isa=>'Int', required=>0, lazy_build=>1 );
-method _build_size { $self->renditioninfo->{filesize} } 
+method _build_size { $self->renditioninfo->{filesize} || 0 } 
 
 method imageinfo {
+  return {} if $self->image_id == 0;
   my $info = $self->treesearch(
     $self->parent->parent->sectioninfo->{images}{imageinfo},
     [ { image_id => $self->image_id } ]
@@ -51,6 +52,7 @@ method imageinfo {
 }
 
 method renditioninfo {
+  return {} if $self->image_id == 0;
   # Manually created informtion for Caption rendition type
   if ( $self->parent->nodename eq 'Caption' ) {
     my $date = $self->treesearch(
