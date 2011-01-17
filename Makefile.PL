@@ -10,6 +10,7 @@ test_requires 'Test::Pod::Coverage';
 test_requires 'Pod::Coverage::Moose';
 test_requires 'Fuse::Filesys::Virtual';
 test_requires 'Fuse';
+test_requires 'YAML::Syck';
 
 requires 'WWW::Phanfare::API' => 0.07;
 requires 'Filesys::Virtual::Plain';
