@@ -12,6 +12,7 @@ my $rcfile = File::HomeDir->my_home . "/.phanfarerc";
 my %config = Config::General->new( $rcfile )->getall;
 
 my $fs   = Filesys::Virtual::Phanfare->new( %config );
+$fs->list('/') or die "Not connected to Phanfare\n";
 my $fuse = Fuse::Filesys::Virtual->new($fs, { debug => 1});
 
 $fuse->main(

@@ -25,13 +25,14 @@ has 'phanfare' => (
 sub _build_phanfare {
   my $self = shift;
 
-  return WWW::Phanfare::Class->new(
+  my $ph = WWW::Phanfare::Class->new(
     api_key       => $self->api_key,
     private_key   => $self->private_key,
     email_address => $self->email_address,
     password      => $self->password,
   );
   # XXX: clear password
+  return $ph;
 }
 
 has 'nodecache'   => ( isa=>'HashRef', is=>'rw', default=>sub{{}} );
