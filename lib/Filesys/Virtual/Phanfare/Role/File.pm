@@ -7,6 +7,13 @@ our $BLOCKSIZE = 1024;
 #has 'uid' => ( is=>'ro', isa=>'Int', required=>1 );
 #has 'gid' => ( is=>'ro', isa=>'Int', required=>1 );
 
+# Writing file
+has 'writehandler'  => ( isa=>'Ref',  is=>'rw' );
+has 'writebuffer'   => ( isa=>'Str',  is=>'ro', default=>'' );
+has 'writesize'     => ( isa=>'Int',  is=>'rw', default=>0  );
+has 'writeuploaded' => ( isa=>'Bool', is=>'rw', default=>0  );
+has 'writetime'     => ( isa=>'Int',  is=>'rw', default=>sub{time} );
+
 sub _size {
   my $self = shift;
   if ( $self->can('size') ) {
@@ -103,25 +110,10 @@ sub test {
 sub open_read {
   my $self = shift;
 
-  #my $class = 'WWW::Phanfare::Class::';
   my $content = $self->value;
-  #if ( $self->isa($class . "Attribute" ) ) {
-  #  $content = $self->value;
-  #} elsif ( $self->isa($class . "Image" ) ) {
-  #  if ( $self->parent->nodename eq 'Caption' ) {
-  #    $content = $self->caption;
-  #  } else {
-  #    # XXX: This belongs in WWW::Phanfare::Class::Image
-  #    #warn sprintf "*** Fetching %s\n", $self->url;
-  #    $content = $self->api->geturl( $self->url );
-  #    #warn sprintf "*** Fetched image size is %s\n", length $content;
-  #    $self->size( length $content );
-  #  }
-  #}
-  #$content .= "\n";
-  warn sprintf "*** Content size is %s\n", length $content;
+  #warn sprintf "*** Content size is %s\n", length $content;
   open( my $fh, '<', \$content );
-  warn "*** create read file handler $fh\n";
+  #warn "*** create read file handler $fh\n";
   return $fh;
 }
 
@@ -144,6 +136,49 @@ sub open_read {
 #  warn "*** create write file handler $fh\n";
 #  return $fh;
 #}
+
+# Has: writebuffer, lastwritesize, lastwritetime
+
+sub open_write {
+  my $self = shift;
+
+  my $content = $self->writebuffer;
+  open( my $fh, '>', \$content );
+  $self->writehandler( $fh );
+  return $fh;
+}
+
+sub close_write {
+  my $self = shift;
+
+  close $self->writehandler;
+  # Check how much buffer grew
+  my $newsize = length($self->writebuffer);
+  my $grewby = $newsize - $self->writesize;
+  $self->writesize( $newsize );
+  # If grew by 2^N then wait, else upload.
+  # Mark if upload is successful
+  if ( $grewby == 0 or _isblock($grewby) ) {
+    warn "*** close_write grewby $grewby, so keep\n";
+  } else {
+    warn "*** close_write grewby $grewby, so upload\n";
+  }
+  return $self;
+}
+
+# Test if a length is a block size
+#
+sub _isblock {
+  my $length = shift;
+
+  my $blk = 512;
+  while ( $blk <= $length ) {
+    return 1 if $blk == $length;
+    $blk *= 2;
+  }
+  return undef;
+}
+
 
 with 'Filesys::Virtual::Phanfare::Role::Node';
 
