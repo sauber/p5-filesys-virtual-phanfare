@@ -129,7 +129,7 @@ sub rmdir {
 
 # Create a file object for writing to
 #
-sub open_write {
+sub _old_open_write {
   my $self = shift;
   my $filename = shift;
   my $append = shift;
@@ -152,7 +152,7 @@ sub open_write {
   return $fh;
 }
 
-sub close_write {
+sub _old_close_write {
   my $self = shift;
   my $fh = shift;
 

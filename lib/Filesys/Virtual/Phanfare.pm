@@ -144,7 +144,8 @@ method opnode ( Str $operation, Str $path, ArrayRef $args ) {
   #}
   my $fullpath  = $self->_path_from_root( $path );
 
-  if ( $operation eq 'mkdir' or $operation eq 'rmdir' or $operation eq 'open_write' ) {
+  #if ( $operation eq 'mkdir' or $operation eq 'rmdir' or $operation eq 'open_write' ) {
+  if ( $operation eq 'mkdir' or $operation eq 'rmdir' ) {
     my $subpath;
     $fullpath =~ s/^(.*)[\/\\](.+?)$/$1/ and $subpath = $2;
     unshift @$args, $subpath;
@@ -155,11 +156,11 @@ method opnode ( Str $operation, Str $path, ArrayRef $args ) {
   #warn "*** fsop $operation $fullpath @$args\n";
   if ( $node ) {
     if ( $node->can($operation) ) {
-      warn "*** fsop $operation $fullpath @$args\n";
+      #warn "*** fsop $operation $fullpath @$args\n";
       #return $node->$operation(@$args) if $node and $node->can($operation);
       if ( $node and $node->can($operation) ) {
         my @result = $node->$operation(@$args);
-        warn "*** result is @result\n";
+        #warn "*** result is @result\n";
         if ( $operation eq 'open_write' ) {
           my $fh = $result[0];
           warn "*** Keeping handle $fh node $node for reference for open_write\n";
@@ -209,6 +210,8 @@ Implemented functions, partially, or not at all
 =item open_write
 
 =item close_write
+
+=item seek
 
 =back
 
