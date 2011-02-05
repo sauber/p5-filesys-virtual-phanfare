@@ -76,9 +76,10 @@ for my $file ( @testfiles ) {
   ok( $node->mtime > 0, "$file mtime" );
   ok( $node->ctime > 0, "$file ctime" );
 
-  ok( my $fh = $node->open_read, "$file open_read" );
-  ok( <$fh>, "$file read" );
-  ok( $fs->close_read( $fh ), "$file close_read" );
+  # Cannot read files from FakeAgent
+  #ok( my $fh = $node->open_read, "$file open_read" );
+  #ok( <$fh>, "$file read" );
+  #ok( $fs->close_read( $fh ), "$file close_read" );
 
   ok ( my $parent = $node->parent, "parent for $file" );
   ok ( $parent->uid, "uid for parent of $file" );
@@ -94,6 +95,5 @@ ok( $ye == $yearnode->ctime, "ctime matches year" );
 
 # Caption
 ok( $captionname =~ /\.txt$/, "$captionname ends with txt" );
-
 
 done_testing();
