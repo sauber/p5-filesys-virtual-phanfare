@@ -39,6 +39,10 @@ method getnode ( Str $nodename ) {
   return $self->attribute($nodename)
     if $self->can('attributelist')
     and grep /^$nodename$/, $self->attributelist;
+
+  # Can a new node be created?
+  return $self->buildnode($nodename)
+    if $self->can('create');
 }
 
 # Get list of subnodes and attributes for this node

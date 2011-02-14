@@ -4,6 +4,7 @@
 
 use Test::More;
 use Date::Parse;
+use Data::Dumper;
 
 use_ok( 'Filesys::Virtual::Phanfare' );
 use lib 't';
@@ -19,12 +20,15 @@ my $fs   = new_ok( 'Filesys::Virtual::Phanfare' => [
 $fs->phanfare->api( FakeAgent->new() );
 
 # Determine name of dirs and files to test
-my($sitename) = grep { $fs->test('d', "/$_") } $fs->list('/');
-my($yearname) = grep { $fs->test('d', "/$sitename/$_") }
+my($sitename) = grep { 1 == $fs->test('d', "/$_") } $fs->list('/');
+#diag "sitename is $sitename\n";
+#diag "sites: " . Dumper grep { $fs->test('d', "/$_") } $fs->list('/');
+#diag "/pro d test: " .  Dumper [ grep { $fs->test('d', "/pro") } $fs->list('/') ];
+my($yearname) = grep { 1 == $fs->test('d', "/$sitename/$_") }
                  $fs->list("/$sitename");
-my($albumname) = grep { $fs->test('d', "/$sitename/$yearname/$_") }
+my($albumname) = grep { 1 == $fs->test('d', "/$sitename/$yearname/$_") }
                  $fs->list("/$sitename/$yearname");
-my($sectionname) = grep { $fs->test('d', "/$sitename/$yearname/$albumname/$_") }
+my($sectionname) = grep { 1 == $fs->test('d', "/$sitename/$yearname/$albumname/$_") }
                    $fs->list("/$sitename/$yearname/$albumname");
 my($renditionname) = 'Web';
 my($imagename) = 

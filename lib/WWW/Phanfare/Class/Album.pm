@@ -3,8 +3,13 @@ use Moose;
 use MooseX::Method::Signatures;
 use WWW::Phanfare::Class::Section;
 
-has album_id => ( is=>'ro', isa=>'Int', required=>1 );
-#has album_name => ( is=>'ro', isa=>'Str', required=>1 );
+has album_id => ( is=>'ro', isa=>'Int', lazy_build=>1 );
+
+# Find out id of this album
+#
+method _build_album_id {
+  $self->parent->albumid($self->nodename);
+}
 
 method buildattributes {
   $self->setattributes( $self->albuminfo ) ;
@@ -18,12 +23,12 @@ method albuminfo {
 }
 
 method section_nameids {
-  $self->_idnamepair( $self->albuminfo->{sections}{section}, 'section' );
+  $self->idnamepair( $self->albuminfo->{sections}{section}, 'section' );
 }
 
 method buildnode ( $nodename ) {
   my %node = $self->section_nameids;
-  my($id,$name) = $self->_idnamematch( \%node, $nodename );
+  my($id,$name) = $self->idnamematch( \%node, $nodename );
   my $type = $self->subnodetype;
   $type->new(
     parent       => $self,
@@ -34,23 +39,35 @@ method buildnode ( $nodename ) {
 }
 
 method subnodetype { 'WWW::Phanfare::Class::Section' }
-method subnodelist { $self->_idnamestrings({ $self->section_nameids }) }
+method subnodelist { $self->idnamestrings({ $self->section_nameids }) }
 
 method sectionlist { $self->subnodelist }
 method section ( Str $sectionname ) { $self->getnode( $sectionname ) }
 
 # Create a section of album
-method create ( Str $nodename ) {
-  $self->api->NewSection(
+#method create ( Str $nodename ) {
+#  $self->api->NewSection(
+#     target_uid => $self->uid,
+#     album_id => $self->album_id,
+#     section_name => $nodename,
+#  )
+#}
+
+# Create this as new node on Phanfare
+method write { 
+  my $year = $self->parent->nodename;
+  $self->api->NewAlbum(
      target_uid => $self->uid,
-     album_id => $self->album_id,
-     section_name => $nodename,
-  )
+     album_name => $self->nodename,
+     album_start_date => sprintf("%04s-01-01T00:00:00", $year),
+     album_end_date   => sprintf("%04s-12-31T23:59:59", $year),
+  );
+  warn sprintf "*** Created new album %s on Phanfare\n", $self->nodename;
 }
 
 method delete ( Str $nodename ) {
   my %node = $self->section_nameids;
-  my($id,$name) = $self->_idnamematch( \%node, $nodename );
+  my($id,$name) = $self->idnamematch( \%node, $nodename );
   $self->api->DeleteSection(
      target_uid => $self->uid,
      album_id => $self->album_id,

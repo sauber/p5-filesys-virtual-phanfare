@@ -2,10 +2,19 @@ package WWW::Phanfare::Class::Image;
 use Moose;
 use MooseX::Method::Signatures;
 
-has image_id     => ( is=>'ro', isa=>'Int', required=>1 );
+#has image_id     => ( is=>'ro', isa=>'Int', required=>1 );
+has image_id     => ( is=>'ro', isa=>'Int', lazy_build=>1 );
+method _build_image_id {
+  # Image data is stored in section's sectioninfo
+  my $info = $self->treesearch(
+    $self->parent->parent->sectioninfo->{images}{imageinfo},
+    [ { filename => $self->nodename } ]
+  );
+  $info->{image_id};
+}
 
-has nodename     => ( is=>'ro', isa=>'Str', required=>0, lazy_build=>1 );
-method _build_nodename { $self->filename }
+#has nodename     => ( is=>'ro', isa=>'Str', required=>0, lazy_build=>1 );
+#method _build_nodename { $self->filename }
 #method nodename { $self->filename }
 
 has filename     => ( is=>'ro', isa=>'Str', required=>0, lazy_build=>1 );
@@ -41,6 +50,7 @@ method _build_size { $self->renditioninfo->{filesize} || 0 }
 
 method imageinfo {
   return {} if $self->image_id == 0;
+  # Image data is stored in section's sectioninfo
   my $info = $self->treesearch(
     $self->parent->parent->sectioninfo->{images}{imageinfo},
     [ { image_id => $self->image_id } ]

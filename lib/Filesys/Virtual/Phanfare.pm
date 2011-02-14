@@ -96,8 +96,10 @@ method rebless ( Ref $object ) {
   if ( $object =~ /Account/ ) {
     apply_all_roles($object, 'Filesys::Virtual::Phanfare::Role::Top');
   } elsif ( does_role($object, 'WWW::Phanfare::Class::Role::Branch') ) {
+    #warn "*** Applying Dir to $object\n";
     apply_all_roles($object, 'Filesys::Virtual::Phanfare::Role::Dir');
   } else {
+    #warn "*** Applying File to $object\n";
     apply_all_roles($object, 'Filesys::Virtual::Phanfare::Role::File');
   }
 }
@@ -111,6 +113,7 @@ method createpath ( Str $path ) {
 
   if ( $self->nodecache->{$path} ) {
     # XXX: Refresh content
+     #warn "*** Node $path already exists. Refresh content?\n";
   } else {
     # Create new node
     my $node;
@@ -124,9 +127,19 @@ method createpath ( Str $path ) {
       my $parentpath = join '/', @part[0..$#part-1];
       $parentpath ||= '/';
       my $parent = $self->createpath( $parentpath );
-      return unless $parent;
+      #return unless $parent;
+      unless ( $parent ) {
+        #warn "*** Could not create parent $parentpath of child $path\n";
+        return;
+      }
       $node = $parent->getnode( $part[-1] );
-      return unless $node;
+      #return unless $node;
+      unless ( $node ) {
+        #warn "*** Could not create node $part[-1] of parent $parentpath\n";
+        return;
+      }
+      #x "Created node $part[-1] of parent $parentpath : ", $node;
+      #warn "*** Created node $part[-1] of parent $parentpath\n";
       $self->rebless($node);
     }
     $self->nodecache->{$path} = $node;
@@ -149,7 +162,15 @@ method opnode ( Str $operation, Str $path, ArrayRef $args ) {
     my $subpath;
     $fullpath =~ s/^(.*)[\/\\](.+?)$/$1/ and $subpath = $2;
     unshift @$args, $subpath;
+  } elsif ( $operation eq 'open_write' ) {
+    # We need to create the file node to write to
+    my $subpath;
+    my $parentpath = $fullpath;
+    $parentpath =~ s/^(.*)[\/\\](.+?)$/$1/ and $subpath = $2;
+    my $parent = $self->createpath( $parentpath );
+    $parent->subnodemake( $subpath );
   }
+
   my $node = $self->createpath( $fullpath );
   #warn "***   found $node...\n";
   # Perform the operation if node exists and has the capability
@@ -159,6 +180,7 @@ method opnode ( Str $operation, Str $path, ArrayRef $args ) {
       #warn "*** fsop $operation $fullpath @$args\n";
       #return $node->$operation(@$args) if $node and $node->can($operation);
       if ( $node and $node->can($operation) ) {
+        #warn "*** fsop $operation $fullpath @$args\n";
         my @result = $node->$operation(@$args);
         #warn "*** result is @result\n";
         if ( $operation eq 'open_write' ) {
@@ -172,7 +194,8 @@ method opnode ( Str $operation, Str $path, ArrayRef $args ) {
       warn "*** fsop $operation $fullpath @$args not implemented\n";
     }
   } else {
-    warn "*** fsop $operation $fullpath @$args does not exist\n";
+    #warn "*** args @$args\n";
+    warn "*** fsop $operation $fullpath @$args node does not exist\n";
   }
   return ();
 }
@@ -217,14 +240,14 @@ Implemented functions, partially, or not at all
 
 =cut
 
-sub modtime      { shift->opnode('modtime',      shift, [     ]) }
-sub size         { shift->opnode('size',         shift, [     ]) }
-sub delete       { shift->opnode('delete',       shift, [     ]) }
-sub mkdir        { shift->opnode('mkdir',        shift, [shift]) }
-sub rmdir        { shift->opnode('rmdir',        shift, [     ]) }
-sub list         { shift->opnode('list',         shift, [     ]) }
-sub list_details { shift->opnode('list_details', shift, [     ]) }
-sub stat         { shift->opnode('stat',         shift, [     ]) }
+sub modtime      { shift->opnode('modtime',      shift, [  ]) }
+sub size         { shift->opnode('size',         shift, [  ]) }
+sub delete       { shift->opnode('delete',       shift, [  ]) }
+sub mkdir        { shift->opnode('mkdir',        shift, [@_]) }
+sub rmdir        { shift->opnode('rmdir',        shift, [  ]) }
+sub list         { shift->opnode('list',         shift, [  ]) }
+sub list_details { shift->opnode('list_details', shift, [  ]) }
+sub stat         { shift->opnode('stat',         shift, [  ]) }
 sub test         { shift->opnode('test',         pop  , [shift]) }
 sub open_read    { my @r=shift->opnode('open_read', shift,[@_]); return $r[0] }
 sub open_write   { my @r=shift->opnode('open_write',shift,[@_]); return $r[0] }

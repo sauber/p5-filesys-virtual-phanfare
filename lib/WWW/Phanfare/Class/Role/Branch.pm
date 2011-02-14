@@ -5,18 +5,33 @@ use MooseX::Method::Signatures;
 requires 'subnodetype';
 requires 'subnodelist';
 
+# List of new subnodes created locally and not yet uploaded
+has extranode => ( isa=>'HashRef[Int]', is=>'rw', default=>sub {{}} );
+
 # Create a named subnode
 #
 method buildnode ( Str $nodename ) {
   my $type = $self->subnodetype;
-  $type->new( parent => $self, nodename=>$nodename );
+  my $node = $type->new( parent => $self, nodename=>$nodename );
+
+  # Add to list of temporary nodes, if it does not exist yet
+  unless ( grep $nodename, $self->subnodelist, keys %{ $self->extranode } ) {
+    warn "*** Creating temp node $nodename in $self->nodename\n";
+    $self->extranode->{$nodename} = $node;
+  }
+
+  return $node;
+}
+
+method subnodemake ( Str $nodename, HashRef $args? ) {
+   $self->subnodetype->new( nodename => $nodename, parent=>$self, %$args );
 }
 
 #method getnode ( Str $nodename ) { $self->buildnode( $nodename ) }
 
 # Extract id=>name pairs from a data structure
 #
-method _idnamepair ( Ref $data, Str $label, HashRef $filter? ) {
+method idnamepair ( Ref $data, Str $label, HashRef $filter? ) {
   # If data only has one element we get a hashref. Convert it to array.
   $data = [ $data ] unless 'ARRAY' eq ref $data; 
   my($key,$value) = each %$filter if $filter;
@@ -36,7 +51,7 @@ method _idnamepair ( Ref $data, Str $label, HashRef $filter? ) {
 # Get list of names from hashref.
 # If multiple ID's have same name, then append ID
 #
-method _idnamestrings ( HashRef $data ) {
+method idnamestrings ( HashRef $data ) {
   my %names;
   while ( my($id,$name) = each %$data ) {
     push @{ $names{$name} }, $id;
@@ -58,7 +73,7 @@ method _idnamestrings ( HashRef $data ) {
 
 # Given a nodename, find the id and name that matches
 #
-method _idnamematch ( HashRef $data, Str $nodename ) {
+method idnamematch ( HashRef $data, Str $nodename ) {
   while ( my($id,$name) = each %$data ) {
     if (
       "$name.$id" eq $nodename or $name eq $nodename or "$id" eq "$nodename"

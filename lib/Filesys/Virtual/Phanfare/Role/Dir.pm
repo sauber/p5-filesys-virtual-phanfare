@@ -40,7 +40,19 @@ sub stat {
 
 sub list {
   my $self = shift;
-  return $self->nodelist();
+
+  # All subnodes and attributes
+  my %names = map {$_=>1} $self->nodelist();
+
+  # Extra nodes not yet written
+  for my $extra ( keys %{ $self->extranode } ) {
+     if ( $names{$extra} ) {
+       delete $self->extranode->{$extra};
+     } else {
+       $names{$extra} = 1;
+     }
+  }
+  return keys %names;
 }
 
 #    -r  File is readable by effective uid/gid.
@@ -104,10 +116,11 @@ sub mkdir {
   my $dirname = shift;
 
   #my $class = 'WWW::Phanfare::Class::';
-  #warn sprintf "*** Create in dir %s subdir %s\n", $self->nodename, $dirname;
-  if ( $self->can('create') ) {
-    $self->create($dirname);
-    return 1;
+  warn sprintf "*** Create in dir %s subdir %s\n", $self->nodename, $dirname;
+  if ( $self->can('subnodemake') ) {
+    my $node = $self->subnodemake($dirname);
+    $node->write;
+    #return 1;
   } else {
     return undef;
   }

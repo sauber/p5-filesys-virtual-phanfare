@@ -38,6 +38,16 @@ method buildattributes {
     
 }
 
+# Create this as new node on Phanfare
+method write {  
+  $self->api->NewSection(
+    target_uid   => $self->uid,
+    album_id     => $self->parent->album_id,
+    section_name => $self->nodename,
+  );
+  warn "*** Created new section $self->nodename on Phanfare\n";
+}
+
 with 'WWW::Phanfare::Class::Role::Branch';
 with 'WWW::Phanfare::Class::Role::Attributes';
 
