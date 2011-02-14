@@ -248,9 +248,9 @@ sub rmdir        { shift->opnode('rmdir',        shift, [  ]) }
 sub list         { shift->opnode('list',         shift, [  ]) }
 sub list_details { shift->opnode('list_details', shift, [  ]) }
 sub stat         { shift->opnode('stat',         shift, [  ]) }
-sub test         { shift->opnode('test',         pop  , [shift]) }
-sub open_read    { my @r=shift->opnode('open_read', shift,[@_]); return $r[0] }
-sub open_write   { my @r=shift->opnode('open_write',shift,[@_]); return $r[0] }
+sub test         { (shift->opnode('test',        pop  , [@_]))[0] }
+sub open_read    { (shift->opnode('open_read',   shift, [@_]))[0] }
+sub open_write   { (shift->opnode('open_write',  shift, [@_]))[0] }
 sub close_read   { shift; my $fh = shift; close $fh; }
 #sub close_write  { shift; my $fh = shift; warn "*** Closing write handler $fh\n"; close $fh; }
 #sub close_read   { shift->opnode('close_read',   shift, [     ]) }
