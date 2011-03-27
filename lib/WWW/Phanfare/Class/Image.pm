@@ -2,6 +2,10 @@ package WWW::Phanfare::Class::Image;
 use Moose;
 use MooseX::Method::Signatures;
 
+# When writing to image value check if the image data is valid.
+# If valid upload immediately.
+# If not valid, then the value might be appended to, so wait.
+
 #has image_id     => ( is=>'ro', isa=>'Int', required=>1 );
 has image_id     => ( is=>'ro', isa=>'Int', lazy_build=>1 );
 method _build_image_id {
