@@ -57,17 +57,17 @@ method write {
   warn sprintf "*** Created new year %s\n", $self->nodename;
 }
 
-method delete ( Str $nodename ) {
-  #my %node = $self->albumid;
-  #my($id,$name) = $self->idnamematch( \%node, $nodename );
-  #$self->api->DeleteAlbum(
-  #   target_uid => $self->uid,
-  #   album_id => $id,
-  #);
-  # If this node is an extra node, then delete it.
-  delete $self->parent->extranode->{$self->nodename} 
-      if $self->parent->extranode->{$self->nodename};
-}
+#method delete ( Str $nodename ) {
+#  #my %node = $self->albumid;
+#  #my($id,$name) = $self->idnamematch( \%node, $nodename );
+#  #$self->api->DeleteAlbum(
+#  #   target_uid => $self->uid,
+#  #   album_id => $id,
+#  #);
+#  # If this node is an extra node, then delete it.
+#  delete $self->parent->extranode->{$self->nodename} 
+#      if $self->parent->extranode->{$self->nodename};
+#}
 
 with 'WWW::Phanfare::Class::Role::Branch';
 
