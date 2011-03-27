@@ -71,8 +71,9 @@ isa_ok( $rendition, 'WWW::Phanfare::Class::Rendition' );
 
 # Verify there are images
 ok( my @imagenames = $class->imagelist($yearname,$albumname,$sectionname,$renditionname), "Class has images" );
+#diag Dumper \@imagenames;
 my $imagename = shift @imagenames;
-#diag "*** image is " . $imagename;
+#diag "*** imagename is " . $imagename;
 ok( my $image = $class->image($yearname,$albumname,$sectionname,$renditionname,$imagename), 'Class has image object' );
 isa_ok( $image, 'WWW::Phanfare::Class::Image' );
 

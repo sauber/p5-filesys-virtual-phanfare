@@ -21,19 +21,31 @@ method subnodelist {
   my $images = $self->parent->sectioninfo->{images}{imageinfo};
   return () unless $images;
   $images = [ $images ] unless 'ARRAY' eq ref $images;
-  return map $self->basename($_->{filename}), @$images;
+  #use Data::Dumper;
+  #warn 'Rendition subnodelist: ', Dumper [ map $_->{filename}, @$images ];
+  my @fullpath = ( map $_->{filename}, @$images );
+  #warn 'Rendition subnodelist fullpath: ', Dumper \@fullpath;
+  #my @filename = ( map $self->basename($_), @fullpath );
+  #warn 'Rendition subnodelist filename: ', Dumper \@filename;
+  #return map $self->basename($_), @fullpath;
+  my @filename;
+  for my $full ( @fullpath ) {
+    push @filename, $self->basename($full);
+  }
+  return @filename;
 }
 
 # Translate a full path filename to basename
 #   Example: C:\Dir1\IMG_1234.JPG => IMG_1234.JPG
 #
-method basename {
-  my $filename = shift;
+method basename ( Str $filename ) {
+  #my $filename = shift;
   my $basename = ( split /[\/\\]/, $filename)[-1]; # Remove dir path
   if ( $self->nodename eq 'Caption' ) {
     # Caption uses .txt extension
     $basename =~ s/(.*)\..+?$/$1\.txt/ or $basename .= '.txt';
   }
+  #warn "Rendition basename $filename -> $basename\n";
   return $basename;
 }
 
