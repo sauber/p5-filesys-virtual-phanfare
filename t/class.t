@@ -91,7 +91,7 @@ ok( scalar @uniqnames == scalar @imagenames, "All image names are unique: @image
 my $newyear = '1999';
 ok( ! grep(/$newyear/, $site->yearlist), "Year $newyear doesn't yet exist" );
 ok( $site->create( $newyear ), "Year $newyear created" );
-diag '*** yearlist:' . Dumper [$site->yearlist];
+#diag '*** yearlist:' . Dumper [$site->yearlist];
 ok( grep(/$newyear/, $site->yearlist), "Year $newyear now exists" );
 ok( $site->delete( $newyear ), "Year $newyear created" );
 ok( ! grep(/$newyear/, $site->yearlist), "Year $newyear no longer exists" );
