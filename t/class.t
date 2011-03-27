@@ -78,6 +78,7 @@ ok( my $image = $class->image($yearname,$albumname,$sectionname,$renditionname,$
 isa_ok( $image, 'WWW::Phanfare::Class::Image' );
 
 # URL of image
+#diag Dumper $image;
 #diag "*** image url is " . $image->url;
 ok( 'http://' eq substr $image->url, 0, 7, "url starts with http" );
 

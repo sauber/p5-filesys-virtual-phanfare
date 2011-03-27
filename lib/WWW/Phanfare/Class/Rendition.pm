@@ -38,16 +38,16 @@ method subnodelist {
 # Translate a full path filename to basename
 #   Example: C:\Dir1\IMG_1234.JPG => IMG_1234.JPG
 #
-method basename ( Str $filename ) {
-  #my $filename = shift;
-  my $basename = ( split /[\/\\]/, $filename)[-1]; # Remove dir path
-  if ( $self->nodename eq 'Caption' ) {
-    # Caption uses .txt extension
-    $basename =~ s/(.*)\..+?$/$1\.txt/ or $basename .= '.txt';
-  }
-  #warn "Rendition basename $filename -> $basename\n";
-  return $basename;
-}
+#method basename ( Str $filename ) {
+#  #my $filename = shift;
+#  my $basename = ( split /[\/\\]/, $filename)[-1]; # Remove dir path
+#  if ( $self->nodename eq 'Caption' ) {
+#    # Caption uses .txt extension
+#    $basename =~ s/(.*)\..+?$/$1\.txt/ or $basename .= '.txt';
+#  }
+#  #warn "Rendition basename $filename -> $basename\n";
+#  return $basename;
+#}
 
 #method subnodelist { $self->imageid } # XXX: Todo
 

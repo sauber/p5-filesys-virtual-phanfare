@@ -6,10 +6,13 @@ use MooseX::Method::Signatures;
 has image_id     => ( is=>'ro', isa=>'Int', lazy_build=>1 );
 method _build_image_id {
   # Image data is stored in section's sectioninfo
+  #warn "Image _build_image_id filename: ". $self->nodename ."\n";
   my $info = $self->treesearch(
     $self->parent->parent->sectioninfo->{images}{imageinfo},
     [ { filename => $self->nodename } ]
   );
+  #use Data::Dumper;
+  #warn "Image info:" . Dumper $info;
   $info->{image_id};
 }
 

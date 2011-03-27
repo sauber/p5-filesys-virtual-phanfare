@@ -66,8 +66,13 @@ method treesearch ( Ref $tree, ArrayRef $path ) {
       $node = [ $node ] unless ref $node eq 'ARRAY';
       my $notfound = {};
       for my $subnode ( @$node ) {
-        #warn sprintf "*** Compare %s to %s\n", $value, substr $subnode->{$key}, 0, length $value;
-        if ( $value eq substr $subnode->{$key}, 0, length $value ) {
+        my $treevalue = $subnode->{$key};
+        # Take path off filenames
+        $treevalue = $self->basename($treevalue) if $key eq 'filename';
+        # Just compare first part of the string for cases with .id appended
+        $treevalue = substr $treevalue, 0, length $value;
+        #warn sprintf "*** Compare %s to %s\n", $value, $treevalue;
+        if ( $value eq $treevalue ) {
           #warn "***   It matches\n";
           $node = $subnode;
           undef $notfound;
@@ -82,6 +87,21 @@ method treesearch ( Ref $tree, ArrayRef $path ) {
   }
   return $node;
 }
+
+# Translate a full path filename to basename
+#   Example: C:\Dir1\IMG_1234.JPG => IMG_1234.JPG
+#
+method basename ( Str $filename ) {
+  #my $filename = shift;
+  my $basename = ( split /[\/\\]/, $filename)[-1]; # Remove dir path
+  if ( $self->nodename eq 'Caption' ) {
+    # Caption uses .txt extension
+    $basename =~ s/(.*)\..+?$/$1\.txt/ or $basename .= '.txt';
+  }
+  #warn "Node filename $filename -> basename $basename\n";
+  return $basename;
+}
+
 
 =head1 NAME
 
