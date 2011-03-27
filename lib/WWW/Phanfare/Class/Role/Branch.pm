@@ -5,8 +5,38 @@ use MooseX::Method::Signatures;
 requires 'subnodetype';
 requires 'subnodelist';
 
+# Operations on a tree, manage itself and subnodes with CRUD type methods
+#   create - Create a node
+#     new - create this node
+#     build - node already on phanfare
+#     add - node not yet on phanfare, upload immediately or store as temp
+#   read - List available nodes
+#     get - list attributes for this node
+#     list - nodes already on phanfare
+#     pending - nodes not yet on phanfare
+#   update - Change attributes
+#     set - set attributes for this node
+#     ... - nodes on phanfare
+#     ... - nodes not on phanfare
+#   delete - remove node
+#     ... - delete this node
+#     remove - remove from phanfare
+#     cancel - remove from extranode
+#   
+
 # List of new subnodes created locally and not yet uploaded
+# This only applies to:
+#   Year, because years are properties of albums
+#   Image, because they can be appended to until complete
 has extranode => ( isa=>'HashRef', is=>'rw', default=>sub {{}} );
+
+# List of extranode names
+#
+method pending { keys %{ $self->extranode } }
+
+# Delete an extranode
+#
+method cancel ( Str $nodename ) { delete $self->extranode->{$nodename} }
 
 # Create a named subnode
 #

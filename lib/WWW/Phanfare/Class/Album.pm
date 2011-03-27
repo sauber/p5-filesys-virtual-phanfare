@@ -54,6 +54,8 @@ method section ( Str $sectionname ) { $self->getnode( $sectionname ) }
 #}
 
 # Create this as new node on Phanfare
+# XXX: If parent node was a temp node, it can now be made permanent.
+#
 method write { 
   my $year = $self->parent->nodename;
   $self->api->NewAlbum(

@@ -104,5 +104,10 @@ $year->create( $newalbum );
 $year->delete( $newalbum );
 ok( ! grep(/$newalbum/, $year->albumlist), "Album $newalbum no longer exists" );
 
+# XXX: Create, read and delete and section
+# XXX: Create, read and delete and rendition
+# XXX: Create, read and delete and image
+# XXX: Create, read and delete and caption
+
 
 done_testing();
