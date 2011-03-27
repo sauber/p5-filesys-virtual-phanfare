@@ -6,25 +6,46 @@ requires 'subnodetype';
 requires 'subnodelist';
 
 # List of new subnodes created locally and not yet uploaded
-has extranode => ( isa=>'HashRef[Int]', is=>'rw', default=>sub {{}} );
+has extranode => ( isa=>'HashRef', is=>'rw', default=>sub {{}} );
 
 # Create a named subnode
 #
 method buildnode ( Str $nodename ) {
   my $type = $self->subnodetype;
   my $node = $type->new( parent => $self, nodename=>$nodename );
+  # XXX: Should use subnodemake instead
+  #my $node = $self->subnodemake( nodename=>$nodename );
 
   # Add to list of temporary nodes, if it does not exist yet
-  unless ( grep $nodename, $self->subnodelist, keys %{ $self->extranode } ) {
-    warn "*** Creating temp node $nodename in $self->nodename\n";
+  my @existingnodes = ( $self->subnodelist, keys %{ $self->extranode } );
+  #use Data::Dumper;
+  #warn "*** buildnode Creating node $nodename in ". $self->nodename ."\n";
+  #warn "*** buildnode subnodelist: " . Dumper [ $self->subnodelist ];
+  #warn "*** buildnode extranode: " . Dumper [ keys %{ $self->extranode } ];
+  #warn "*** buildnode existingnodes: " . Dumper \@existingnodes;
+  unless ( grep $_ eq $nodename, $self->subnodelist, keys %{ $self->extranode } ) {
+    #warn "*** buildnode Creating temp node $nodename in ". $self->nodename ."\n";
     $self->extranode->{$nodename} = $node;
+    #use Data::Dumper;
+    #warn "*** buildnode extranode". Dumper $self->extranode;
   }
 
   return $node;
 }
 
+sub create { shift->buildnode( @_ ) }
+
+# Delete an extranode
+# XXX: If node is not an extranode, then delete data recursively in agent
+method delete ( Str $nodename ) {
+  delete $self->extranode->{$nodename};
+}
+
 method subnodemake ( Str $nodename, HashRef $args? ) {
-   $self->subnodetype->new( nodename => $nodename, parent=>$self, %$args );
+  $self->subnodetype->new( nodename => $nodename, parent=>$self, %$args );
+  #my $type = $self->subnodetype;
+  #my $node = $type->new( parent=>$self, nodename=>$nodename );
+  #return $node;
 }
 
 #method getnode ( Str $nodename ) { $self->buildnode( $nodename ) }
@@ -87,7 +108,7 @@ with 'WWW::Phanfare::Class::Role::Node';
 
 =head1 NAME
 
-WWW::Phanfare::Class::Role::Branch - Node wtih sub nodes.
+WWW::Phanfare::Class::Role::Branch - Node with sub nodes.
 
 =cut
 

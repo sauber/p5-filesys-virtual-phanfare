@@ -10,11 +10,11 @@ use WWW::Phanfare::Class::Year;
 method subnodelist {
   my $albumlist = $self->api->GetAlbumList(target_uid=>$self->uid)->{albums}{album};;
   #use Data::Dumper;
-  #my $years = $self->extranode;
+  my $years = $self->extranode;
   #warn "*** yearid extra years : " . Dumper $years;
-  #my %year = map { $_=>1 } keys %$years;
+  my %year = map { $_=>1 } keys %$years;
   #warn "*** yearid extra years : " . Dumper \%year;
-  my %year;
+  #my %year;
   for my $album ( @$albumlist ) {
     my $num = substr $album->{album_start_date}, 0, 4;
     ++$year{$num};
