@@ -100,11 +100,21 @@ ok( ! grep(/$newyear/, $site->yearlist), "Year $newyear no longer exists" );
 my $newalbum = "New Album";
 ok( ! grep(/$newalbum/, $year->albumlist), "Album $newalbum doesn't yet exist" );
 $year->create( $newalbum );
+# XXX: TODO let fakeagent remember creation
 #ok( grep(/$newalbum/, $year->albumlist), "Album $newalbum now exists" );
 $year->delete( $newalbum );
 ok( ! grep(/$newalbum/, $year->albumlist), "Album $newalbum no longer exists" );
 
 # XXX: Create, read and delete and section
+my $newsection = 'New Section';
+ok( ! grep(/$newsection/, $album->sectionlist), "Section $newsection doesn't yet exist" );
+$album->create( $newsection );
+# XXX: TODO let fakeagent remember creation
+#ok( grep(/$newsection/, $album->sectionlist), "Section $newsection now exists" );
+$album->delete( $newsection );
+ok( ! grep(/$newsection/, $album->sectionlist), "Section $newsection no longer exists" );
+
+
 # XXX: Create, read and delete and rendition
 # XXX: Create, read and delete and image
 # XXX: Create, read and delete and caption
