@@ -1,0 +1,59 @@
+Desired API design
+
+# Agent
+$api = WWW::Phanfare::Class->new();
+
+# Account
+$account = $api->account;
+
+# Sites
+@sites = $api->list;
+@names = $api->names;
+$site = $api->get('sitename');
+$site = $api->sitename; # AUTOLOAD get
+$site->attribute('key' => $value);
+$value = $site->attribute('key');
+$name = $site->name;
+$account = $site->parent;
+'Year' = $site->childclass;
+$uid = $site->uid; # = $api->session->uid;
+$gid = $site->gid; # = $api->session->gid;
+
+# Year
+@years = $site->list;
+@names = $site->names;
+$year = $site->get('yearname');
+$year = $site->yearname; # AUTOLOAD get
+$year = $site->create('yearname');
+$name = $year->name;
+$site = $year->parent;
+'Album' = $year->childclass;
+$uid = $site->uid; # $self->parent->uid;
+$gid = $site->gid; # $self->parent->gid;
+
+# Album
+@albums = $year->list;
+@names = $year->names;
+$album = $year->get('albumname');
+$album = $year->albumname; # AUTOLOAD get
+$album = $year->create(albumname');
+$name = $album->name;
+$id = $album->id;
+$year = $album->parent;
+'Section' = $album->childclass;
+uid...
+gid...
+
+# Section
+# Rendition
+# Image
+
+# Attribute
+@attributes = $node->attribute->list;
+@names = $node->attribute->names;
+$attribute = $node->attribute->get('key');
+$attribute = $node->attribute->key; # AUTOLOAD get
+$attribute = $node->attribute->key($value); # AUTOLOAD set
+$attribute->set($value);
+$value = $node->attribute->key->value;
+$value = $attribute->value;
