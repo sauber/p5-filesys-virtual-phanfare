@@ -7,10 +7,10 @@ $api = WWW::Phanfare::Class->new();
 $account = $api->account;
 
 # Sites
-@sites = $api->list;
-@names = $api->names;
-$site = $api->get('sitename');
-$site = $api->sitename; # AUTOLOAD get
+@sites = $account->list;
+@names = $account->names;
+$site = $account->get('sitename');
+$site = $account->sitename; # AUTOLOAD get
 $site->attribute('key' => $value);
 $value = $site->attribute('key');
 $name = $site->name;

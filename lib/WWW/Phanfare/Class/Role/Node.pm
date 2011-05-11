@@ -16,13 +16,10 @@ has parent => (
   isa => 'WWW::Phanfare::Class::Role::Node',
 );
 
-# Name of node
+# Name/id of node
 #
-has nodename => (
-  is => 'ro',
-  required => 1,
-  isa => 'Str',
-);
+has name => ( isa => 'Str', is => 'ro', required => 1 );
+has id   => ( isa => 'Int', is => 'ro', required => 1 );
 
 # Get attributes and agent from parent
 method uid   { $self->parent->uid   }

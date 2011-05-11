@@ -8,7 +8,8 @@ has 'api_key'       => ( is=>'ro', isa=>'Str', required=>1 );
 has 'private_key'   => ( is=>'ro', isa=>'Str', required=>1 );
 has 'email_address' => ( is=>'ro', isa=>'Str' );
 has 'password'      => ( is=>'ro', isa=>'Str' );
-method subnodetype { 'WWW::Phanfare::Class::Account' }
+sub childclass { 'WWW::Phanfare::Class::Account' }
+has list => ( is=>'ro'. isa=>'ArrayRef[WWW::Phanfare::Class::Account]', default=>sub{ shift->account->list } );
 
 # Initialize account
 has 'account' => (
@@ -65,50 +66,49 @@ sub _build_api {
 }
 
 
-
-# SITES
-method sitelist { $self->account->sitelist }
-method site ( Str $sitename ) { $self->account->site( $sitename ) }
-
-# YEARS
-# XXX: For now assume there is only one site
-method yearlist { $self->site($self->sitelist)->yearlist }
-method year ( Str $yearname ) {
-  $self->site($self->sitelist)->year( $yearname )
-}
-
-# ALBUMS
-method albumlist ( Int $year ) { $self->year( $year )->albumlist }
-method album ( Int $year, Str $albumname ) {
-  $self->year($year)->album( $albumname )
-}
-
-# SECTIONS
-method sectionlist ( Int $year, Str $albumname ){
-  $self->year($year)->album( $albumname )->sectionlist
-}
-method section ( Int $year, Str $albumname, Str $sectionname ) {
-  $self->year($year)->album( $albumname )->section( $sectionname );
-}
-
-# RENDITIONS
-method renditionlist ( Int $year, Str $albumname, Str $sectionname ) {
-  $self->year($year)->album( $albumname )->section( $sectionname )->renditionlist;
-}
-method rendition ( Int $year, Str $albumname, Str $sectionname, Str $renditionname ) {
-  my $section = $self->year($year)->album( $albumname )->section( $sectionname );
-  $section->rendition( $renditionname );
-}
-
-# IMAGES
-method imagelist ( Int $year, Str $albumname, Str $sectionname, $renditionname ) {
-  my $section = $self->year($year)->album( $albumname )->section( $sectionname );
-  $section->rendition( $renditionname )->imagelist;
-}
-method image ( Int $year, Str $albumname, Str $sectionname, $renditionname, Str $imagename ) {
-  my $section = $self->year($year)->album( $albumname )->section( $sectionname );
-  $section->rendition( $renditionname )->image( $imagename );
-}
+## SITES
+#method sitelist { $self->account->sitelist }
+#method site ( Str $sitename ) { $self->account->site( $sitename ) }
+#
+## YEARS
+## XXX: For now assume there is only one site
+#method yearlist { $self->site($self->sitelist)->yearlist }
+#method year ( Str $yearname ) {
+#  $self->site($self->sitelist)->year( $yearname )
+#}
+#
+## ALBUMS
+#method albumlist ( Int $year ) { $self->year( $year )->albumlist }
+#method album ( Int $year, Str $albumname ) {
+#  $self->year($year)->album( $albumname )
+#}
+#
+## SECTIONS
+#method sectionlist ( Int $year, Str $albumname ){
+#  $self->year($year)->album( $albumname )->sectionlist
+#}
+#method section ( Int $year, Str $albumname, Str $sectionname ) {
+#  $self->year($year)->album( $albumname )->section( $sectionname );
+#}
+#
+## RENDITIONS
+#method renditionlist ( Int $year, Str $albumname, Str $sectionname ) {
+#  $self->year($year)->album( $albumname )->section( $sectionname )->renditionlist;
+#}
+#method rendition ( Int $year, Str $albumname, Str $sectionname, Str $renditionname ) {
+#  my $section = $self->year($year)->album( $albumname )->section( $sectionname );
+#  $section->rendition( $renditionname );
+#}
+#
+## IMAGES
+#method imagelist ( Int $year, Str $albumname, Str $sectionname, $renditionname ) {
+#  my $section = $self->year($year)->album( $albumname )->section( $sectionname );
+#  $section->rendition( $renditionname )->imagelist;
+#}
+#method image ( Int $year, Str $albumname, Str $sectionname, $renditionname, Str $imagename ) {
+#  my $section = $self->year($year)->album( $albumname )->section( $sectionname );
+#  $section->rendition( $renditionname )->image( $imagename );
+#}
 
 =head1 NAME
 
