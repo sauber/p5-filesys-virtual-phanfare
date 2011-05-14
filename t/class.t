@@ -39,42 +39,42 @@ ok( my $account = $class->account, "Class has account" );
 isa_ok( $account, 'WWW::Phanfare::Class::Account' );
 
 # Verify there is a site
-ok( my($sitename) = $class->sitelist, "Class has sites" );
+ok( my($sitename) = $class->names, "Class has sites" );
 #diag "*** site is " . $sitename;
-ok( my $site = $class->site($sitename), "Class has site object" );
+ok( my $site = $class->$sitename, "Class has site object" );
 isa_ok( $site, 'WWW::Phanfare::Class::Site' );
 
 # Verify there are years
-ok( my($yearname) = $class->yearlist, "Class has years" );
+ok( my($yearname) = $site->names, "Class has years" );
 #diag "*** year is " . $yearname;
-ok( my $year = $class->year($yearname), "Class has year object" );
+ok( my $year = $class->$yearname, "Class has year object" );
 isa_ok( $year, 'WWW::Phanfare::Class::Year' );
 
 # Verify there are albums
-ok( my($albumname) = $class->albumlist($yearname), "Class has an album" );
+ok( my($albumname) = $year->names, "Class has an album" );
 #diag "*** album is " . $albumname;
-ok( my $album = $class->album($yearname,$albumname), "Class has album object" );
+ok( my $album = $year->$albumname, "Class has album object" );
 isa_ok( $album, 'WWW::Phanfare::Class::Album' );
 #diag Dumper $album;
 
 # Verify there are sections
-ok( my($sectionname) = $class->sectionlist($yearname,$albumname), "Class has sections" );
+ok( my($sectionname) = $album->names, "Class has sections" );
 #diag "*** section is " . $sectionname;
-ok( my $section = $class->section($yearname,$albumname,$sectionname), "Class has section object" );
+ok( my $section = $album->$sectionname, "Class has section object" );
 isa_ok( $section, 'WWW::Phanfare::Class::Section' );
 
 # Verify there are renditions
-ok( my($renditionname) = $class->renditionlist($yearname,$albumname,$sectionname), "Class has renditions" );
+ok( my($renditionname) = $section->names, "Class has renditions" );
 #diag "*** rendition is " . $renditionname;
-ok( my $rendition = $class->rendition($yearname,$albumname,$sectionname,$renditionname), "Class has section object" );
+ok( my $rendition = $class->$renditionname, "Class has section object" );
 isa_ok( $rendition, 'WWW::Phanfare::Class::Rendition' );
 
 # Verify there are images
-ok( my @imagenames = $class->imagelist($yearname,$albumname,$sectionname,$renditionname), "Class has images" );
+ok( my @imagenames = $rendition->names, "Class has images" );
 #diag Dumper \@imagenames;
 my $imagename = shift @imagenames;
 #diag "*** imagename is " . $imagename;
-ok( my $image = $class->image($yearname,$albumname,$sectionname,$renditionname,$imagename), 'Class has image object' );
+ok( my $image = $rendition->$imagename, 'Class has image object' );
 isa_ok( $image, 'WWW::Phanfare::Class::Image' );
 
 # URL of image
@@ -89,30 +89,30 @@ ok( scalar @uniqnames == scalar @imagenames, "All image names are unique: @image
 
 # Create, read and delete a year
 my $newyear = '1999';
-ok( ! grep(/$newyear/, $site->yearlist), "Year $newyear doesn't yet exist" );
+ok( ! grep(/$newyear/, $site->names), "Year $newyear doesn't yet exist" );
 ok( $site->create( $newyear ), "Year $newyear created" );
 #diag '*** yearlist:' . Dumper [$site->yearlist];
-ok( grep(/$newyear/, $site->yearlist), "Year $newyear now exists" );
+ok( grep(/$newyear/, $site->names), "Year $newyear now exists" );
 ok( $site->delete( $newyear ), "Year $newyear created" );
-ok( ! grep(/$newyear/, $site->yearlist), "Year $newyear no longer exists" );
+ok( ! grep(/$newyear/, $site->names), "Year $newyear no longer exists" );
 
 # Create, read and delete and album
 my $newalbum = "New Album";
-ok( ! grep(/$newalbum/, $year->albumlist), "Album $newalbum doesn't yet exist" );
+ok( ! grep(/$newalbum/, $year->names), "Album $newalbum doesn't yet exist" );
 $year->create( $newalbum );
 # XXX: TODO let fakeagent remember creation
 #ok( grep(/$newalbum/, $year->albumlist), "Album $newalbum now exists" );
 $year->delete( $newalbum );
-ok( ! grep(/$newalbum/, $year->albumlist), "Album $newalbum no longer exists" );
+ok( ! grep(/$newalbum/, $year->names), "Album $newalbum no longer exists" );
 
 # XXX: Create, read and delete and section
 my $newsection = 'New Section';
-ok( ! grep(/$newsection/, $album->sectionlist), "Section $newsection doesn't yet exist" );
+ok( ! grep(/$newsection/, $album->names), "Section $newsection doesn't yet exist" );
 $album->create( $newsection );
 # XXX: TODO let fakeagent remember creation
 #ok( grep(/$newsection/, $album->sectionlist), "Section $newsection now exists" );
 $album->delete( $newsection );
-ok( ! grep(/$newsection/, $album->sectionlist), "Section $newsection no longer exists" );
+ok( ! grep(/$newsection/, $album->names), "Section $newsection no longer exists" );
 
 
 # XXX: Create, read and delete and rendition

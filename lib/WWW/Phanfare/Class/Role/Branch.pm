@@ -102,7 +102,8 @@ method idnamepair ( Ref $data, Str $label, HashRef $filter? ) {
 # Get list of names from hashref.
 # If multiple ID's have same name, then append ID
 #
-method idnamestrings ( HashRef $data ) {
+#method idnamestrings ( HashRef $data ) {
+method names ( HashRef $data ) {
   my %names;
   while ( my($id,$name) = each %$data ) {
     push @{ $names{$name} }, $id;
