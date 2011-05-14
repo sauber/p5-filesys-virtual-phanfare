@@ -24,6 +24,10 @@ has '_attr' => (
 #  },
 #);
 
+# From http://search.cpan.org/~doy/Moose-2.0006/lib/Moose/Manual/MethodModifiers.pod
+#after 'options'  => sub { print "Need to upload new attributes to Phanfare\n"; };
+
+
 # Set list of attributes
 #
 method setattributes ( HashRef $data ) {
