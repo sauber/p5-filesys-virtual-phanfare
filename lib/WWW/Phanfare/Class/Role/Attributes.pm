@@ -8,6 +8,22 @@ has '_attr' => (
   isa => 'HashRef[WWW::Phanfare::Class::Attribute]',
 );
 
+# From http://search.cpan.org/~doy/Moose-2.0006/lib/Moose/Meta/Attribute/Native/Trait/Hash.pm
+#has 'options' => (
+#  traits    => ['Hash'],
+#  is        => 'ro',
+#  isa       => 'HashRef[Str]',
+#  default   => sub { {} },
+#  handles   => {
+#    set_option     => 'set',
+#    get_option     => 'get',
+#    has_no_options => 'is_empty',
+#    num_options    => 'count',
+#    delete_option  => 'delete',
+#    option_pairs   => 'kv',
+#  },
+#);
+
 # Set list of attributes
 #
 method setattributes ( HashRef $data ) {
