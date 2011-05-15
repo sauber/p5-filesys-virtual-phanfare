@@ -19,7 +19,7 @@ has parent => (
 # Name/id of node
 #
 has name => ( isa => 'Str', is => 'ro', required => 1 );
-has id   => ( isa => 'Int', is => 'ro', required => 1 );
+has id   => ( isa => 'Int', is => 'ro' );
 
 # Get attributes and agent from parent
 method uid   { $self->parent->uid   }
@@ -28,32 +28,32 @@ method api { $self->parent->api }
 
 # If this node has subnodes or attributes, scan them for a match
 #
-method getnode ( Str $nodename ) {
-  return $self->buildnode($nodename)
-    if $self->can('subnodelist')
-    and grep /^$nodename$/, $self->subnodelist;
-    
-  return $self->attribute($nodename)
-    if $self->can('attributelist')
-    and grep /^$nodename$/, $self->attributelist;
-
-  # Can a new node be created?
-  return $self->buildnode($nodename)
-    if $self->can('create');
-}
+#method getnode ( Str $nodename ) {
+#  return $self->buildnode($nodename)
+#    if $self->can('subnodelist')
+#    and grep /^$nodename$/, $self->subnodelist;
+#    
+#  return $self->attribute($nodename)
+#    if $self->can('attributelist')
+#    and grep /^$nodename$/, $self->attributelist;
+#
+#  # Can a new node be created?
+#  return $self->buildnode($nodename)
+#    if $self->can('create');
+#}
 
 # Get list of subnodes and attributes for this node
 #
-method nodelist {
-  my     @list;
-  push   @list, $self->subnodelist   if $self->can('subnodelist');
-  push   @list, $self->attributelist if $self->can('attributelist');
-  return @list;
-}
+#method nodelist {
+#  my     @list;
+#  push   @list, $self->subnodelist   if $self->can('subnodelist');
+#  push   @list, $self->attributelist if $self->can('attributelist');
+#  return @list;
+#}
 
 # Search through a data tree parsed from xml to find substructures or attributes
 #
-method treesearch ( Ref $tree, ArrayRef $path ) {
+method _treesearch ( Ref $tree, ArrayRef $path ) {
   my @part = @$path;
   my $node = $tree;
   for my $part ( @$path ) {
@@ -88,7 +88,7 @@ method treesearch ( Ref $tree, ArrayRef $path ) {
 # Translate a full path filename to basename
 #   Example: C:\Dir1\IMG_1234.JPG => IMG_1234.JPG
 #
-method basename ( Str $filename ) {
+method _basename ( Str $filename ) {
   #my $filename = shift;
   my $basename = ( split /[\/\\]/, $filename)[-1]; # Remove dir path
   if ( $self->nodename eq 'Caption' ) {

@@ -2,8 +2,94 @@ package WWW::Phanfare::Class::Role::Branch;
 use Moose::Role;
 use MooseX::Method::Signatures;
 
-requires 'subnodetype';
-requires 'subnodelist';
+#requires 'subnodetype';
+#requires 'subnodelist';
+requires 'childclass';
+requires '_idnames';
+
+# List of subnodes
+has '_nodes' => (
+  traits  => ['Array'],
+  is      => 'ro',
+  isa     => 'ArrayRef[Ref]',
+  #default => sub { [] },
+  lazy_build => 1,
+  handles => {
+    list    => 'elements',
+    _add     => 'push',
+    #map_options    => 'map',
+    #filter_options => 'grep',
+    #find_option    => 'first',
+    #get_option     => 'get',
+    #join_options   => 'join',
+    #count_options  => 'count',
+    #has_options    => 'count',
+    #has_no_options => 'is_empty',
+    #sorted_options => 'sort',
+  },
+);
+
+# Build a list of subnodes.
+# Names and ID's come from required _idnames method.
+# If ID eq name, then there is no ID
+#
+method _build_list {
+  my $type = $self->childclass;
+  my @nodes;
+  my %idname = $self->_idnames;
+  while ( my($id,$name) = each %idname ) {
+    push @nodes, $type->new(
+      parent => $self,
+      name => $name,
+      ( $name ne $id ? ( id=>$id ) : () ),
+    );
+  }
+  return \@nodes;
+}
+
+
+# Names of subnodes.
+# If names are duplicates, then append ID.
+#
+method names {
+  my %name_count;
+  ++$name_count{$_->name} for $self->list;
+  return map {
+    $name_count{$_->name} > 1
+      ? $_->name .'.'. $_->id
+      : $_->name
+  } $self->nodes;
+}
+
+# Get a subnode, by name of name.id
+#
+method get ( Str $name ) {
+  for my $node ( $self->list ) {
+    return $node if $name eq $node->name .'.'. $node->id;
+    return $node if $name eq $node->name;
+  }
+}
+
+sub AUTOLOAD {
+  my $self = shift @_;
+  our $AUTOLOAD;
+
+  my $name = $AUTOLOAD;
+  $name =~ s/.*:://;
+
+  return $self->get($name);
+}
+
+method create ( Str $name ) {
+  my $type = $self->childclass;
+  my $node = $type->new( parent=>$self, name=>$name );
+  if ( $node->can( 'write' ) ) {
+    $node->write;
+    $self->clear__nodes; # Need read from Phanfare to learn id
+  } else {
+    $self->_add( $node );
+  }
+}
 
 # Operations on a tree, manage itself and subnodes with CRUD type methods
 #   create - Create a node
@@ -28,61 +114,61 @@ requires 'subnodelist';
 # This only applies to:
 #   Year, because years are properties of albums
 #   Image, because they can be appended to until complete
-has extranode => ( isa=>'HashRef', is=>'rw', default=>sub {{}} );
+#has extranode => ( isa=>'HashRef', is=>'rw', default=>sub {{}} );
 
 # List of extranode names
 #
-method pending { keys %{ $self->extranode } }
+#method pending { keys %{ $self->extranode } }
 
 # Delete an extranode
 #
-method cancel ( Str $nodename ) { delete $self->extranode->{$nodename} }
+#method cancel ( Str $nodename ) { delete $self->extranode->{$nodename} }
 
 # Create a named subnode
 #
-method buildnode ( Str $nodename ) {
-  my $type = $self->subnodetype;
-  my $node = $type->new( parent => $self, nodename=>$nodename );
-  # XXX: Should use subnodemake instead
-  #my $node = $self->subnodemake( nodename=>$nodename );
+#method buildnode ( Str $nodename ) {
+#  my $type = $self->subnodetype;
+#  my $node = $type->new( parent => $self, nodename=>$nodename );
+#  # XXX: Should use subnodemake instead
+#  #my $node = $self->subnodemake( nodename=>$nodename );
+#
+#  # Add to list of temporary nodes, if it does not exist yet
+#  my @existingnodes = ( $self->subnodelist, keys %{ $self->extranode } );
+#  #use Data::Dumper;
+#  #warn "*** buildnode Creating node $nodename in ". $self->nodename ."\n";
+#  #warn "*** buildnode subnodelist: " . Dumper [ $self->subnodelist ];
+#  #warn "*** buildnode extranode: " . Dumper [ keys %{ $self->extranode } ];
+#  #warn "*** buildnode existingnodes: " . Dumper \@existingnodes;
+#  unless ( grep $_ eq $nodename, $self->subnodelist, keys %{ $self->extranode } ) {
+#    #warn "*** buildnode Creating temp node $nodename in ". $self->nodename ."\n";
+#    $self->extranode->{$nodename} = $node;
+#    #use Data::Dumper;
+#    #warn "*** buildnode extranode". Dumper $self->extranode;
+#  }
+#
+#  return $node;
+#}
 
-  # Add to list of temporary nodes, if it does not exist yet
-  my @existingnodes = ( $self->subnodelist, keys %{ $self->extranode } );
-  #use Data::Dumper;
-  #warn "*** buildnode Creating node $nodename in ". $self->nodename ."\n";
-  #warn "*** buildnode subnodelist: " . Dumper [ $self->subnodelist ];
-  #warn "*** buildnode extranode: " . Dumper [ keys %{ $self->extranode } ];
-  #warn "*** buildnode existingnodes: " . Dumper \@existingnodes;
-  unless ( grep $_ eq $nodename, $self->subnodelist, keys %{ $self->extranode } ) {
-    #warn "*** buildnode Creating temp node $nodename in ". $self->nodename ."\n";
-    $self->extranode->{$nodename} = $node;
-    #use Data::Dumper;
-    #warn "*** buildnode extranode". Dumper $self->extranode;
-  }
-
-  return $node;
-}
-
-sub create { shift->buildnode( @_ ) }
+#sub create { shift->buildnode( @_ ) }
 
 # Delete an extranode
 # XXX: If node is not an extranode, then delete data recursively in agent
-method delete ( Str $nodename ) {
-  delete $self->extranode->{$nodename};
-}
+#method delete ( Str $nodename ) {
+#  delete $self->extranode->{$nodename};
+#}
 
-method subnodemake ( Str $nodename, HashRef $args? ) {
-  $self->subnodetype->new( nodename => $nodename, parent=>$self, %$args );
-  #my $type = $self->subnodetype;
-  #my $node = $type->new( parent=>$self, nodename=>$nodename );
-  #return $node;
-}
+#method subnodemake ( Str $nodename, HashRef $args? ) {
+#  $self->subnodetype->new( nodename => $nodename, parent=>$self, %$args );
+#  #my $type = $self->subnodetype;
+#  #my $node = $type->new( parent=>$self, nodename=>$nodename );
+#  #return $node;
+#}
 
 #method getnode ( Str $nodename ) { $self->buildnode( $nodename ) }
 
 # Extract id=>name pairs from a data structure
 #
-method idnamepair ( Ref $data, Str $label, HashRef $filter? ) {
+method _idnamepair ( Ref $data, Str $label, HashRef $filter? ) {
   # If data only has one element we get a hashref. Convert it to array.
   $data = [ $data ] unless 'ARRAY' eq ref $data; 
   my($key,$value) = each %$filter if $filter;
@@ -103,37 +189,36 @@ method idnamepair ( Ref $data, Str $label, HashRef $filter? ) {
 # If multiple ID's have same name, then append ID
 #
 #method idnamestrings ( HashRef $data ) {
-method names ( HashRef $data ) {
-  my %names;
-  while ( my($id,$name) = each %$data ) {
-    push @{ $names{$name} }, $id;
-  }
-  my @namestrings;
-  while ( my($name,$id) = each %names) {
-    if ( @$id == 1 ) {
-      # There is only one ID for this name
-      push @namestrings, $name;
-    } else {
-      # There is multiple ID for this name
-      for my $i ( @$id ) {
-        push @namestrings, "$name.$i";
-      }
-    }
-  }
-  return @namestrings;
-}
+#  my %names;
+#  while ( my($id,$name) = each %$data ) {
+#    push @{ $names{$name} }, $id;
+#  }
+#  my @namestrings;
+#  while ( my($name,$id) = each %names) {
+#    if ( @$id == 1 ) {
+#      # There is only one ID for this name
+#      push @namestrings, $name;
+#    } else {
+#      # There is multiple ID for this name
+#      for my $i ( @$id ) {
+#        push @namestrings, "$name.$i";
+#      }
+#    }
+#  }
+#  return @namestrings;
+#}
 
 # Given a nodename, find the id and name that matches
 #
-method idnamematch ( HashRef $data, Str $nodename ) {
-  while ( my($id,$name) = each %$data ) {
-    if (
-      "$name.$id" eq $nodename or $name eq $nodename or "$id" eq "$nodename"
-    ) {
-      return ($id,$name);
-    }
-  }
-}
+#method idnamematch ( HashRef $data, Str $nodename ) {
+#  while ( my($id,$name) = each %$data ) {
+#    if (
+#      "$name.$id" eq $nodename or $name eq $nodename or "$id" eq "$nodename"
+#    ) {
+#      return ($id,$name);
+#    }
+#  }
+#}
 
 with 'WWW::Phanfare::Class::Role::Node';
 

@@ -7,27 +7,35 @@ use WWW::Phanfare::Class::Year;
 
 # List of years in start dates
 #
-method subnodelist {
+#method subnodelist {
+method _idnames {
   my $albumlist = $self->api->GetAlbumList(target_uid=>$self->uid)->{albums}{album};;
   #use Data::Dumper;
-  my $years = $self->extranode;
+  #my $years = $self->extranode;
   #warn "*** yearid extra years : " . Dumper $years;
-  my %year = map { $_=>1 } keys %$years;
+  #my %year = map { $_=>1 } keys %$years;
   #warn "*** yearid extra years : " . Dumper \%year;
-  #my %year;
+
+  # List year only once
+  my %year;
   for my $album ( @$albumlist ) {
     my $num = substr $album->{album_start_date}, 0, 4;
     ++$year{$num};
   }
-  return keys %year;
+  #my $type = $self->childclass;
+  #return [ map {
+  #  $type->new( name => $_, parent => $self )
+  #} sort { $a <=> $b } keys %year ];
+  return map $_=>$_, keys %year;
 }
 
-method subnodetype { 'WWW::Phanfare::Class::Year' };
+#method subnodetype { 'WWW::Phanfare::Class::Year' };
+sub childclass { 'WWW::Phanfare::Class::Year' };
 #method subnodelist { $self->yearid }
 #method subnodemake ( Int $nodename ) { $self->subnodetype->new( nodename => $nodename ) }
 
-method yearlist { $self->subnodelist }
-method year ( Str $yearname ) { $self->getnode( $yearname ) }
+#method yearlist { $self->subnodelist }
+#method year ( Str $yearname ) { $self->getnode( $yearname ) }
 
 # Create a year that does not yet have albums
 #

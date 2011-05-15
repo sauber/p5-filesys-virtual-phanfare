@@ -3,19 +3,23 @@ use Moose;
 use MooseX::Method::Signatures;
 use WWW::Phanfare::Class::Rendition;
 
-has section_id   => ( is=>'ro', isa=>'Int', required=>1 );
+#has section_id   => ( is=>'ro', isa=>'Int', required=>1 );
 #has section_name => ( is=>'ro', isa=>'Str', required=>1 );
 
-method subnodetype { 'WWW::Phanfare::Class::Rendition' }
-method subnodelist { qw(Full WebLarge Web WebSmall Thumbnail ThumbnailSmall Caption ) }
+#method subnodetype { 'WWW::Phanfare::Class::Rendition' }
+sub childclass { 'WWW::Phanfare::Class::Rendition' }
+method _idnames {
+  map $_=>$_,
+    qw(Full WebLarge Web WebSmall Thumbnail ThumbnailSmall Caption )
+}
 
-method renditionlist { $self->subnodelist }
-method rendition ( Str $renditionname ) { $self->getnode( $renditionname ) }
+#method renditionlist { $self->subnodelist }
+#method rendition ( Str $renditionname ) { $self->getnode( $renditionname ) }
 
-method sectioninfo {
-   $self->treesearch(
-     $self->parent->albuminfo->{sections}{section},
-     [ { section_name => $self->nodename } ],
+method _sectioninfo {
+   $self->_treesearch(
+     $self->parent->_albuminfo->{sections}{section},
+     [ { section_name => $self->name } ],
    );
 }
 
@@ -34,6 +38,7 @@ method buildattributes {
   #    last;
   #  }
   #}
+  #$self->setattributes( $self->sectioninfo );
   $self->setattributes( $self->sectioninfo );
     
 }
@@ -42,10 +47,10 @@ method buildattributes {
 method write {  
   $self->api->NewSection(
     target_uid   => $self->uid,
-    album_id     => $self->parent->album_id,
-    section_name => $self->nodename,
+    album_id     => $self->parent->id,
+    section_name => $self->name,
   );
-  warn "*** Created new section $self->nodename on Phanfare\n";
+  warn "*** Created new section $self->name on Phanfare\n";
 }
 
 with 'WWW::Phanfare::Class::Role::Branch';

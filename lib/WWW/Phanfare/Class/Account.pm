@@ -11,12 +11,16 @@ sub _build_parent { shift }
 # We have just one subnode - the primary site name
 # XXX: Can we access other sites somehow?
 #
-method subnodelist { $self->attribute('primary_site_name')->value }
-method subnodetype { 'WWW::Phanfare::Class::Site' }
+#method subnodelist { $self->attribute('primary_site_name')->value }
+#method subnodetype { 'WWW::Phanfare::Class::Site' }
+sub childclass { 'WWW::Phanfare::Class::Site' }
 
-method sitelist { $self->subnodelist }
-method site ( Str $sitename ) { $self->getnode( $sitename ) }
+#method sitelist { $self->subnodelist }
+#method site ( Str $sitename ) { $self->getnode( $sitename ) }
 
+method _idnames {
+  $self->attribute('primary_site_id') => $self->attribute('primary_site_name')
+}
 
 with 'WWW::Phanfare::Class::Role::Branch';
 with 'WWW::Phanfare::Class::Role::Attributes';
