@@ -13,11 +13,11 @@ use WWW::Phanfare::Class::Image;
 #  return map $_->{image_id}, @$images;
 #}
 
-method subnodetype { 'WWW::Phanfare::Class::Image' }
+sub childclass { 'WWW::Phanfare::Class::Image' }
 
 # List of image filenames. They might be full path
 #
-method subnodelist {
+method _idnames {
   my $images = $self->parent->sectioninfo->{images}{imageinfo};
   return () unless $images;
   $images = [ $images ] unless 'ARRAY' eq ref $images;
@@ -32,7 +32,7 @@ method subnodelist {
   for my $full ( @fullpath ) {
     push @filename, $self->basename($full);
   }
-  return @filename;
+  return map $_=>$_, @filename;
 }
 
 # Translate a full path filename to basename
@@ -84,8 +84,8 @@ method subnodelist {
 #  warn "*** Rendition could not build $nodename\n";
 #}
 
-method imagelist { $self->subnodelist }
-method image ( Str $imagename ) { $self->getnode( $imagename ) }
+#method imagelist { $self->subnodelist }
+#method image ( Str $imagename ) { $self->getnode( $imagename ) }
 
 # Write a new image
 #method create ( Str $nodename, Str $content ) {
