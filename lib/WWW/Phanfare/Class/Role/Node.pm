@@ -65,7 +65,7 @@ method _treesearch ( Ref $tree, ArrayRef $path ) {
       for my $subnode ( @$node ) {
         my $treevalue = $subnode->{$key};
         # Take path off filenames
-        $treevalue = $self->basename($treevalue) if $key eq 'filename';
+        $treevalue = $self->_basename($treevalue) if $key eq 'filename';
         # Just compare first part of the string for cases with .id appended
         $treevalue = substr $treevalue, 0, length $value;
         #warn sprintf "*** Compare %s to %s\n", $value, $treevalue;
@@ -91,7 +91,7 @@ method _treesearch ( Ref $tree, ArrayRef $path ) {
 method _basename ( Str $filename ) {
   #my $filename = shift;
   my $basename = ( split /[\/\\]/, $filename)[-1]; # Remove dir path
-  if ( $self->nodename eq 'Caption' ) {
+  if ( $self->name eq 'Caption' ) {
     # Caption uses .txt extension
     $basename =~ s/(.*)\..+?$/$1\.txt/ or $basename .= '.txt';
   }

@@ -42,7 +42,7 @@ method _build__nodes {
   my $type = $self->childclass;
   my @nodes;
   my $idname = $self->_idnames;
-  #xx "*** $self build $type", $idname;
+  xx "*** $self build $type", $idname;
   while ( my($id,$name) = each %$idname ) {
     #warn "*** build node type $type name $name id $id\n";
     push @nodes, $type->new(
@@ -71,7 +71,7 @@ method names {
 # Get a subnode, by name of name.id
 #
 method get ( Str $name ) {
-  #warn "*** branch get node $name\n";
+  warn "*** branch get node $name\n";
   for my $node ( $self->list ) {
     return $node if $node->id and $name eq $node->name .'.'. $node->id;
     return $node if               $name eq $node->name;
@@ -86,6 +86,7 @@ sub AUTOLOAD {
   $name =~ s/.*:://;
 
   #warn "*** branch autoload node $name\n";
+  die caller if $name eq 'nodename';
   return $self->get($name);
 }
 

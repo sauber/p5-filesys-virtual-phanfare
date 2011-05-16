@@ -16,7 +16,7 @@ has '_attr' => (
   default   => sub { {} },
   #lazy_build => 1,
   handles   => {
-    setattributes     => 'set',
+    _set_attr     => 'set',
     #get_attribute     => 'get',
     #has_no_options => 'is_empty',
     #num_options    => 'count',
@@ -26,6 +26,15 @@ has '_attr' => (
     attributes => 'keys',
   },
 );
+
+method setattributes ( HashRef $data ) {
+  my %attr = map {
+    ref $data->{$_}
+      ? ()
+      : ( $_ => $data->{$_} )
+  } keys %$data;
+  $self->_set_attr( %attr );
+}
 
 #requires '_build__attr';
 

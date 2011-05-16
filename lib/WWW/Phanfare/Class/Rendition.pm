@@ -18,7 +18,7 @@ sub childclass { 'WWW::Phanfare::Class::Image' }
 # List of image filenames. They might be full path
 #
 method _idnames {
-  my $images = $self->parent->sectioninfo->{images}{imageinfo};
+  my $images = $self->parent->_info->{images}{imageinfo};
   return () unless $images;
   $images = [ $images ] unless 'ARRAY' eq ref $images;
   #use Data::Dumper;
@@ -30,9 +30,9 @@ method _idnames {
   #return map $self->basename($_), @fullpath;
   my @filename;
   for my $full ( @fullpath ) {
-    push @filename, $self->basename($full);
+    push @filename, $self->_basename($full);
   }
-  return map $_=>$_, @filename;
+  return { map {$_=>$_} @filename };
 }
 
 # Translate a full path filename to basename

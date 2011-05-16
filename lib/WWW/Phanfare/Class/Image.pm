@@ -11,9 +11,9 @@ has image_id     => ( is=>'ro', isa=>'Int', lazy_build=>1 );
 method _build_image_id {
   # Image data is stored in section's sectioninfo
   #warn "Image _build_image_id filename: ". $self->nodename ."\n";
-  my $info = $self->treesearch(
-    $self->parent->parent->sectioninfo->{images}{imageinfo},
-    [ { filename => $self->nodename } ]
+  my $info = $self->_treesearch(
+    $self->parent->parent->_info->{images}{imageinfo},
+    [ { filename => $self->name } ]
   );
   #use Data::Dumper;
   #warn "Image info:" . Dumper $info;
@@ -27,7 +27,7 @@ method _build_image_id {
 has filename     => ( is=>'ro', isa=>'Str', required=>0, lazy_build=>1 );
 method _build_filename {
   my $basename = ( split /[\/\\]/, $self->imageinfo->{filename})[-1];
-  if ( $self->parent->nodename eq 'Caption' ) {
+  if ( $self->parent->name eq 'Caption' ) {
     # Caption uses .txt extension
     $basename =~ s/(.*)\..+?$/$1\.txt/ or $basename .= '.txt';
   }
@@ -58,8 +58,8 @@ method _build_size { $self->renditioninfo->{filesize} || 0 }
 method imageinfo {
   return {} if $self->image_id == 0;
   # Image data is stored in section's sectioninfo
-  my $info = $self->treesearch(
-    $self->parent->parent->sectioninfo->{images}{imageinfo},
+  my $info = $self->_treesearch(
+    $self->parent->parent->_info->{images}{imageinfo},
     [ { image_id => $self->image_id } ]
   );
   #use Data::Dumper;
@@ -71,8 +71,8 @@ method imageinfo {
 method renditioninfo {
   return {} if $self->image_id == 0;
   # Manually created informtion for Caption rendition type
-  if ( $self->parent->nodename eq 'Caption' ) {
-    my $date = $self->treesearch(
+  if ( $self->parent->name eq 'Caption' ) {
+    my $date = $self->_treesearch(
       $self->imageinfo->{renditions}{rendition},
       [ { rendition_type => 'Full' } ]
     )->{created_date};
@@ -83,9 +83,9 @@ method renditioninfo {
   }
   
   # All other valid rendition types
-  return $self->treesearch(
+  return $self->_treesearch(
     $self->imageinfo->{renditions}{rendition},
-    [ { rendition_type => $self->parent->nodename } ]
+    [ { rendition_type => $self->parent->name } ]
   );
 
   #use Data::Dumper;
@@ -99,7 +99,7 @@ method renditioninfo {
 
 # Get binary image or caption text
 method value {
-  if ( $self->parent->nodename eq 'Caption' ) {
+  if ( $self->parent->name eq 'Caption' ) {
     return $self->caption;
   } else {
     #warn sprintf "*** Fetching %s\n", $self->url;
@@ -112,7 +112,7 @@ method value {
 }
 
 method setvalue ( Str $content ) {
-  if ( $self->parent->nodename eq 'Caption' ) {
+  if ( $self->parent->name eq 'Caption' ) {
   } else {
   }
   warn sprintf "*** Wrote %s bytes to value\n", length $content;

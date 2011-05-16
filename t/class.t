@@ -58,7 +58,6 @@ ok( my($albumname) = $year->names, "Class has an album" );
 ok( my $album = $year->$albumname, "Class has album object" );
 isa_ok( $album, 'WWW::Phanfare::Class::Album' );
 #diag Dumper $album;
-done_testing; exit;
 
 # XXX: This causes deep recursion
 # Verify there are sections
@@ -70,12 +69,12 @@ isa_ok( $section, 'WWW::Phanfare::Class::Section' );
 # Verify there are renditions
 ok( my($renditionname) = $section->names, "Class has renditions" );
 #diag "*** rendition is " . $renditionname;
-ok( my $rendition = $class->$renditionname, "Class has section object" );
+ok( my $rendition = $section->$renditionname, "Class has section object" );
 isa_ok( $rendition, 'WWW::Phanfare::Class::Rendition' );
 
 # Verify there are images
 ok( my @imagenames = $rendition->names, "Class has images" );
-#diag Dumper \@imagenames;
+diag Dumper \@imagenames;
 my $imagename = shift @imagenames;
 #diag "*** imagename is " . $imagename;
 ok( my $image = $rendition->$imagename, 'Class has image object' );
@@ -97,6 +96,7 @@ ok( ! grep(/$newyear/, $site->names), "Year $newyear doesn't yet exist" );
 ok( $site->create( $newyear ), "Year $newyear created" );
 #diag '*** yearlist:' . Dumper [$site->yearlist];
 ok( grep(/$newyear/, $site->names), "Year $newyear now exists" );
+done_testing; exit;
 ok( $site->delete( $newyear ), "Year $newyear created" );
 ok( ! grep(/$newyear/, $site->names), "Year $newyear no longer exists" );
 

@@ -15,15 +15,15 @@ use WWW::Phanfare::Class::Section;
 #  $self->setattributes( $self->albuminfo ) ;
 #}
 
-method _albuminfo {
+method _info {
   $self->api->GetAlbum(
     target_uid => $self->uid,
-    album_id   => $self->album_id,
+    album_id   => $self->id,
   )->{album};
 }
 
 method _idnames {
-  $self->_idnamepair( $self->_albuminfo->{sections}{section}, 'section' );
+  $self->_idnamepair( $self->_info->{sections}{section}, 'section' );
 }
 
 #method buildnode ( $nodename ) {

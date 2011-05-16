@@ -9,16 +9,18 @@ use WWW::Phanfare::Class::Rendition;
 #method subnodetype { 'WWW::Phanfare::Class::Rendition' }
 sub childclass { 'WWW::Phanfare::Class::Rendition' }
 method _idnames {
-  map $_=>$_,
+  return {
+    map {$_=>$_}
     qw(Full WebLarge Web WebSmall Thumbnail ThumbnailSmall Caption )
+  };
 }
 
 #method renditionlist { $self->subnodelist }
 #method rendition ( Str $renditionname ) { $self->getnode( $renditionname ) }
 
-method _sectioninfo {
+method _info {
    $self->_treesearch(
-     $self->parent->_albuminfo->{sections}{section},
+     $self->parent->_info->{sections}{section},
      [ { section_name => $self->name } ],
    );
 }
@@ -39,7 +41,7 @@ method buildattributes {
   #  }
   #}
   #$self->setattributes( $self->sectioninfo );
-  $self->setattributes( $self->sectioninfo );
+  $self->setattributes( $self->_info );
     
 }
 

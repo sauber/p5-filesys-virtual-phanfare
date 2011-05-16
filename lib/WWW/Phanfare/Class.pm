@@ -48,11 +48,11 @@ sub _build_account {
     name => '',
     id => 0,
   );
-  #$account->setattributes( %{ $session->{session} } );
-  my %attr = %{ $session->{session} };
-  # Can only handle scalar attributes for now
-  %attr = map { ref $attr{$_} ? () : ($_=>$attr{$_}) } keys %attr;
-  $account->setattributes( %attr );
+  $account->setattributes( $session->{session} );
+  #my %attr = %{ $session->{session} };
+  ## Can only handle scalar attributes for now
+  #%attr = map { ref $attr{$_} ? () : ($_=>$attr{$_}) } keys %attr;
+  #$account->setattributes( %attr );
   return $account;
 } 
 
