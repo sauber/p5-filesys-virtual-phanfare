@@ -26,7 +26,9 @@ method _idnames {
   #return [ map {
   #  $type->new( name => $_, parent => $self )
   #} sort { $a <=> $b } keys %year ];
-  return map $_=>$_, keys %year;
+  #use Data::Dumper;
+  #warn "*** years : " . Dumper \%year;
+  return { map {$_=>$_} keys %year };
 }
 
 #method subnodetype { 'WWW::Phanfare::Class::Year' };

@@ -3,7 +3,7 @@ use Moose;
 use MooseX::Method::Signatures;
 use WWW::Phanfare::Class::Site;
 
-has 'uid'   => ( is=>'rw', isa=>'Int' );
+#has 'uid'   => ( is=>'rw', isa=>'Int' );
 #has 'gid'   => ( is=>'rw', isa=>'Int' );
 has parent => ( is=>'ro', required=>1, lazy_build=>1 );
 sub _build_parent { shift }
@@ -19,8 +19,15 @@ sub childclass { 'WWW::Phanfare::Class::Site' }
 #method site ( Str $sitename ) { $self->getnode( $sitename ) }
 
 method _idnames {
-  $self->attribute('primary_site_id') => $self->attribute('primary_site_name')
+  my %sites = (
+    $self->attribute('primary_site_id') => $self->attribute('primary_site_name')
+  );
+  return \%sites;
 }
+
+#method _build__attr {
+#  $self->parent->_info...
+#}
 
 with 'WWW::Phanfare::Class::Role::Branch';
 with 'WWW::Phanfare::Class::Role::Attributes';

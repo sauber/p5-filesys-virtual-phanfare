@@ -9,7 +9,9 @@ has 'private_key'   => ( is=>'ro', isa=>'Str', required=>1 );
 has 'email_address' => ( is=>'ro', isa=>'Str' );
 has 'password'      => ( is=>'ro', isa=>'Str' );
 sub childclass { 'WWW::Phanfare::Class::Account' }
-has list => ( is=>'ro'. isa=>'ArrayRef[WWW::Phanfare::Class::Account]', default=>sub{ shift->account->list } );
+#has list => ( is=>'ro'. isa=>'ArrayRef[WWW::Phanfare::Class::Account]', default=>sub{ shift->account->list } );
+#has name => ( is=>'ro', isa=>'Str' );
+#has id => ( is=>'ro', isa=>'Str' );
 
 # Initialize account
 has 'account' => (
@@ -38,19 +40,24 @@ sub _build_account {
 
   # Create account object with session data
   #my $account = WWW::Phanfare::Class::Account->new(
-  my $type = $self->subnodetype;
+  my $type = $self->childclass;
   my $account = $type->new(
     uid => $session->{session}{uid},
     gid => $session->{session}{public_group_id},
     parent => $self,
-    nodename => '',
+    name => '',
+    id => 0,
   );
-  $account->setattributes( $session->{session} );
+  #$account->setattributes( %{ $session->{session} } );
+  my %attr = %{ $session->{session} };
+  # Can only handle scalar attributes for now
+  %attr = map { ref $attr{$_} ? () : ($_=>$attr{$_}) } keys %attr;
+  $account->setattributes( %attr );
   return $account;
 } 
 
 # Initialize API  
-has 'api' => (
+has api => (
   isa        => 'WWW::Phanfare::API',
   is         => 'rw',
   lazy_build => 1,
@@ -63,6 +70,30 @@ sub _build_api {
     api_key     => $self->api_key,
     private_key => $self->private_key,
   );
+}
+
+#method names {
+#  return 'sites';
+#}
+
+# Get a subnode, by name of name.id
+#
+method get ( Str $name ) {
+  #for my $node ( $self->list ) {
+  #return $node if $name eq $node->name .'.'. $node->id;
+  #return $node if $name eq $node->name;
+  #}
+  $self->account->list;
+}
+
+sub AUTOLOAD {
+  my $self = shift @_;
+  our $AUTOLOAD;
+
+  my $name = $AUTOLOAD;
+  $name =~ s/.*:://;
+
+  return $self->get($name);
 }
 
 

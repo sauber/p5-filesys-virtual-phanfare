@@ -3,15 +3,19 @@ use Moose;
 use MooseX::Method::Signatures;
 use WWW::Phanfare::Class::Album;
 
+method _fetch {
+  $self->api->GetAlbumList(target_uid=>$self->uid);
+}
+
 # List of album_id=>album_name pairs
 # XXX: Filter by year
 #
 method _idnames {
-  my $albumlist = $self->api->GetAlbumList(target_uid=>$self->uid);
+  #my $albumlist = $self->_info;
   $self->_idnamepair(
-    $albumlist->{albums}{album},
+    $self->_fetch->{albums}{album},
     'album',
-    { album_start_date=>$self->nodename },
+    { album_start_date=>$self->name },
   );
   #my @nodes;
   #my $type = $self->childclass;

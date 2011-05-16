@@ -2,6 +2,11 @@ package WWW::Phanfare::Class::Role::Branch;
 use Moose::Role;
 use MooseX::Method::Signatures;
 
+sub xx {
+  use Data::Dumper;
+  warn Data::Dumper->Dump([$_[1]], ["*** $_[0]"]);
+}
+
 #requires 'subnodetype';
 #requires 'subnodelist';
 requires 'childclass';
@@ -33,11 +38,13 @@ has '_nodes' => (
 # Names and ID's come from required _idnames method.
 # If ID eq name, then there is no ID
 #
-method _build_list {
+method _build__nodes {
   my $type = $self->childclass;
   my @nodes;
-  my %idname = $self->_idnames;
-  while ( my($id,$name) = each %idname ) {
+  my $idname = $self->_idnames;
+  #xx "*** $self build $type", $idname;
+  while ( my($id,$name) = each %$idname ) {
+    #warn "*** build node type $type name $name id $id\n";
     push @nodes, $type->new(
       parent => $self,
       name => $name,
@@ -58,15 +65,16 @@ method names {
     $name_count{$_->name} > 1
       ? $_->name .'.'. $_->id
       : $_->name
-  } $self->nodes;
+  } $self->list;
 }
 
 # Get a subnode, by name of name.id
 #
 method get ( Str $name ) {
+  #warn "*** branch get node $name\n";
   for my $node ( $self->list ) {
-    return $node if $name eq $node->name .'.'. $node->id;
-    return $node if $name eq $node->name;
+    return $node if $node->id and $name eq $node->name .'.'. $node->id;
+    return $node if               $name eq $node->name;
   }
 }
 
@@ -77,6 +85,7 @@ sub AUTOLOAD {
   my $name = $AUTOLOAD;
   $name =~ s/.*:://;
 
+  #warn "*** branch autoload node $name\n";
   return $self->get($name);
 }
 
@@ -174,15 +183,17 @@ method _idnamepair ( Ref $data, Str $label, HashRef $filter? ) {
   my($key,$value) = each %$filter if $filter;
   #warn "*** Use filter $key=$value\n";
   # Pairs of id=>name
-  map { $_->{"${label}_id"} => $_->{"${label}_name"} }
-    grep {
-      if ( $key and $value and $_->{$key} ) {
-        1 if $_->{$key} =~ /^$value/;
-      } else {
-        1
+  return {
+    map { $_->{"${label}_id"} => $_->{"${label}_name"} }
+      grep {
+        if ( $key and $value and $_->{$key} ) {
+          1 if $_->{$key} =~ /^$value/;
+        } else {
+          1
+        }
       }
-    }
-    @$data;
+      @$data
+  };
 }
 
 # Get list of names from hashref.

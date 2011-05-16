@@ -14,8 +14,9 @@ has '_attr' => (
   is        => 'ro',
   isa       => 'HashRef[Str]',
   default   => sub { {} },
+  #lazy_build => 1,
   handles   => {
-    #set_attribute     => 'set',
+    setattributes     => 'set',
     #get_attribute     => 'get',
     #has_no_options => 'is_empty',
     #num_options    => 'count',
@@ -25,6 +26,8 @@ has '_attr' => (
     attributes => 'keys',
   },
 );
+
+#requires '_build__attr';
 
 # From http://search.cpan.org/~doy/Moose-2.0006/lib/Moose/Manual/MethodModifiers.pod
 #after 'options'  => sub { print "Need to upload new attributes to Phanfare\n"; };
