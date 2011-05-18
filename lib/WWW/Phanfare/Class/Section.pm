@@ -55,6 +55,14 @@ method write {
   warn "*** Created new section $self->name on Phanfare\n";
 }
 
+method delete  {
+  $self->api->DeleteSection(
+     target_uid => $self->uid,
+     album_id   => $self->parent->id,
+     section_id => $self->id,
+  );
+}
+
 with 'WWW::Phanfare::Class::Role::Branch';
 with 'WWW::Phanfare::Class::Role::Attributes';
 

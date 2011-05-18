@@ -19,20 +19,25 @@ sub childclass { 'WWW::Phanfare::Class::Image' }
 #
 method _idnames {
   my $images = $self->parent->_info->{images}{imageinfo};
-  return () unless $images;
+  return {} unless $images;
   $images = [ $images ] unless 'ARRAY' eq ref $images;
   #use Data::Dumper;
   #warn 'Rendition subnodelist: ', Dumper [ map $_->{filename}, @$images ];
-  my @fullpath = ( map $_->{filename}, @$images );
+  #my @fullpath = ( map $_->{filename}, @$images );
   #warn 'Rendition subnodelist fullpath: ', Dumper \@fullpath;
   #my @filename = ( map $self->basename($_), @fullpath );
   #warn 'Rendition subnodelist filename: ', Dumper \@filename;
   #return map $self->basename($_), @fullpath;
-  my @filename;
-  for my $full ( @fullpath ) {
-    push @filename, $self->_basename($full);
-  }
-  return { map {$_=>$_} @filename };
+  #my @filename;
+  #for my $full ( @fullpath ) {
+  #  push @filename, $self->_basename($full);
+  #}
+  #return { map {$_=>$_} @filename };
+
+  return {
+    map { $_->{image_id} => $self->_basename( $_->{filename} ) }
+    @$images
+  };
 }
 
 # Translate a full path filename to basename

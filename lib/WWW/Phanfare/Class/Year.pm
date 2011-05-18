@@ -80,6 +80,10 @@ sub childclass { 'WWW::Phanfare::Class::Album' };
 #      if $self->parent->extranode->{$self->nodename};
 #}
 
+method start_date { sprintf("%04s-01-01T00:00:00", $self->name) }
+method end_date   { sprintf("%04s-12-31T23:59:59", $self->name) }
+
+
 with 'WWW::Phanfare::Class::Role::Branch';
 
 =head1 NAME

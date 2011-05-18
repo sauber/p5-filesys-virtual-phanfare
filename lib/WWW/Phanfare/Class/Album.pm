@@ -80,6 +80,12 @@ method write {
 #  );
 #}
 
+method delete {
+  $self->api->DeleteAlbum(
+     target_uid => $self->uid,
+     album_id => $self->id,
+  );
+}
 
 with 'WWW::Phanfare::Class::Role::Branch';
 with 'WWW::Phanfare::Class::Role::Attributes';
