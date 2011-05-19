@@ -93,29 +93,29 @@ ok( scalar @uniqnames == scalar @imagenames, "All image names are unique: @image
 # Create, read and delete a year
 my $newyear = '1999';
 ok( ! grep(/$newyear/, $site->names), "Year $newyear doesn't yet exist" );
-ok( $site->create( $newyear ), "Year $newyear created" );
+ok( $site->add( $newyear ), "Year $newyear created" );
 #diag '*** yearlist:' . Dumper [$site->yearlist];
 ok( grep(/$newyear/, $site->names), "Year $newyear now exists" );
 done_testing; exit;
-ok( $site->delete( $newyear ), "Year $newyear created" );
+ok( $site->remove( $newyear ), "Year $newyear created" );
 ok( ! grep(/$newyear/, $site->names), "Year $newyear no longer exists" );
 
 # Create, read and delete and album
 my $newalbum = "New Album";
 ok( ! grep(/$newalbum/, $year->names), "Album $newalbum doesn't yet exist" );
-$year->create( $newalbum );
+$year->add( $newalbum );
 # XXX: TODO let fakeagent remember creation
 #ok( grep(/$newalbum/, $year->albumlist), "Album $newalbum now exists" );
-$year->delete( $newalbum );
+$year->remove( $newalbum );
 ok( ! grep(/$newalbum/, $year->names), "Album $newalbum no longer exists" );
 
 # XXX: Create, read and delete and section
 my $newsection = 'New Section';
 ok( ! grep(/$newsection/, $album->names), "Section $newsection doesn't yet exist" );
-$album->create( $newsection );
+$album->add( $newsection );
 # XXX: TODO let fakeagent remember creation
 #ok( grep(/$newsection/, $album->sectionlist), "Section $newsection now exists" );
-$album->delete( $newsection );
+$album->remove( $newsection );
 ok( ! grep(/$newsection/, $album->names), "Section $newsection no longer exists" );
 
 

@@ -118,7 +118,7 @@ method setvalue ( Str $content ) {
   warn sprintf "*** Wrote %s bytes to value\n", length $content;
 }
 
-method write {
+method _write {
   if ( $self->parent->name eq 'Full' ) {
     return $self->api->NewImage(
       target_uid => $self->uid,
@@ -140,7 +140,7 @@ method write {
   }
 }
 
-method delete {
+method _delete {
   return unless $self->parent->name eq 'Full';
   $self->api->DeleteImage(
     target_uid => $self->uid,

@@ -15,13 +15,14 @@ requires '_idnames';
 # List of subnodes
 has '_nodes' => (
   traits  => ['Array'],
-  is      => 'ro',
+  is      => 'rw',
   isa     => 'ArrayRef[Ref]',
   #default => sub { [] },
   lazy_build => 1,
   handles => {
     list    => 'elements',
     _add     => 'push',
+    _del     => 'delete',
     #map_options    => 'map',
     #filter_options => 'grep',
     #find_option    => 'first',
@@ -31,6 +32,7 @@ has '_nodes' => (
     #has_options    => 'count',
     #has_no_options => 'is_empty',
     #sorted_options => 'sort',
+    _indexget => 'accessor',
   },
 );
 
@@ -72,10 +74,19 @@ method names {
 #
 method get ( Str $name ) {
   warn "*** branch get node $name\n";
+  return $self->_indexget( $self->_index( $name ) );
+}
+
+# Index number of matching node
+#
+method _index ( Str $name ) {
+  my $i = 0;
   for my $node ( $self->list ) {
-    return $node if $node->id and $name eq $node->name .'.'. $node->id;
-    return $node if               $name eq $node->name;
+    return $i if $node->id and $name eq $node->name .'.'. $node->id;
+    return $i if               $name eq $node->name;
+    ++$i;
   }
+  return undef;
 }
 
 sub AUTOLOAD {
@@ -90,15 +101,29 @@ sub AUTOLOAD {
   return $self->get($name);
 }
 
-method create ( Str $name ) {
+# Create new child object and add to list.
+# Let object write itself to phanfare if possible
+# 
+method add ( Str $name ) {
   my $type = $self->childclass;
   my $node = $type->new( parent=>$self, name=>$name );
-  if ( $node->can( 'write' ) ) {
-    $node->write;
+  if ( $node->can( '_write' ) ) {
+    $node->_write;
     $self->clear__nodes; # Need read from Phanfare to learn id
   } else {
     $self->_add( $node );
   }
+}
+
+# Let child object remove itself from phanfare
+# Then remove from list
+#
+method remove ( Str $name ) {
+  my $node = $self->get( $name ) or return undef;
+  if ( $node->can( '_delete' ) ) {
+    $node->_delete;
+    $self->_del( $self->_index( $name ) );
+   }
 }
 
 # Operations on a tree, manage itself and subnodes with CRUD type methods

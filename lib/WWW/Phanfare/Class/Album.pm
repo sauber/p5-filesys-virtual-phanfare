@@ -59,13 +59,15 @@ sub childclass { 'WWW::Phanfare::Class::Section' }
 # Create this as new node on Phanfare
 # XXX: If parent node was a temp node, it can now be made permanent.
 #
-method write { 
+method _write { 
   my $year = $self->parent->name;
   $self->api->NewAlbum(
      target_uid => $self->uid,
      album_name => $self->name,
-     album_start_date => sprintf("%04s-01-01T00:00:00", $year),
-     album_end_date   => sprintf("%04s-12-31T23:59:59", $year),
+     #album_start_date => sprintf("%04s-01-01T00:00:00", $year),
+     #album_end_date   => sprintf("%04s-12-31T23:59:59", $year),
+     album_start_date => $self->parent->startdata,
+     album_end_date   => $self->parent->enddata,
   );
   warn sprintf "*** Created new album %s on Phanfare\n", $self->name;
 }
@@ -80,7 +82,7 @@ method write {
 #  );
 #}
 
-method delete {
+method _delete {
   $self->api->DeleteAlbum(
      target_uid => $self->uid,
      album_id => $self->id,

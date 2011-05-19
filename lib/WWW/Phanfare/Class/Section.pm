@@ -46,7 +46,7 @@ method buildattributes {
 }
 
 # Create this as new node on Phanfare
-method write {  
+method _write {  
   $self->api->NewSection(
     target_uid   => $self->uid,
     album_id     => $self->parent->id,
@@ -55,7 +55,7 @@ method write {
   warn "*** Created new section $self->name on Phanfare\n";
 }
 
-method delete  {
+method _delete  {
   $self->api->DeleteSection(
      target_uid => $self->uid,
      album_id   => $self->parent->id,
