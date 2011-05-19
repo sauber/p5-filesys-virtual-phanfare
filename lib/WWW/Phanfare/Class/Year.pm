@@ -80,6 +80,14 @@ sub childclass { 'WWW::Phanfare::Class::Album' };
 #      if $self->parent->extranode->{$self->nodename};
 #}
 
+# A year can only be deleted if there are no albums in that year
+#
+method _delete {
+  return if $self->list;
+  return 1;
+}
+
+
 method start_date { sprintf("%04s-01-01T00:00:00", $self->name) }
 method end_date   { sprintf("%04s-12-31T23:59:59", $self->name) }
 

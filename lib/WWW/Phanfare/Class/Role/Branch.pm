@@ -44,7 +44,7 @@ method _build__nodes {
   my $type = $self->childclass;
   my @nodes;
   my $idname = $self->_idnames;
-  xx "*** $self build $type", $idname;
+  #xx "*** $self build $type", $idname;
   while ( my($id,$name) = each %$idname ) {
     #warn "*** build node type $type name $name id $id\n";
     push @nodes, $type->new(
@@ -73,7 +73,7 @@ method names {
 # Get a subnode, by name of name.id
 #
 method get ( Str $name ) {
-  warn "*** branch get node $name\n";
+  #warn "*** branch get node $name\n";
   return $self->_indexget( $self->_index( $name ) );
 }
 
@@ -121,9 +121,9 @@ method add ( Str $name ) {
 method remove ( Str $name ) {
   my $node = $self->get( $name ) or return undef;
   if ( $node->can( '_delete' ) ) {
-    $node->_delete;
-    $self->_del( $self->_index( $name ) );
-   }
+    $node->_delete && $self->_del( $self->_index( $name ) );
+  }
+  #warn "*** branch remove $name failed\n";
 }
 
 # Operations on a tree, manage itself and subnodes with CRUD type methods

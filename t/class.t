@@ -74,7 +74,7 @@ isa_ok( $rendition, 'WWW::Phanfare::Class::Rendition' );
 
 # Verify there are images
 ok( my @imagenames = $rendition->names, "Class has images" );
-diag Dumper \@imagenames;
+#diag Dumper \@imagenames;
 my $imagename = shift @imagenames;
 #diag "*** imagename is " . $imagename;
 ok( my $image = $rendition->$imagename, 'Class has image object' );
@@ -96,9 +96,13 @@ ok( ! grep(/$newyear/, $site->names), "Year $newyear doesn't yet exist" );
 ok( $site->add( $newyear ), "Year $newyear created" );
 #diag '*** yearlist:' . Dumper [$site->yearlist];
 ok( grep(/$newyear/, $site->names), "Year $newyear now exists" );
-done_testing; exit;
-ok( $site->remove( $newyear ), "Year $newyear created" );
+ok( $site->remove( $newyear ), "Year $newyear removed" );
 ok( ! grep(/$newyear/, $site->names), "Year $newyear no longer exists" );
+
+# Verify that a year with albums cannot be delete
+ok( ! $site->remove( $yearname ), "Year $yearname removed" );
+#diag '*** yearlist:' . Dumper [$site->names];
+done_testing; exit;
 
 # Create, read and delete and album
 my $newalbum = "New Album";
