@@ -74,7 +74,9 @@ method names {
 #
 method get ( Str $name ) {
   #warn "*** branch get node $name\n";
-  return $self->_indexget( $self->_index( $name ) );
+  my $index = $self->_index( $name );
+  return unless defined $index;
+  return $self->_indexget( $index );
 }
 
 # Index number of matching node

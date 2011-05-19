@@ -9,21 +9,6 @@ use_ok( 'FakeAgent' );
 
 use Data::Dumper;
 
-#my %config;
-#eval '
-#  use Config::General;
-#  use File::HomeDir;
-#  use WWW::Phanfare::API;
-#
-#  my $rcfile = File::HomeDir->my_home . "/.phanfarerc";
-#  %config = Config::General->new( $rcfile )->getall;
-#  die unless $config{api_key}
-#         and $config{private_key}
-#         and $config{email_address}
-#         and $config{password};
-#';
-#plan skip_all => "Local config not found: $@" if $@;
-
 # Create an object
 my $class = new_ok( 'WWW::Phanfare::Class' => [ 
   api_key       => 'secret',
@@ -32,7 +17,6 @@ my $class = new_ok( 'WWW::Phanfare::Class' => [
   password      => 'secret',
 ] );
 isa_ok( $class, 'WWW::Phanfare::Class' );
-#done_testing; exit;
 $class->api( FakeAgent->new() );
 
 # Verify there is account
@@ -59,7 +43,6 @@ ok( my $album = $year->$albumname, "Class has album object" );
 isa_ok( $album, 'WWW::Phanfare::Class::Album' );
 #diag Dumper $album;
 
-# XXX: This causes deep recursion
 # Verify there are sections
 ok( my($sectionname) = $album->names, "Class has sections" );
 #diag "*** section is " . $sectionname;
@@ -102,14 +85,14 @@ ok( ! grep(/$newyear/, $site->names), "Year $newyear no longer exists" );
 # Verify that a year with albums cannot be delete
 ok( ! $site->remove( $yearname ), "Year $yearname removed" );
 #diag '*** yearlist:' . Dumper [$site->names];
-done_testing; exit;
 
 # Create, read and delete and album
 my $newalbum = "New Album";
 ok( ! grep(/$newalbum/, $year->names), "Album $newalbum doesn't yet exist" );
 $year->add( $newalbum );
 # XXX: TODO let fakeagent remember creation
-#ok( grep(/$newalbum/, $year->albumlist), "Album $newalbum now exists" );
+ok( grep(/$newalbum/, $year->albumlist), "Album $newalbum now exists" );
+done_testing; exit;
 $year->remove( $newalbum );
 ok( ! grep(/$newalbum/, $year->names), "Album $newalbum no longer exists" );
 
