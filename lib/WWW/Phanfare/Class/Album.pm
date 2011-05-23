@@ -64,10 +64,8 @@ method _write {
   $self->api->NewAlbum(
      target_uid => $self->uid,
      album_name => $self->name,
-     #album_start_date => sprintf("%04s-01-01T00:00:00", $year),
-     #album_end_date   => sprintf("%04s-12-31T23:59:59", $year),
-     album_start_date => $self->parent->startdata,
-     album_end_date   => $self->parent->enddata,
+     album_start_date => $self->parent->start_date,
+     album_end_date   => $self->parent->end_date,
   );
   warn sprintf "*** Created new album %s on Phanfare\n", $self->name;
 }

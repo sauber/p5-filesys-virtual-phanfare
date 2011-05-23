@@ -87,7 +87,7 @@ ok( ! $site->remove( $yearname ), "Year $yearname removed" );
 #diag '*** yearlist:' . Dumper [$site->names];
 
 # Create, read and delete and album
-my $newalbum = "New Album";
+my $newalbum = "Boef Album";
 ok( ! grep(/$newalbum/, $year->names), "Album $newalbum doesn't yet exist" );
 $year->add( $newalbum );
 # XXX: TODO let fakeagent remember creation
