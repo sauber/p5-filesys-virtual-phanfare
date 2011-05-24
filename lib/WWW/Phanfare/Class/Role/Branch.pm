@@ -110,9 +110,13 @@ method add ( Str $name ) {
   my $type = $self->childclass;
   my $node = $type->new( parent=>$self, name=>$name );
   if ( $node->can( '_write' ) ) {
+    #warn "*** Node add $name write\n";
     $node->_write;
-    $self->clear__nodes; # Need read from Phanfare to learn id
+    #$self->clear__nodes; # Need read from Phanfare to learn id
+    delete $self->{_nodes};
+    #xx "Node add clear__nodes", $self->_nodes;
   } else {
+    #warn "*** Node add $name _add\n";
     $self->_add( $node );
   }
 }
