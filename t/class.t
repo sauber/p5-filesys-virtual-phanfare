@@ -95,16 +95,17 @@ ok( grep(/$newalbum/, $year->names), "Album $newalbum now exists" );
 #diag '*** album list:' . Dumper [$year->names];
 $year->remove( $newalbum );
 ok( ! grep(/$newalbum/, $year->names), "Album $newalbum no longer exists" );
-done_testing; exit;
 
 # XXX: Create, read and delete and section
 my $newsection = 'New Section';
 ok( ! grep(/$newsection/, $album->names), "Section $newsection doesn't yet exist" );
 $album->add( $newsection );
 # XXX: TODO let fakeagent remember creation
-#ok( grep(/$newsection/, $album->names), "Section $newsection now exists" );
+diag '*** section list:' . Dumper [$album->names];
+ok( grep(/$newsection/, $album->names), "Section $newsection now exists" );
 $album->remove( $newsection );
 ok( ! grep(/$newsection/, $album->names), "Section $newsection no longer exists" );
+done_testing; exit;
 
 
 # XXX: Create, read and delete and rendition

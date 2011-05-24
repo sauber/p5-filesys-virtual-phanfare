@@ -7,7 +7,6 @@ use Data::Dumper;
 use Clone qw(clone);
 use base qw(WWW::Phanfare::API);
 our $AUTOLOAD;
-#my($_albumlist,$_albuminfo);
 
 sub AUTOLOAD {
   warn "*** FakeAgent $AUTOLOAD not handled\n";
@@ -32,30 +31,20 @@ sub Authenticate {
 
 sub GetAlbumList {
   my $self = shift;
-  #my %data = @_;
-  #use Data::Dumper;
-  #warn "*** GetAlbumList: " . Dumper \%data;
   my $list = LoadFile 't/data/albumlist.yaml';
-  if ( defined $self->{_albuminfo} ) {
-    #warn "*** FakeAgent GetAlbumList Add\n";
-    push @{ $list->{albums}{album} }, $self->{_albumlist};
-  } else {
-    #warn "*** FakeAgent GetAlbumList NoAdd: " . Dumper $self;
-  }
+  push @{ $list->{albums}{album} }, $self->{_albumlist} if $self->{_albumlist};
   return $list;
 }
 
-sub GetAlbum     {
-  my $self = shift;
-  #warn "*** $self FakeAgent GetAlbum: " . Dumper $self;
-  $self->{_albuminfo} || LoadFile 't/data/albuminfo.yaml';
+# If a new album is created, then assume return the one just created
+# Otherwise load from file
+#
+sub GetAlbum {
+  shift->{_albuminfo} || LoadFile 't/data/albuminfo.yaml';
 }
 
 sub NewAlbum {
-  my $self = shift;
-  my %data = @_;
-  #warn "*** $self NewAlbum: " . Dumper \%data;
-  #warn "*** $self self: " . Dumper $self;
+  my($self, %data) = @_;
 
   # Clone last albumlist entry
   #
@@ -65,25 +54,46 @@ sub NewAlbum {
     $self->{_albumlist}->{$k} = $v;
   }
   ++$self->{_albumlist}{album_id};
-  #warn "*** NewAlbum _albumlist: " . $self->{_albumlist};
 
   # Clone Album
   my $album = $self->GetAlbum;
-  $self->{_albuminfo} = clone $album->{album};
+  #$self->{_albuminfo} = clone $album->{album};
+  $self->{_albuminfo} = clone $album;
   while (my($k,$v) = each %data ) {
-    $self->{_albuminfo}{$k} = $v;
+    $self->{_albuminfo}{album}{$k} = $v;
   }
-  ++$self->{_albuminfo}{album_id};
-  #warn "*** NewAlbum _albuminfo: " . $self->{_albuminfo};
-  #warn "*** $self self: " . Dumper $self;
-  
+  ++$self->{_albuminfo}{album}{album_id};
 }
 
 sub DeleteAlbum {
   my $self = shift;
   delete $self->{_albumlist};
   delete $self->{_albuminfo};
- }
+}
+
+sub NewSection {
+  my($self, %data) = @_;
+
+  #$self->{_albuminfo} = clone $self->GetAlbum->{album};
+
+  #warn "*** NewSection section: " . Dumper $self->GetAlbum->{album}{sections}{section};
+  my $oldsection = clone $self->GetAlbum->{album}{sections}{section};
+  my $section = clone $oldsection;
+  $section->{section_name} = $data{section_name};
+  ++$section->{section_id};
+  $self->{_albuminfo} = clone $self->GetAlbum->{album};
+  $self->{_albuminfo}{sections}{section} = [
+    $oldsection,
+    $section
+  ];
+  #warn "*** NewSection sections: " . Dumper $self->{_albuminfo}{sections};
+}
+
+sub DeleteSection {
+  my $self = shift;
+  delete $self->{_albuminfo};
+}
+
 
 # Make sure not caught by AUTOLOAD
 sub DESTROY {}

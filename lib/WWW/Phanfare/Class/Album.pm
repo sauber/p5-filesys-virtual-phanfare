@@ -23,6 +23,11 @@ method _info {
 }
 
 method _idnames {
+  #use Data::Dumper;
+  #warn "*** Album _idname:" . Dumper $self->api->GetAlbum(
+  #  target_uid => $self->uid,
+  #  album_id   => $self->id,
+  #);
   $self->_idnamepair( $self->_info->{sections}{section}, 'section' );
 }
 
@@ -67,7 +72,7 @@ method _write {
      album_start_date => $self->parent->start_date,
      album_end_date   => $self->parent->end_date,
   );
-  warn sprintf "*** Created new album %s on Phanfare\n", $self->name;
+  #warn sprintf "*** Created new album %s on Phanfare\n", $self->name;
 }
 
 #method delete ( Str $nodename ) {
