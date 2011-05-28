@@ -44,18 +44,19 @@ method _build__nodes {
   my $type = $self->childclass;
   my @nodes;
   my $idname = $self->_idnames;
-  #xx "*** $self build $type", $idname;
-  while ( my($id,$name) = each %$idname ) {
+  xx "Branch _build__nodes $self build $type", $idname unless ref $idname eq 'ARRAY';
+  #while ( my($id,$name) = each %$idname ) {
+  for my $item ( @$idname ) {
+    my $id = $item->{id};
+    my $name = $item->{name};
     #warn "*** build node type $type name $name id $id\n";
     my $node = $type->new(
       parent => $self,
       name => $name,
       ( $name ne $id ? ( id=>$id ) : () ),
     );
-    # XXX: Todo
-    #if ( can $self->setattributes ) {
-    #  $node->setattributes();
-    #}
+    $node->setattributes( $item->{obj} )
+      if $item->{obj} and $self->can('setattributes');
     push @nodes, $node;
   }
   return \@nodes;
@@ -222,17 +223,22 @@ method _idnamepair ( Ref $data, Str $label, HashRef $filter? ) {
   my($key,$value) = each %$filter if $filter;
   #warn "*** Use filter $key=$value\n";
   # Pairs of id=>name
-  return {
-    map { $_->{"${label}_id"} => $_->{"${label}_name"} }
-      grep {
-        if ( $key and $value and $_->{$key} ) {
-          1 if $_->{$key} =~ /^$value/;
-        } else {
-          1
-        }
+  return [
+    #map { $_->{"${label}_id"} => $_->{"${label}_name"} }
+    map {{
+      id   => $_->{"${label}_id"},
+      name => $_->{"${label}_name"},
+      obj  => $_,
+    }}
+    grep {
+      if ( $key and $value and $_->{$key} ) {
+        1 if $_->{$key} =~ /^$value/;
+      } else {
+        1
       }
-      @$data
-  };
+    }
+    @$data
+  ];
 }
 
 # Get list of names from hashref.

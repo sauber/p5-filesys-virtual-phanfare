@@ -40,10 +40,14 @@ method _idnames {
   #}
   #return { map {$_=>$_} @filename };
 
-  return {
-    map { $_->{image_id} => $self->_basename( $_->{filename} ) }
+  return [
+    map {{
+      id   => $_->{image_id},
+      name => $self->_basename( $_->{filename} ),
+      obj  => $_,
+    }}
     @$images
-  };
+  ];
 }
 
 # Translate a full path filename to basename

@@ -9,10 +9,13 @@ use WWW::Phanfare::Class::Rendition;
 #method subnodetype { 'WWW::Phanfare::Class::Rendition' }
 sub childclass { 'WWW::Phanfare::Class::Rendition' }
 method _idnames {
-  return {
-    map {$_=>$_}
+  return [
+    map {{
+      id=>$_,
+      name=>$_,
+    }}
     qw(Full WebLarge Web WebSmall Thumbnail ThumbnailSmall Caption )
-  };
+  ];
 }
 
 #method renditionlist { $self->subnodelist }

@@ -20,10 +20,14 @@ sub childclass { 'WWW::Phanfare::Class::Site' }
 #method site ( Str $sitename ) { $self->getnode( $sitename ) }
 
 method _idnames {
-  my %sites = (
-    $self->attribute('primary_site_id') => $self->attribute('primary_site_name')
-  );
-  return \%sites;
+  #my %sites = (
+  #  $self->attribute('primary_site_id') => $self->attribute('primary_site_name')
+  #);
+  #return \%sites;
+  return [{
+    id => $self->attribute('primary_site_id'),
+    name => $self->attribute('primary_site_name'),
+  }];
 }
 
 #method _build__attr {

@@ -28,7 +28,8 @@ method _idnames {
   #} sort { $a <=> $b } keys %year ];
   #use Data::Dumper;
   #warn "*** years : " . Dumper \%year;
-  return { map {$_=>$_} keys %year };
+  #return { map { $_=>$_} keys %year };
+  return [ map {{ id=>$_, name=>$_ }} keys %year ];
 }
 
 #method subnodetype { 'WWW::Phanfare::Class::Year' };

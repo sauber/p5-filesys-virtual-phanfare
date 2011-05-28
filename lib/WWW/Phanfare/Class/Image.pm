@@ -168,7 +168,7 @@ method _delete {
   
 
 with 'WWW::Phanfare::Class::Role::Leaf';
-#with 'WWW::Phanfare::Class::Role::Attributes';
+with 'WWW::Phanfare::Class::Role::Attributes';
 
 =head1 NAME
 
