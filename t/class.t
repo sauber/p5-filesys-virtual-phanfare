@@ -86,7 +86,7 @@ ok( ! grep(/$newyear/, $site->names), "Year $newyear no longer exists" );
 ok( ! $site->remove( $yearname ), "Year $yearname removed" );
 #diag '*** yearlist:' . Dumper [$site->names];
 
-# Create, read and delete and album
+# Create, read and delete an album
 my $newalbum = "New Album";
 ok( ! grep(/$newalbum/, $year->names), "Album $newalbum doesn't yet exist" );
 $year->add( $newalbum );
@@ -96,7 +96,7 @@ ok( grep(/$newalbum/, $year->names), "Album $newalbum now exists" );
 $year->remove( $newalbum );
 ok( ! grep(/$newalbum/, $year->names), "Album $newalbum no longer exists" );
 
-# XXX: Create, read and delete and section
+# Create, read and delete a section
 my $newsection = 'New Section';
 ok( ! grep(/$newsection/, $album->names), "Section $newsection doesn't yet exist" );
 $album->add( $newsection );
@@ -105,11 +105,18 @@ $album->add( $newsection );
 ok( grep(/$newsection/, $album->names), "Section $newsection now exists" );
 $album->remove( $newsection );
 ok( ! grep(/$newsection/, $album->names), "Section $newsection no longer exists" );
+
+# XXX: Create, read and delete and image
+my $newimage = 'New Image';
+ok( ! grep(/$newimage/, $rendition->names), "Image $newimage doesn't yet exist" );
+$rendition->add( $newimage, '<imagedata>' );
+ok( grep(/$newimage/, $rendition->names), "Image $newimage now exists" );
+
+
 done_testing; exit;
 
 
-# XXX: Create, read and delete and rendition
-# XXX: Create, read and delete and image
+
 # XXX: Create, read and delete and caption
 
 

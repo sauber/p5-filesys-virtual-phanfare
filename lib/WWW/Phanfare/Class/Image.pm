@@ -27,7 +27,7 @@ method _build_image_id {
 has filename     => ( is=>'ro', isa=>'Str', required=>0, lazy_build=>1 );
 method _build_filename {
   my $basename = ( split /[\/\\]/, $self->imageinfo->{filename})[-1];
-  if ( $self->parent->name eq 'Caption' ) {
+  if ( $self->renditionname eq 'Caption' ) {
     # Caption uses .txt extension
     $basename =~ s/(.*)\..+?$/$1\.txt/ or $basename .= '.txt';
   }
@@ -71,7 +71,7 @@ method imageinfo {
 method renditioninfo {
   return {} if $self->image_id == 0;
   # Manually created informtion for Caption rendition type
-  if ( $self->parent->name eq 'Caption' ) {
+  if ( $self->renditionname eq 'Caption' ) {
     my $date = $self->_treesearch(
       $self->imageinfo->{renditions}{rendition},
       [ { rendition_type => 'Full' } ]
@@ -85,7 +85,7 @@ method renditioninfo {
   # All other valid rendition types
   return $self->_treesearch(
     $self->imageinfo->{renditions}{rendition},
-    [ { rendition_type => $self->parent->name } ]
+    [ { rendition_type => $self->renditionname } ]
   );
 
   #use Data::Dumper;
@@ -99,7 +99,7 @@ method renditioninfo {
 
 # Get binary image or caption text
 method value {
-  if ( $self->parent->name eq 'Caption' ) {
+  if ( $self->renditionname eq 'Caption' ) {
     return $self->caption;
   } else {
     #warn sprintf "*** Fetching %s\n", $self->url;
@@ -118,20 +118,24 @@ method setvalue ( Str $content ) {
   warn sprintf "*** Wrote %s bytes to value\n", length $content;
 }
 
+method albumid       { $self->parent->parent->parent->id }
+method sectionid     { $self->parent->parent->id         }
+method renditionname { $self->parent->name               }
+
 method _write {
-  if ( $self->parent->name eq 'Full' ) {
+  if ( $self->renditionname eq 'Full' ) {
     return $self->api->NewImage(
       target_uid => $self->uid,
-      album_id   => $self->parent->parent->parent->id,
-      section_id => $self->parent->parent->id,
+      album_id   => $self->albumid,
+      section_id => $self->sectionid,
       filename   => $self->name,
       #content    => $self->value,
     );
-  } elsif ( $self->parent->name eq 'Caption' ) {
+  } elsif ( $self->renditionname eq 'Caption' ) {
     return $self->api->UpdateCaption(
       target_uid => $self->uid,
-      album_id   => $self->parent->parent->parent->id,
-      section_id => $self->parent->parent->id,
+      album_id   => $self->albumid,
+      section_id => $self->sectionid,
       image_id   => $self->id,
       caption    => $self->caption,
     );
@@ -144,8 +148,8 @@ method _delete {
   return unless $self->parent->name eq 'Full';
   $self->api->DeleteImage(
     target_uid => $self->uid,
-    album_id => $self->parent->parent->parent->id,
-    section_id => $self->parent->parent->id,
+    album_id => $self->albumid,
+    section_id => $self->sectionid,
     image_id => $self->id,
   );
 }

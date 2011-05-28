@@ -106,9 +106,10 @@ sub AUTOLOAD {
 # Create new child object and add to list.
 # Let object write itself to phanfare if possible
 # 
-method add ( Str $name ) {
+method add ( Str $name, Str $value? ) {
   my $type = $self->childclass;
   my $node = $type->new( parent=>$self, name=>$name );
+  $node->value( $value ) if $value;
   if ( $node->can( '_write' ) ) {
     #warn "*** Node add $name write\n";
     $node->_write;

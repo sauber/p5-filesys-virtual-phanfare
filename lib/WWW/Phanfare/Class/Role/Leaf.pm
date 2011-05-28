@@ -2,6 +2,8 @@ package WWW::Phanfare::Class::Role::Leaf;
 use MooseX::Method::Signatures;
 use Moose::Role;
 
+has value => ( isa=>'Str', is=>'rw' );
+
 # All nodes in the tree must have a parent
 #
 #has parent => (
