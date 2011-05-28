@@ -68,6 +68,10 @@ isa_ok( $image, 'WWW::Phanfare::Class::Image' );
 #diag "*** image url is " . $image->url;
 ok( 'http://' eq substr $image->url, 0, 7, "url starts with http" );
 
+# Caption of image
+ok( length $image->caption, "Image has caption" );
+#diag "Image Caption: " . $image->caption;
+
 # Make sure all image filenames are different
 my %U;
 my @uniqnames = grep { ! $U{$_}++ } @imagenames;
@@ -90,7 +94,6 @@ ok( ! $site->remove( $yearname ), "Year $yearname removed" );
 my $newalbum = "New Album";
 ok( ! grep(/$newalbum/, $year->names), "Album $newalbum doesn't yet exist" );
 $year->add( $newalbum );
-# XXX: TODO let fakeagent remember creation
 ok( grep(/$newalbum/, $year->names), "Album $newalbum now exists" );
 #diag '*** album list:' . Dumper [$year->names];
 $year->remove( $newalbum );
@@ -100,13 +103,12 @@ ok( ! grep(/$newalbum/, $year->names), "Album $newalbum no longer exists" );
 my $newsection = 'New Section';
 ok( ! grep(/$newsection/, $album->names), "Section $newsection doesn't yet exist" );
 $album->add( $newsection );
-# XXX: TODO let fakeagent remember creation
 #diag '*** section list:' . Dumper [$album->names];
 ok( grep(/$newsection/, $album->names), "Section $newsection now exists" );
 $album->remove( $newsection );
 ok( ! grep(/$newsection/, $album->names), "Section $newsection no longer exists" );
 
-# XXX: Create, read and delete and image
+# Create, read and delete and image
 #$rendition = $section->Full;
 my $newimage = 'New Image.jpg';
 ok( ! grep(/$newimage/, $rendition->names), "Image $newimage doesn't yet exist" );
@@ -118,12 +120,14 @@ ok( grep(/$newimage/, $rendition->names), "Image $newimage now exists" );
 $rendition->remove( $newimage );
 ok( ! grep(/$newimage/, $rendition->names), "Image $newimage no longer exists" );
 
+# XXX: Create, read and delete and caption
+my $caption = "New Caption";
+ok( $image->caption( $caption ), "Set new image caption" );
+ok( $caption eq $image->caption, "Read new image caption" );
 
 done_testing; exit;
 
 
-
-# XXX: Create, read and delete and caption
 
 
 done_testing();
