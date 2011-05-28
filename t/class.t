@@ -120,15 +120,14 @@ ok( grep(/$newimage/, $rendition->names), "Image $newimage now exists" );
 $rendition->remove( $newimage );
 ok( ! grep(/$newimage/, $rendition->names), "Image $newimage no longer exists" );
 
-# XXX: Create, read and delete and caption
+# Create, read and delete and caption
 my $caption = "New Caption";
 ok( $image->caption( $caption ), "Set new image caption" );
 ok( $caption eq $image->caption, "Read new image caption" );
 #diag "Caption: " . $image->caption;
-
 done_testing; exit;
 
-
+# XXX: Test attributes
 
 
 done_testing();
