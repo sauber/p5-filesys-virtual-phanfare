@@ -34,8 +34,23 @@ method _build_filename {
   return $basename;
 }
 
-has caption      => ( is=>'rw', isa=>'Str', required=>0, lazy_build=>1 );
-method _build_caption { $self->imageinfo->{caption} }
+#has caption      => ( is=>'rw', isa=>'Str', required=>0, lazy_build=>1 );
+#method _build_caption { $self->imageinfo->{caption} }
+
+method caption ( Str $value? ) {
+  # Read
+  return $self->imageinfo->{caption} unless $value;
+
+  # Write
+  return $self->api->UpdateCaption(
+    target_uid => $self->uid,
+    album_id   => $self->albumid,
+    section_id => $self->sectionid,
+    image_id   => $self->id,
+    caption    => $value,
+  ) or return undef;
+  return $self->imageinfo->{caption} = $value;
+}
 
 # XXX: Probably all are required
 #has image_date   => ( is=>'ro', isa=>'Str', required=>0 );
@@ -135,14 +150,14 @@ method _write {
       filename   => $self->name,
       #content    => $self->value,
     );
-  } elsif ( $self->renditionname eq 'Caption' ) {
-    return $self->api->UpdateCaption(
-      target_uid => $self->uid,
-      album_id   => $self->albumid,
-      section_id => $self->sectionid,
-      image_id   => $self->id,
-      caption    => $self->caption,
-    );
+  #} elsif ( $self->renditionname eq 'Caption' ) {
+  #  return $self->api->UpdateCaption(
+  #    target_uid => $self->uid,
+  #    album_id   => $self->albumid,
+  #    section_id => $self->sectionid,
+  #    image_id   => $self->id,
+  #    caption    => $self->caption,
+  #  );
   } else {
     warn sprintf "*** Trying to write image in %s rendition\n", $self->renditionname;
     return undef;

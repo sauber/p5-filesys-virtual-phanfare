@@ -125,6 +125,21 @@ sub DeleteImage {
   delete $self->{_albuminfo};
 }
 
+sub UpdateCaption {
+  my($self, %data) = @_;
+
+  $self->{_albuminfo} = clone $self->GetAlbum;
+  my $image = $self->GetAlbum->{album}{sections}{section}{images}{imageinfo}[0];
+  #warn sprintf "id %s vs %s\n", $image->{image_id}, $data{image_id};
+  $image->{caption} = $data{caption};
+  #++$image->{image_id};
+  #x "Clone image $data{image_name}", $image;
+  #push @{ $self->GetAlbum->{album}{sections}{section}{images}{imageinfo} },
+  #  $image;
+}
+
+
+
 
 # Make sure not caught by AUTOLOAD
 sub DESTROY {}
