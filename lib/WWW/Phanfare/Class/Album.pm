@@ -23,11 +23,12 @@ method _info {
 }
 
 method _idnames {
-  #use Data::Dumper;
   #warn "*** Album _idname:" . Dumper $self->api->GetAlbum(
   #  target_uid => $self->uid,
   #  album_id   => $self->id,
   #);
+  #use Data::Dumper;
+  #warn '*** Album _idnames _info: ' . Dumper $self->_info;
   $self->_idnamepair( $self->_info->{sections}{section}, 'section' );
 }
 

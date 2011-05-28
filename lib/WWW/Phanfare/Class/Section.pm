@@ -52,7 +52,7 @@ method _write {
     album_id     => $self->parent->id,
     section_name => $self->name,
   );
-  warn "*** Created new section $self->name on Phanfare\n";
+  #warn "*** Created new section $self->name on Phanfare\n";
 }
 
 method _delete  {

@@ -8,6 +8,11 @@ use Clone qw(clone);
 use base qw(WWW::Phanfare::API);
 our $AUTOLOAD;
 
+sub x {
+  use Data::Dumper;
+  warn Data::Dumper->Dump([$_[1]], ["*** $_[0]"]);
+}
+
 sub AUTOLOAD {
   warn "*** FakeAgent $AUTOLOAD not handled\n";
 }
@@ -41,6 +46,15 @@ sub GetAlbumList {
 #
 sub GetAlbum {
   shift->{_albuminfo} || LoadFile 't/data/albuminfo.yaml';
+  #my $self = shift;
+  #if ( $self->{_albuminfo} ) {
+  #  #x "*** FakeAgent Getalbum _albuminfo", $self->{_albuminfo};
+  #  warn "*** FakeAgent Getalbum _albuminfo\n";
+  #  return $self->{_albuminfo};
+  #} else {
+  #  warn "*** FakeAgent Getalbum LoadFile\n";
+  #  return LoadFile 't/data/albuminfo.yaml';
+  #}
 }
 
 sub NewAlbum {
@@ -81,8 +95,8 @@ sub NewSection {
   my $section = clone $oldsection;
   $section->{section_name} = $data{section_name};
   ++$section->{section_id};
-  $self->{_albuminfo} = clone $self->GetAlbum->{album};
-  $self->{_albuminfo}{sections}{section} = [
+  $self->{_albuminfo} = clone $self->GetAlbum;
+  $self->{_albuminfo}{album}{sections}{section} = [
     $oldsection,
     $section
   ];

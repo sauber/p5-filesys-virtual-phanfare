@@ -101,7 +101,7 @@ my $newsection = 'New Section';
 ok( ! grep(/$newsection/, $album->names), "Section $newsection doesn't yet exist" );
 $album->add( $newsection );
 # XXX: TODO let fakeagent remember creation
-diag '*** section list:' . Dumper [$album->names];
+#diag '*** section list:' . Dumper [$album->names];
 ok( grep(/$newsection/, $album->names), "Section $newsection now exists" );
 $album->remove( $newsection );
 ok( ! grep(/$newsection/, $album->names), "Section $newsection no longer exists" );
