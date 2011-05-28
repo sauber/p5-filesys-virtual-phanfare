@@ -143,6 +143,7 @@ method rendition { $self->parent                 }
 
 method _write {
   if ( $self->rendition->name eq 'Full' ) {
+    #warn sprintf "*** Error: Trying to write image in %s rendition\n", $self->rendition->name;
     return $self->api->NewImage(
       target_uid => $self->uid,
       album_id   => $self->album->id,

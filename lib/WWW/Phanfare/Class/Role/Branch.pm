@@ -44,7 +44,7 @@ method _build__nodes {
   my $type = $self->childclass;
   my @nodes;
   my $idname = $self->_idnames;
-  xx "Branch _build__nodes $self build $type", $idname unless ref $idname eq 'ARRAY';
+  #xx "Branch _build__nodes $self build $type", $idname unless ref $idname eq 'ARRAY';
   #while ( my($id,$name) = each %$idname ) {
   for my $item ( @$idname ) {
     my $id = $item->{id};
@@ -56,7 +56,16 @@ method _build__nodes {
       ( $name ne $id ? ( id=>$id ) : () ),
     );
     $node->setattributes( $item->{obj} )
-      if $item->{obj} and $self->can('setattributes');
+      if $item->{obj} and $node->can('setattributes');
+    #if ( $node->can('setattributes') ) {
+    #  warn "*** Branch _build__nodes $type name $name accepts attributes\n";
+    #  if ( $item->{obj} ) {
+    #    #xx "  setting to", [ keys %{$item->{obj}} ];
+    #    $node->setattributes( $item->{obj} );
+    #  } else {
+    #    warn "***   But there are no attributes to set\n";
+    #  }
+    #}
     push @nodes, $node;
   }
   return \@nodes;

@@ -63,6 +63,7 @@ sub childclass { 'WWW::Phanfare::Class::Year' };
 #}
 
 with 'WWW::Phanfare::Class::Role::Branch';
+#with 'WWW::Phanfare::Class::Role::Attributes';
 
 =head1 NAME
 

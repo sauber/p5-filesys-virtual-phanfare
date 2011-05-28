@@ -146,7 +146,7 @@ method _idnames {
 #}
 
 with 'WWW::Phanfare::Class::Role::Branch';
-with 'WWW::Phanfare::Class::Role::Attributes';
+#with 'WWW::Phanfare::Class::Role::Attributes';
 
 =head1 NAME
 

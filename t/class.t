@@ -110,6 +110,9 @@ ok( ! grep(/$newsection/, $album->names), "Section $newsection no longer exists"
 
 # Create, read and delete and image
 #$rendition = $section->Full;
+$rendition = $section->WebLarge;
+$renditionname = $rendition->name;
+#diag "Rendition for new image: " . $renditionname;
 my $newimage = 'New Image.jpg';
 ok( ! grep(/$newimage/, $rendition->names), "Image $newimage doesn't yet exist" );
 ok( ! $rendition->add( $newimage, '<imagedata>' ), "Cannot add to $renditionname rendition" );
@@ -126,13 +129,14 @@ ok( $image->caption( $caption ), "Set new image caption" );
 ok( $caption eq $image->caption, "Read new image caption" );
 #diag "Caption: " . $image->caption;
 
-# XXX: Test attributes
-ok ( ! $year->attributes, "Year has attributes" );
+# Some nodes have attributes - some don't
+ok (   $account->attributes,   "Album has attributes"     );
+ok ( ! $site->attributes,      "Site has attributes"      );
+ok ( ! $year->attributes,      "Year has attributes"      );
+ok (   $album->attributes,     "Album has attributes"     );
+ok (   $section->attributes,   "Section has attributes"   );
 ok ( ! $rendition->attributes, "Rendition has attributes" );
+ok (   $image->attributes,     "Image has attributes"     );
 #done_testing(); exit;
-ok ( $site->attributes, "Site has attributes" );
-ok ( $album->attributes, "Album has attributes" );
-ok ( $section->attributes, "Section has attributes" );
-ok ( $image->attributes, "Image has attributes" );
 
 done_testing(); exit;
