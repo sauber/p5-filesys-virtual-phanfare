@@ -27,10 +27,10 @@ method _build_image_id {
 has filename     => ( is=>'ro', isa=>'Str', required=>0, lazy_build=>1 );
 method _build_filename {
   my $basename = ( split /[\/\\]/, $self->imageinfo->{filename})[-1];
-  if ( $self->rendition->name eq 'Caption' ) {
-    # Caption uses .txt extension
-    $basename =~ s/(.*)\..+?$/$1\.txt/ or $basename .= '.txt';
-  }
+  #if ( $self->rendition->name eq 'Caption' ) {
+  #  # Caption uses .txt extension
+  #  $basename =~ s/(.*)\..+?$/$1\.txt/ or $basename .= '.txt';
+  #}
   return $basename;
 }
 
@@ -86,16 +86,16 @@ method imageinfo {
 method renditioninfo {
   return {} if $self->image_id == 0;
   # Manually created informtion for Caption rendition type
-  if ( $self->rendition->name eq 'Caption' ) {
-    my $date = $self->_treesearch(
-      $self->imageinfo->{renditions}{rendition},
-      [ { rendition_type => 'Full' } ]
-    )->{created_date};
-    return {
-      filesize => length $self->caption,
-      created_date => $date,
-    }
-  }
+  #if ( $self->rendition->name eq 'Caption' ) {
+  #  my $date = $self->_treesearch(
+  #    $self->imageinfo->{renditions}{rendition},
+  #    [ { rendition_type => 'Full' } ]
+  #  )->{created_date};
+  #  return {
+  #    filesize => length $self->caption,
+  #    created_date => $date,
+  #  }
+  #}
   
   # All other valid rendition types
   return $self->_treesearch(
@@ -118,20 +118,20 @@ method value ( Str $value? ) {
   return $self->setvalue( $value ) if $value;
 
   # Read
-  if ( $self->rendition->name eq 'Caption' ) {
-    return $self->caption;
-  } else {
+  #if ( $self->rendition->name eq 'Caption' ) {
+  #  return $self->caption;
+  #} else {
     #warn sprintf "*** Fetching %s\n", $self->url;
     my $content = $self->api->geturl( $self->url );
     #warn sprintf "*** Fetched image size is %s\n", length $content;
     # Set size so ls can show accurate value now that it's known
     $self->size( length $content );
     return $content;
-  }
+  #}
 }
 
 method setvalue ( Str $value ) {
-  if ( $self->rendition->name eq 'Caption' ) {
+  if ( $self->rendition->name eq 'Full' ) {
   } else {
   }
   warn sprintf "*** Wrote %s bytes to value\n", length $value;
@@ -150,16 +150,8 @@ method _write {
       filename   => $self->name,
       #content    => $self->value,
     );
-  #} elsif ( $self->renditionname eq 'Caption' ) {
-  #  return $self->api->UpdateCaption(
-  #    target_uid => $self->uid,
-  #    album_id   => $self->albumid,
-  #    section_id => $self->sectionid,
-  #    image_id   => $self->id,
-  #    caption    => $self->caption,
-  #  );
   } else {
-    warn sprintf "*** Trying to write image in %s rendition\n", $self->rendition->name;
+    warn sprintf "*** Error: Trying to write image in %s rendition\n", $self->rendition->name;
     return undef;
   }
 }
