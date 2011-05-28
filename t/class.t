@@ -125,9 +125,14 @@ my $caption = "New Caption";
 ok( $image->caption( $caption ), "Set new image caption" );
 ok( $caption eq $image->caption, "Read new image caption" );
 #diag "Caption: " . $image->caption;
-done_testing; exit;
 
 # XXX: Test attributes
+ok ( ! $year->attributes, "Year has attributes" );
+ok ( ! $rendition->attributes, "Rendition has attributes" );
+done_testing(); exit;
+#ok ( $site->attributes, "Site has attributes" );
+#ok ( $album->attributes, "Album has attributes" );
+#ok ( $section->attributes, "Section has attributes" );
+#ok ( $image->attributes, "Image has attributes" );
+#
 
-
-done_testing();

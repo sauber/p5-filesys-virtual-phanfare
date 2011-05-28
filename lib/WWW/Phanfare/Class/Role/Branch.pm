@@ -47,11 +47,16 @@ method _build__nodes {
   #xx "*** $self build $type", $idname;
   while ( my($id,$name) = each %$idname ) {
     #warn "*** build node type $type name $name id $id\n";
-    push @nodes, $type->new(
+    my $node = $type->new(
       parent => $self,
       name => $name,
       ( $name ne $id ? ( id=>$id ) : () ),
     );
+    # XXX: Todo
+    #if ( can $self->setattributes ) {
+    #  $node->setattributes();
+    #}
+    push @nodes, $node;
   }
   return \@nodes;
 }
