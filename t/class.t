@@ -130,13 +130,28 @@ ok( $caption eq $image->caption, "Read new image caption" );
 #diag "Caption: " . $image->caption;
 
 # Some nodes have attributes - some don't
-ok (   $account->attributes,   "Album has attributes"     );
-ok ( ! $site->attributes,      "Site has attributes"      );
-ok ( ! $year->attributes,      "Year has attributes"      );
-ok (   $album->attributes,     "Album has attributes"     );
-ok (   $section->attributes,   "Section has attributes"   );
-ok ( ! $rendition->attributes, "Rendition has attributes" );
-ok (   $image->attributes,     "Image has attributes"     );
+ok(   $account->attributes,   "Album has attributes"     );
+ok( ! $site->attributes,      "Site has attributes"      );
+ok( ! $year->attributes,      "Year has attributes"      );
+ok(   $album->attributes,     "Album has attributes"     );
+ok(   $section->attributes,   "Section has attributes"   );
+ok( ! $rendition->attributes, "Rendition has attributes" );
+ok(   $image->attributes,     "Image has attributes"     );
+
+# Set attributes
+ok( defined $album->attribute('album_type'), "Album has album_type attribute" ) ;
+ok( $album->attribute('album_type', 'Dated' ), "Album sets album_type attribute" ) ;
+ok( defined $section->attribute('section_descr'), "Section has section_descr attribute" ) ;
+ok( $section->attribute('section_descr', 'A Section Description'), "Section sets section_descr attribute" ) ;
+ok( ! $account->attribute('key', 'new value'), "Account sets key attribute" ) ;
+
+# TODO:
+# Upload image
+# Hide Image
+# Publish Album
+# Set image date
+# Hide and Caption are really just attributes
+
 #done_testing(); exit;
 
 done_testing(); exit;

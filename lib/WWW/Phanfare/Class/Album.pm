@@ -68,8 +68,8 @@ sub childclass { 'WWW::Phanfare::Class::Section' }
 method _write { 
   my $year = $self->parent->name;
   $self->api->NewAlbum(
-     target_uid => $self->uid,
-     album_name => $self->name,
+     target_uid       => $self->uid,
+     album_name       => $self->name,
      album_start_date => $self->parent->start_date,
      album_end_date   => $self->parent->end_date,
   );
@@ -89,7 +89,18 @@ method _write {
 method _delete {
   $self->api->DeleteAlbum(
      target_uid => $self->uid,
-     album_id => $self->id,
+     album_id   => $self->id,
+  );
+}
+
+# Write an attribute
+#
+method _update ( Str $field, Str $value ) {
+  $self->api->UpdateAlbum(
+     target_uid      => $self->uid,
+     album_id        => $self->id,
+     field_to_update => $field,
+     field_value     => $value,
   );
 }
 

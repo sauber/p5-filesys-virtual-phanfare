@@ -66,6 +66,18 @@ method _delete  {
   );
 }
 
+# Write an attribute
+#
+method _update ( Str $field, Str $value ) {
+  $self->api->UpdateSection(
+    target_uid      => $self->uid,
+    album_id        => $self->parent->id,
+    section_id      => $self->id,
+    field_to_update => $field,
+    field_value     => $value,
+  );
+}
+
 with 'WWW::Phanfare::Class::Role::Branch';
 with 'WWW::Phanfare::Class::Role::Attributes';
 

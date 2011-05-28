@@ -22,11 +22,13 @@ has '_attr' => (
     #num_options    => 'count',
     #delete_option  => 'delete',
     #option_pairs   => 'kv',
-    attribute => 'accessor',
+    #attribute => 'accessor',
     attributes => 'keys',
   },
 );
 
+# Set multiple attributes at once
+#
 method setattributes ( HashRef $data ) {
   my %attr = map {
     ref $data->{$_}
@@ -36,6 +38,26 @@ method setattributes ( HashRef $data ) {
   #use Data::Dumper;
   #warn "*** Attributes set: " . Dumper \%attr;
   $self->_set_attr( %attr );
+}
+
+# Get or set an attribute
+#
+method attribute ( Str $key, Str $value? ) {
+  # Read
+  return $self->_attr->{$key} unless $value;
+
+  # Write
+  if ( $value ) {
+    if ( $self->can('_update') ) {
+      #warn "*** Attribes attribute write $key:$value\n";
+      $self->_update( $key => $value ) or return undef;
+      $self->_set_attr( $key => $value );
+      #warn "*** Attribes attribute write $key:$value succeeded\n";
+    } else {
+      #warn "*** Attribes attribute write $key:$value not supported\n";
+      return undef;
+    }
+  }
 }
 
 #requires '_build__attr';

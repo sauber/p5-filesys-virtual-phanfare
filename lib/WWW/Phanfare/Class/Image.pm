@@ -130,11 +130,12 @@ method value ( Str $value? ) {
   #}
 }
 
+# XXX TODO
 method setvalue ( Str $value ) {
   if ( $self->rendition->name eq 'Full' ) {
   } else {
   }
-  warn sprintf "*** Wrote %s bytes to value\n", length $value;
+  #warn sprintf "*** Wrote %s bytes to value\n", length $value;
 }
 
 method album     { $self->parent->parent->parent }
@@ -144,15 +145,17 @@ method rendition { $self->parent                 }
 method _write {
   if ( $self->rendition->name eq 'Full' ) {
     #warn sprintf "*** Error: Trying to write image in %s rendition\n", $self->rendition->name;
+    # XXX: Set time stamp
     return $self->api->NewImage(
       target_uid => $self->uid,
       album_id   => $self->album->id,
       section_id => $self->section->id,
       filename   => $self->name,
       #content    => $self->value,
+      #image_date  => ..., # XXX TODO how do pass date in here?
     );
   } else {
-    warn sprintf "*** Error: Trying to write image in %s rendition\n", $self->rendition->name;
+    warn sprintf "*** Error: Write image %s in %s rendition failed\n", $self->name, $self->rendition->name;
     return undef;
   }
 }
