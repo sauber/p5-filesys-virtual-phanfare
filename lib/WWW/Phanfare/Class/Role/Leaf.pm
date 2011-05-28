@@ -2,7 +2,7 @@ package WWW::Phanfare::Class::Role::Leaf;
 use MooseX::Method::Signatures;
 use Moose::Role;
 
-has value => ( isa=>'Str', is=>'rw' );
+requires 'value';
 
 # All nodes in the tree must have a parent
 #

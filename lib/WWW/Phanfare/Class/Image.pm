@@ -34,7 +34,7 @@ method _build_filename {
   return $basename;
 }
 
-has caption      => ( is=>'ro', isa=>'Str', required=>0, lazy_build=>1 );
+has caption      => ( is=>'rw', isa=>'Str', required=>0, lazy_build=>1 );
 method _build_caption { $self->imageinfo->{caption} }
 
 # XXX: Probably all are required
@@ -98,7 +98,11 @@ method renditioninfo {
 }
 
 # Get binary image or caption text
-method value {
+method value ( Str $value? ) {
+  # Write
+  return $self->setvalue( $value ) if $value;
+
+  # Read
   if ( $self->renditionname eq 'Caption' ) {
     return $self->caption;
   } else {
@@ -111,11 +115,11 @@ method value {
   }
 }
 
-method setvalue ( Str $content ) {
+method setvalue ( Str $value ) {
   if ( $self->parent->name eq 'Caption' ) {
   } else {
   }
-  warn sprintf "*** Wrote %s bytes to value\n", length $content;
+  warn sprintf "*** Wrote %s bytes to value\n", length $value;
 }
 
 method albumid       { $self->parent->parent->parent->id }
@@ -140,6 +144,7 @@ method _write {
       caption    => $self->caption,
     );
   } else {
+    warn sprintf "*** Trying to write image in %s rendition\n", $self->renditionname;
     return undef;
   }
 }

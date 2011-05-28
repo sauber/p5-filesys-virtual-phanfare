@@ -107,10 +107,16 @@ $album->remove( $newsection );
 ok( ! grep(/$newsection/, $album->names), "Section $newsection no longer exists" );
 
 # XXX: Create, read and delete and image
-my $newimage = 'New Image';
+#$rendition = $section->Full;
+my $newimage = 'New Image.jpg';
 ok( ! grep(/$newimage/, $rendition->names), "Image $newimage doesn't yet exist" );
-$rendition->add( $newimage, '<imagedata>' );
+ok( ! $rendition->add( $newimage, '<imagedata>' ), "Cannot add to $renditionname rendition" );
+$rendition = $section->Full;
+$renditionname = $rendition->name;
+ok( $rendition->add( $newimage, '<imagedata>' ), "Added to $renditionname rendition" );
 ok( grep(/$newimage/, $rendition->names), "Image $newimage now exists" );
+$rendition->remove( $newimage );
+ok( ! grep(/$newimage/, $rendition->names), "Image $newimage no longer exists" );
 
 
 done_testing; exit;

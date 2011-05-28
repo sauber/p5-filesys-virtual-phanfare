@@ -112,10 +112,11 @@ method add ( Str $name, Str $value? ) {
   $node->value( $value ) if $value;
   if ( $node->can( '_write' ) ) {
     #warn "*** Node add $name write\n";
-    $node->_write;
+    $node->_write or return;
     #$self->clear__nodes; # Need read from Phanfare to learn id
     delete $self->{_nodes};
     #xx "Node add clear__nodes", $self->_nodes;
+    return $self; # success
   } else {
     #warn "*** Node add $name _add\n";
     $self->_add( $node );

@@ -108,6 +108,23 @@ sub DeleteSection {
   delete $self->{_albuminfo};
 }
 
+sub NewImage {
+  my($self, %data) = @_;
+
+  my $image = clone $self->GetAlbum->{album}{sections}{section}{images}{imageinfo}[-1];
+  $image->{filename} = $data{filename};
+  ++$image->{image_id};
+  #x "Clone image $data{image_name}", $image;
+  $self->{_albuminfo} = clone $self->GetAlbum;
+  push @{ $self->GetAlbum->{album}{sections}{section}{images}{imageinfo} },
+    $image;
+}
+
+sub DeleteImage {
+  my $self = shift;
+  delete $self->{_albuminfo};
+}
+
 
 # Make sure not caught by AUTOLOAD
 sub DESTROY {}

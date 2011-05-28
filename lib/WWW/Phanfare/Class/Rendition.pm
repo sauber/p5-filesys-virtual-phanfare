@@ -13,6 +13,12 @@ use WWW::Phanfare::Class::Image;
 #  return map $_->{image_id}, @$images;
 #}
 
+#method childclass { 
+#  $self->name eq 'Caption'
+#    ? 'WWW::Phanfare::Class::Caption'
+#    : 'WWW::Phanfare::Class::Image'
+#}
+
 sub childclass { 'WWW::Phanfare::Class::Image' }
 
 # List of image filenames. They might be full path
