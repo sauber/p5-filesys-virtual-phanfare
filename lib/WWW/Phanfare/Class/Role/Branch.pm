@@ -124,10 +124,11 @@ sub AUTOLOAD {
 # Create new child object and add to list.
 # Let object write itself to phanfare if possible
 # 
-method add ( Str $name, Str $value? ) {
+method add ( Str $name, Str $value?, Str $date? ) {
   my $type = $self->childclass;
   my $node = $type->new( parent=>$self, name=>$name );
   $node->value( $value ) if $value;
+  $node->attribute( 'image_date', $date ) if $date;
   if ( $node->can( '_write' ) ) {
     #warn "*** Node add $name write\n";
     $node->_write or return;

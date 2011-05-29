@@ -124,17 +124,19 @@ method _hidden ( Bool $value? ) {
 #}
 
 # Get binary image or caption text
+has _imagedata => ( isa=>'Str', is=>'rw' );
 method value ( Str $value? ) {
   # Write
   #return $self->setvalue( $value ) if $value;
-  return if defined $value;
+  #return if defined $value;
+  return $self->_imagedata( $value ) if $value;
 
   # Read
   #if ( $self->rendition->name eq 'Caption' ) {
   #  return $self->caption;
   #} else {
     #warn sprintf "*** Fetching %s\n", $self->url;
-    my $content = $self->api->geturl( $self->url );
+    my $content = $self->api->geturl( $self->attribute('url') );
     #warn sprintf "*** Fetched image size is %s\n", length $content;
     # Set size so ls can show accurate value now that it's known
     $self->size( length $content );
@@ -163,8 +165,8 @@ method _write {
       album_id   => $self->album->id,
       section_id => $self->section->id,
       filename   => $self->name,
-      #content    => $self->value,
-      #image_date  => ..., # XXX TODO how do pass date in here?
+      content    => $self->_imagedata,
+      image_date  => $self->attribute('image_date'),
     );
   } else {
     warn sprintf "*** Error: Write image %s in %s rendition failed\n", $self->name, $self->rendition->name;

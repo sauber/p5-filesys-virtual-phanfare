@@ -109,7 +109,7 @@ ok( ! grep(/$newimage/, $rendition->names), "Image $newimage doesn't yet exist" 
 ok( ! $rendition->add( $newimage, '<imagedata>' ), "Cannot add to $renditionname rendition" );
 $rendition = $section->Full;
 $renditionname = $rendition->name;
-ok( $rendition->add( $newimage, '<imagedata>' ), "Added to $renditionname rendition" );
+ok( $rendition->add( $newimage, '<imagedata>', '2009-09-15T00:00:00' ), "Added to $renditionname rendition" );
 ok( grep(/$newimage/, $rendition->names), "Image $newimage now exists" );
 $rendition->remove( $newimage );
 ok( ! grep(/$newimage/, $rendition->names), "Image $newimage no longer exists" );
@@ -194,12 +194,5 @@ ok( 'http://' eq substr $image->attribute('url'), 0, 7, "url starts with http" )
 for $attrkey ( qw(created_date filesize height media_type quality width) ) {
   ok( defined $image->attribute($attrkey), "Image has rendition $attrkey" );
 }
-
-# TODO:
-# Upload image
-# Publish Album
-# Set image date
-
-#done_testing(); exit;
 
 done_testing(); exit;
