@@ -44,19 +44,17 @@ method setattributes ( HashRef $data ) {
 #
 method attribute ( Str $key, Str $value? ) {
   # Read
-  return $self->_attr->{$key} unless $value;
+  return $self->_attr->{$key} unless defined $value;
 
   # Write
-  if ( $value ) {
-    if ( $self->can('_update') ) {
-      #warn "*** Attribes attribute write $key:$value\n";
-      $self->_update( $key => $value ) or return undef;
-      $self->_set_attr( $key => $value );
-      #warn "*** Attribes attribute write $key:$value succeeded\n";
-    } else {
-      #warn "*** Attribes attribute write $key:$value not supported\n";
-      return undef;
-    }
+  if ( $self->can('_update') ) {
+    #warn "*** Attributes attribute write $key:$value\n";
+    defined $self->_update( $key => $value ) or return undef;
+    $self->_set_attr( $key => $value );
+    #warn "*** Attribes attribute write $key:$value succeeded\n";
+  } else {
+    #warn "*** Attribes attribute write $key:$value not supported\n";
+    return undef;
   }
 }
 

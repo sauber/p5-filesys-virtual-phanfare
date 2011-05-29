@@ -158,7 +158,7 @@ sub HideImage {
 
   $self->{_albuminfo} = clone $self->GetAlbum;
   my $image = $self->GetAlbum->{album}{sections}{section}{images}{imageinfo}[0];
-  $image->{hide} = $data{hide};
+  $image->{hidden} = $data{hide};
 }
 
 

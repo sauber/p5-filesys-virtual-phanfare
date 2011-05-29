@@ -138,38 +138,65 @@ ok( ! $account->attribute('key', 'new value'), "Account sets key attribute" ) ;
 # Album attributes
 my $attrkey = 'album_type';
 my $attrval = 'Timeless';
-ok( defined $album->attribute($attrkey), "Album has $attrkey attribute" ) ;
+ok( my $prevattr =  $album->attribute($attrkey), "Album has $attrkey attribute" ) ;
 ok( $album->attribute($attrkey, $attrval ), "Album sets $attrkey attribute" ) ;
 ok( $album->attribute($attrkey) eq $attrval , "Album $attrkey attribute is set" ) ;
+ok( $album->attribute($attrkey, $prevattr ), "Album restores $attrkey attribute" ) ;
+ok( $album->attribute($attrkey) eq $prevattr , "Album $attrkey attribute is restored" ) ;
 ok( ! $album->attribute('key'), "Album key attribute is set" ) ;
 
 # Section attributes
-my $attrkey = 'section_descr';
-my $attrval = 'Short Description';
-ok( defined $section->attribute($attrkey), "Section has $attrkey attribute" ) ;
+$attrkey = 'section_descr';
+$attrval = 'Short Description';
+#diag 'Section attributes: ' . Dumper $section->_attr;
+$prevattr = $section->attribute($attrkey);
+ok ( defined $prevattr, "Section has $attrkey attribute" ) ;
 ok( $section->attribute($attrkey, $attrval), "Section sets $attrkey attribute" ) ;
 ok( $section->attribute($attrkey) eq $attrval , "Section $attrkey attribute is set" ) ;
+ok( defined $section->attribute($attrkey, $prevattr), "Section restores $attrkey attribute" ) ;
+ok( $section->attribute($attrkey) eq $prevattr , "Section $attrkey attribute is restored" ) ;
+#diag 'Section attributes: ' . Dumper $section->_attr;
 ok( ! $section->attribute('key'), "Section key attribute is set" ) ;
+
+# Image attributes
+ok( ! $image->attribute('key'), "Image attribute key does not exist" );
+ok( ! $image->attribute('key', 'value'), "Image attribute key cannot be set" );
+($attrkey) = grep !/(hidden|caption)/, $image->attributes;
+$attrval = $image->attribute( $attrkey );
+ok( defined $attrval, "Previous image attribute defined" );
+ok( ! $image->attribute( $attrkey, 42 ), "Cannot set any attributes" );
+ok( $image->attribute( 'caption', $image->attribute('caption') ), "Set image attribute caption");
+ok( defined $image->attribute( 'hidden', $image->attribute('hidden') ), "Set image attribute hidden");
 
 # Create, read and delete a caption
 my $caption = "New Caption";
+my $prevcap = $image->caption;
+ok( defined $prevcap, "Previous image caption exists" );
 ok( $image->caption( $caption ), "Set new image caption" );
 ok( $caption eq $image->caption, "Read new image caption" );
+ok( $image->caption( $prevcap ), "Restore image caption" );
+ok( $prevcap eq $image->caption, "Image caption is restored" );
 #diag "Caption: " . $image->caption;
 
 # Create, read and delete hide flag
-ok( $image->hide( 1 ), "Set image hide flag" );
-ok( $image->hide == 1, "Get image hide flag" );
-#diag "Caption: " . $image->caption;
+my $prevhide = $image->hidden;
+ok( defined $prevhide, "Previous hide flag exists" );
+ok( $image->hidden( 1 ), "Set image hide flag 1" );
+ok( $image->hidden == 1, "Get image hide flag 1" );
+ok( defined $image->hidden( 0 ), "Set image hide flag 0" );
+ok( $image->hidden == 0, "Get image hide flag 0" );
+ok( defined $image->hidden( $prevhide ), "Restore image hide" );
+ok( $prevhide == $image->hidden, "Hide flag resoted" );
+#diag "Hide: " . $image->hidden;
 
-
+# Hide and Caption are really just attributes
+ok( $image->attribute('hidden') == $image->hidden, "Image hide attribute" );
+ok( $image->attribute('caption') == $image->caption, "Image hide attribute" );
 
 # TODO:
 # Upload image
-# Hide Image
 # Publish Album
 # Set image date
-# Hide and Caption are really just attributes
 
 #done_testing(); exit;
 

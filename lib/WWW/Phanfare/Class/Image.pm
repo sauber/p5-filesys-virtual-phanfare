@@ -34,12 +34,9 @@ method _build_filename {
   return $basename;
 }
 
-#has caption      => ( is=>'rw', isa=>'Str', required=>0, lazy_build=>1 );
-#method _build_caption { $self->imageinfo->{caption} }
-
 method caption ( Str $value? ) {
   # Read
-  return $self->imageinfo->{caption} unless $value;
+  return $self->imageinfo->{caption} unless defined $value;
 
   # Write
   return $self->api->UpdateCaption(
@@ -52,9 +49,9 @@ method caption ( Str $value? ) {
   return $self->imageinfo->{caption} = $value;
 }
 
-method hide ( Bool $value? ) {
+method hidden ( Bool $value? ) {
   # Read
-  return $self->imageinfo->{hide} unless $value;
+  return $self->imageinfo->{hidden} unless defined $value;
 
   # Write
   return $self->api->HideImage(
@@ -64,7 +61,7 @@ method hide ( Bool $value? ) {
     image_id   => $self->id,
     hide       => $value,
   ) or return undef;
-  return $self->imageinfo->{hide} = $value;
+  return $self->imageinfo->{hidden} = $value;
 }
 
 
@@ -186,6 +183,17 @@ method _delete {
   );
 }
   
+
+# 'hide' and 'caption' are the only attributes that can be updated
+#
+method _update ( Str $key, Str $value ) {
+  if ( $key eq 'caption' ) {
+    return $self->caption( $value );
+  } elsif ( $key eq 'hidden' ) {
+    return $self->hidden( $value );
+  }
+  return undef;
+}
 
 with 'WWW::Phanfare::Class::Role::Leaf';
 with 'WWW::Phanfare::Class::Role::Attributes';
