@@ -9,18 +9,35 @@ use_ok( 'FakeAgent' );
 
 use Data::Dumper;
 
-# Create an object
-my $class = new_ok( 'WWW::Phanfare::Class' => [ 
-  api_key       => 'secret',
-  private_key   => 'secret',
-  email_address => 's@c.et',
-  password      => 'secret',
-] );
+# Create test object on live site
+my %config;
+eval '
+  use Config::General;
+  use File::HomeDir;
+  use WWW::Phanfare::API;
+  my $rcfile = File::HomeDir->my_home . "/.phanfarerc";
+  %config = Config::General->new( $rcfile )->getall;
+  die unless $config{api_key}
+         and $config{private_key}
+         and $config{email_address}
+         and $config{password};
+';
+plan skip_all => "Local config not found: $@" if $@;
+my $class = new_ok( 'WWW::Phanfare::Class' => [ %config ] );
 isa_ok( $class, 'WWW::Phanfare::Class' );
-$class->api( FakeAgent->new() );
+
+# Create an fake test object
+#my $class = new_ok( 'WWW::Phanfare::Class' => [ 
+#  api_key       => 'secret',
+#  private_key   => 'secret',
+#  email_address => 's@c.et',
+#  password      => 'secret',
+#] );
+#isa_ok( $class, 'WWW::Phanfare::Class' );
+#$class->api( FakeAgent->new() );
 
 # Verify there is account
-ok( my $account = $class->account, "Class has account" );
+ok( my $account = $class->account(), "Class has account" );
 isa_ok( $account, 'WWW::Phanfare::Class::Account' );
 
 # Verify there is a site
