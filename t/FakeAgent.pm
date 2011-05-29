@@ -85,6 +85,16 @@ sub DeleteAlbum {
   delete $self->{_albuminfo};
 }
 
+# Set an Album Attribute
+#
+sub UpdateAlbum {
+  my($self, %data) = @_;
+
+  $self->{_albuminfo} = clone $self->GetAlbum;
+  $self->{_albuminfo}{album}{$data{field_to_update}} = $data{field_value};
+}
+
+
 sub NewSection {
   my($self, %data) = @_;
 
@@ -101,6 +111,16 @@ sub NewSection {
     $section
   ];
   #warn "*** NewSection sections: " . Dumper $self->{_albuminfo}{sections};
+}
+
+# Set a Section Attribute
+#
+sub UpdateSection {
+  my($self, %data) = @_;
+
+  $self->{_albuminfo} = clone $self->GetAlbum;
+  $self->{_albuminfo}{album}{sections}{section}{$data{field_to_update}}
+    = $data{field_value};
 }
 
 sub DeleteSection {

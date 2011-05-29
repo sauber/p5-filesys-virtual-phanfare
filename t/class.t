@@ -138,12 +138,24 @@ ok(   $section->attributes,   "Section has attributes"   );
 ok( ! $rendition->attributes, "Rendition has attributes" );
 ok(   $image->attributes,     "Image has attributes"     );
 
-# Set attributes
-ok( defined $album->attribute('album_type'), "Album has album_type attribute" ) ;
-ok( $album->attribute('album_type', 'Dated' ), "Album sets album_type attribute" ) ;
-ok( defined $section->attribute('section_descr'), "Section has section_descr attribute" ) ;
-ok( $section->attribute('section_descr', 'A Section Description'), "Section sets section_descr attribute" ) ;
+# Account attributes cannot be set
 ok( ! $account->attribute('key', 'new value'), "Account sets key attribute" ) ;
+
+# Album attributes
+my $attrkey = 'album_type';
+my $attrval = 'Timeless';
+ok( defined $album->attribute($attrkey), "Album has $attrkey attribute" ) ;
+ok( $album->attribute($attrkey, $attrval ), "Album sets $attrkey attribute" ) ;
+ok( $album->attribute($attrkey) eq $attrval , "Album $attrkey attribute is set" ) ;
+ok( ! $album->attribute('key'), "Album key attribute is set" ) ;
+
+# Section attributes
+my $attrkey = 'section_descr';
+my $attrval = 'Short Description';
+ok( defined $section->attribute($attrkey), "Section has $attrkey attribute" ) ;
+ok( $section->attribute($attrkey, $attrval), "Section sets $attrkey attribute" ) ;
+ok( $section->attribute($attrkey) eq $attrval , "Section $attrkey attribute is set" ) ;
+ok( ! $section->attribute('key'), "Section key attribute is set" ) ;
 
 # TODO:
 # Upload image
