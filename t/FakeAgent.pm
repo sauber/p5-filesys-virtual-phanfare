@@ -151,6 +151,7 @@ sub UpdateCaption {
   $self->{_albuminfo} = clone $self->GetAlbum;
   my $image = $self->GetAlbum->{album}{sections}{section}{images}{imageinfo}[0];
   $image->{caption} = $data{caption};
+  return { stat=>'ok' };
 }
 
 sub HideImage {
@@ -159,6 +160,7 @@ sub HideImage {
   $self->{_albuminfo} = clone $self->GetAlbum;
   my $image = $self->GetAlbum->{album}{sections}{section}{images}{imageinfo}[0];
   $image->{hidden} = $data{hide};
+  return { stat=>'ok' };
 }
 
 

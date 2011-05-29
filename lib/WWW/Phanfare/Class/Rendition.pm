@@ -24,9 +24,9 @@ sub childclass { 'WWW::Phanfare::Class::Image' }
 # List of image filenames. They might be full path
 #
 method _idnames {
-  my $images = $self->parent->_info->{images}{imageinfo};
-  return {} unless $images;
-  $images = [ $images ] unless 'ARRAY' eq ref $images;
+  #my $images = $self->parent->_info->{images}{imageinfo};
+  #return {} unless $images;
+  #$images = [ $images ] unless 'ARRAY' eq ref $images;
   #use Data::Dumper;
   #warn 'Rendition subnodelist: ', Dumper [ map $_->{filename}, @$images ];
   #my @fullpath = ( map $_->{filename}, @$images );
@@ -40,13 +40,32 @@ method _idnames {
   #}
   #return { map {$_=>$_} @filename };
 
+  my $imageinfo = $self->parent->_info->{images}{imageinfo};
+  return [] unless $imageinfo;
+  $imageinfo = [ $imageinfo ] unless ref $imageinfo eq 'ARRAY';
+
+  my @images;
+  for my $image ( @$imageinfo ) {
+    # Merge imageinfo and rendition info
+    $image = {
+      %$image,
+      %{
+         $self->_treesearch(
+           $image->{renditions}{rendition},
+           [ { rendition_type => $self->name } ]
+         )
+      }
+    };
+    push @images, $image;
+  }
+
   return [
     map {{
       id   => $_->{image_id},
       name => $self->_basename( $_->{filename} ),
-      obj  => $_,
+      attr  => $_,
     }}
-    @$images
+    @images
   ];
 }
 

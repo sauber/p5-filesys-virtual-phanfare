@@ -55,8 +55,11 @@ method _build__nodes {
       name => $name,
       ( $name ne $id ? ( id=>$id ) : () ),
     );
-    $node->setattributes( $item->{obj} )
-      if $item->{obj} and $node->can('setattributes');
+    # We already know all the attributes
+    $node->setattributes( $item->{attr} )
+      if $item->{attr} and $node->can('setattributes');
+    # Object can build attributes by itself
+    $node->_buildattributes if $node->can('_buildattributes');
     #if ( $node->can('setattributes') ) {
     #  warn "*** Branch _build__nodes $type name $name accepts attributes\n";
     #  if ( $item->{obj} ) {
@@ -237,7 +240,7 @@ method _idnamepair ( Ref $data, Str $label, HashRef $filter? ) {
     map {{
       id   => $_->{"${label}_id"},
       name => $_->{"${label}_name"},
-      obj  => $_,
+      attr  => $_,
     }}
     grep {
       if ( $key and $value and $_->{$key} ) {

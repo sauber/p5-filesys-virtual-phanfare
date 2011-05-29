@@ -63,15 +63,6 @@ my $imagename = shift @imagenames;
 ok( my $image = $rendition->$imagename, 'Class has image object' );
 isa_ok( $image, 'WWW::Phanfare::Class::Image' );
 
-# URL of image
-#diag Dumper $image;
-#diag "*** image url is " . $image->url;
-ok( 'http://' eq substr $image->url, 0, 7, "url starts with http" );
-
-# Caption of image
-ok( length $image->caption, "Image has caption" );
-#diag "Image Caption: " . $image->caption;
-
 # Make sure all image filenames are different
 my %U;
 my @uniqnames = grep { ! $U{$_}++ } @imagenames;
@@ -170,28 +161,39 @@ ok( defined $image->attribute( 'hidden', $image->attribute('hidden') ), "Set ima
 
 # Create, read and delete a caption
 my $caption = "New Caption";
-my $prevcap = $image->caption;
+my $prevcap = $image->_caption;
 ok( defined $prevcap, "Previous image caption exists" );
-ok( $image->caption( $caption ), "Set new image caption" );
-ok( $caption eq $image->caption, "Read new image caption" );
-ok( $image->caption( $prevcap ), "Restore image caption" );
-ok( $prevcap eq $image->caption, "Image caption is restored" );
+ok( $image->_caption( $caption ), "Set new image caption" );
+ok( $caption eq $image->_caption, "Read new image caption" );
+ok( $image->_caption( $prevcap ), "Restore image caption" );
+ok( $prevcap eq $image->_caption, "Image caption is restored" );
 #diag "Caption: " . $image->caption;
 
 # Create, read and delete hide flag
-my $prevhide = $image->hidden;
+my $prevhide = $image->_hidden;
 ok( defined $prevhide, "Previous hide flag exists" );
-ok( $image->hidden( 1 ), "Set image hide flag 1" );
-ok( $image->hidden == 1, "Get image hide flag 1" );
-ok( defined $image->hidden( 0 ), "Set image hide flag 0" );
-ok( $image->hidden == 0, "Get image hide flag 0" );
-ok( defined $image->hidden( $prevhide ), "Restore image hide" );
-ok( $prevhide == $image->hidden, "Hide flag resoted" );
+ok( $image->_hidden( 1 ), "Set image hide flag 1" );
+ok( $image->_hidden == 1, "Get image hide flag 1" );
+ok( defined $image->_hidden( 0 ), "Set image hide flag 0" );
+ok( $image->_hidden == 0, "Get image hide flag 0" );
+ok( defined $image->_hidden( $prevhide ), "Restore image hide" );
+ok( $prevhide == $image->_hidden, "Hide flag resoted" );
 #diag "Hide: " . $image->hidden;
 
 # Hide and Caption are really just attributes
-ok( $image->attribute('hidden') == $image->hidden, "Image hide attribute" );
-ok( $image->attribute('caption') == $image->caption, "Image hide attribute" );
+ok( $image->attribute('hidden') == $image->_hidden, "Image hide attribute" );
+ok( $image->attribute('caption') == $image->_caption, "Image hide attribute" );
+
+# Image attributes from imageinfo
+for $attrkey ( qw(filename image_date is_video) ) {
+  ok( defined $image->attribute($attrkey), "Image has image attribute $attrkey" );
+}
+
+# Image attributes from rendition
+ok( 'http://' eq substr $image->attribute('url'), 0, 7, "url starts with http" );
+for $attrkey ( qw(created_date filesize height media_type quality width) ) {
+  ok( defined $image->attribute($attrkey), "Image has rendition $attrkey" );
+}
 
 # TODO:
 # Upload image
