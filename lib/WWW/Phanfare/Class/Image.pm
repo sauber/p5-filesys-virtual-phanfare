@@ -52,6 +52,22 @@ method caption ( Str $value? ) {
   return $self->imageinfo->{caption} = $value;
 }
 
+method hide ( Bool $value? ) {
+  # Read
+  return $self->imageinfo->{hide} unless $value;
+
+  # Write
+  return $self->api->HideImage(
+    target_uid => $self->uid,
+    album_id   => $self->album->id,
+    section_id => $self->section->id,
+    image_id   => $self->id,
+    hide       => $value,
+  ) or return undef;
+  return $self->imageinfo->{hide} = $value;
+}
+
+
 # XXX: Probably all are required
 #has image_date   => ( is=>'ro', isa=>'Str', required=>0 );
 #has is_video     => ( is=>'ro', isa=>'Int', required=>0 );

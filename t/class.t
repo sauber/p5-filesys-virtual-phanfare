@@ -123,12 +123,6 @@ ok( grep(/$newimage/, $rendition->names), "Image $newimage now exists" );
 $rendition->remove( $newimage );
 ok( ! grep(/$newimage/, $rendition->names), "Image $newimage no longer exists" );
 
-# Create, read and delete and caption
-my $caption = "New Caption";
-ok( $image->caption( $caption ), "Set new image caption" );
-ok( $caption eq $image->caption, "Read new image caption" );
-#diag "Caption: " . $image->caption;
-
 # Some nodes have attributes - some don't
 ok(   $account->attributes,   "Album has attributes"     );
 ok( ! $site->attributes,      "Site has attributes"      );
@@ -156,6 +150,19 @@ ok( defined $section->attribute($attrkey), "Section has $attrkey attribute" ) ;
 ok( $section->attribute($attrkey, $attrval), "Section sets $attrkey attribute" ) ;
 ok( $section->attribute($attrkey) eq $attrval , "Section $attrkey attribute is set" ) ;
 ok( ! $section->attribute('key'), "Section key attribute is set" ) ;
+
+# Create, read and delete a caption
+my $caption = "New Caption";
+ok( $image->caption( $caption ), "Set new image caption" );
+ok( $caption eq $image->caption, "Read new image caption" );
+#diag "Caption: " . $image->caption;
+
+# Create, read and delete hide flag
+ok( $image->hide( 1 ), "Set image hide flag" );
+ok( $image->hide == 1, "Get image hide flag" );
+#diag "Caption: " . $image->caption;
+
+
 
 # TODO:
 # Upload image
