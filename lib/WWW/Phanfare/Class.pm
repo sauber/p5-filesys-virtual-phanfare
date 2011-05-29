@@ -9,9 +9,6 @@ has 'private_key'   => ( is=>'ro', isa=>'Str', required=>1 );
 has 'email_address' => ( is=>'ro', isa=>'Str' );
 has 'password'      => ( is=>'ro', isa=>'Str' );
 sub childclass { 'WWW::Phanfare::Class::Account' }
-#has list => ( is=>'ro'. isa=>'ArrayRef[WWW::Phanfare::Class::Account]', default=>sub{ shift->account->list } );
-#has name => ( is=>'ro', isa=>'Str' );
-#has id => ( is=>'ro', isa=>'Str' );
 
 # Initialize account
 has 'account' => (
@@ -36,7 +33,10 @@ sub _build_account {
   }
 
   #use Data::Dumper;
-  #warn '*** _build_account' . Dumper $session;
+  #warn '*** Class _build_account: ' . Dumper $session;
+
+  warn sprintf "*** Error: Could not login: %s\n", $session->{code_value}
+    unless $session->{stat} eq 'ok';
 
   # Create account object with session data
   #my $account = WWW::Phanfare::Class::Account->new(
@@ -72,9 +72,6 @@ sub _build_api {
   );
 }
 
-#method names {
-#  return 'sites';
-#}
 
 # Get a subnode, by name of name.id
 #
@@ -97,49 +94,6 @@ sub AUTOLOAD {
 }
 
 
-## SITES
-#method sitelist { $self->account->sitelist }
-#method site ( Str $sitename ) { $self->account->site( $sitename ) }
-#
-## YEARS
-## XXX: For now assume there is only one site
-#method yearlist { $self->site($self->sitelist)->yearlist }
-#method year ( Str $yearname ) {
-#  $self->site($self->sitelist)->year( $yearname )
-#}
-#
-## ALBUMS
-#method albumlist ( Int $year ) { $self->year( $year )->albumlist }
-#method album ( Int $year, Str $albumname ) {
-#  $self->year($year)->album( $albumname )
-#}
-#
-## SECTIONS
-#method sectionlist ( Int $year, Str $albumname ){
-#  $self->year($year)->album( $albumname )->sectionlist
-#}
-#method section ( Int $year, Str $albumname, Str $sectionname ) {
-#  $self->year($year)->album( $albumname )->section( $sectionname );
-#}
-#
-## RENDITIONS
-#method renditionlist ( Int $year, Str $albumname, Str $sectionname ) {
-#  $self->year($year)->album( $albumname )->section( $sectionname )->renditionlist;
-#}
-#method rendition ( Int $year, Str $albumname, Str $sectionname, Str $renditionname ) {
-#  my $section = $self->year($year)->album( $albumname )->section( $sectionname );
-#  $section->rendition( $renditionname );
-#}
-#
-## IMAGES
-#method imagelist ( Int $year, Str $albumname, Str $sectionname, $renditionname ) {
-#  my $section = $self->year($year)->album( $albumname )->section( $sectionname );
-#  $section->rendition( $renditionname )->imagelist;
-#}
-#method image ( Int $year, Str $albumname, Str $sectionname, $renditionname, Str $imagename ) {
-#  my $section = $self->year($year)->album( $albumname )->section( $sectionname );
-#  $section->rendition( $renditionname )->image( $imagename );
-#}
 
 =head1 NAME
 

@@ -23,44 +23,10 @@ method _info {
 }
 
 method _idnames {
-  #warn "*** Album _idname:" . Dumper $self->api->GetAlbum(
-  #  target_uid => $self->uid,
-  #  album_id   => $self->id,
-  #);
-  #use Data::Dumper;
-  #warn '*** Album _idnames _info: ' . Dumper $self->_info;
   $self->_idnamepair( $self->_info->{sections}{section}, 'section' );
 }
 
-#method buildnode ( $nodename ) {
-#method _build_list {
-#  my %node = $self->section_nameids;
-#  #my($id,$name) = $self->idnamematch( \%node, $nodename );
-#  my $type = $self->childclass;
-#  return [
-#    $type->new(
-#    parent       => $self,
-#    name     => $nodename,
-#    section_id   => $id,
-#    #section_name => $name,
-#  );
-#}
-
-#method subnodetype { 'WWW::Phanfare::Class::Section' }
 sub childclass { 'WWW::Phanfare::Class::Section' }
-#method subnodelist { $self->idnamestrings({ $self->section_nameids }) }
-
-#method sectionlist { $self->subnodelist }
-#method section ( Str $sectionname ) { $self->getnode( $sectionname ) }
-
-# Create a section of album
-#method create ( Str $nodename ) {
-#  $self->api->NewSection(
-#     target_uid => $self->uid,
-#     album_id => $self->album_id,
-#     section_name => $nodename,
-#  )
-#}
 
 # Create this as new node on Phanfare
 # XXX: If parent node was a temp node, it can now be made permanent.
@@ -76,21 +42,14 @@ method _write {
   #warn sprintf "*** Created new album %s on Phanfare\n", $self->name;
 }
 
-#method delete ( Str $nodename ) {
-#  my %node = $self->section_nameids;
-#  my($id,$name) = $self->idnamematch( \%node, $nodename );
-#  $self->api->DeleteSection(
-#     target_uid => $self->uid,
-#     album_id => $self->album_id,
-#     section_id => $id,
-#  );
-#}
-
 method _delete {
-  $self->api->DeleteAlbum(
+  my $res = $self->api->DeleteAlbum(
      target_uid => $self->uid,
      album_id   => $self->id,
   );
+  use Data::Dumper;
+  warn "*** Album _delete result: " . Dumper $res;
+  return $res;
 }
 
 # Write an attribute

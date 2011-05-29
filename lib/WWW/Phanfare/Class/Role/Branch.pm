@@ -33,6 +33,7 @@ has '_nodes' => (
     #has_no_options => 'is_empty',
     #sorted_options => 'sort',
     _indexget => 'accessor',
+    _clear => 'clear',
   },
 );
 
@@ -72,6 +73,11 @@ method _build__nodes {
     push @nodes, $node;
   }
   return \@nodes;
+}
+
+method _rebuild {
+  warn sprintf "Rebuilding nodes in %s %s\n", $self->parent->childclass, $self->name;
+  $self->_nodes( $self->_build__nodes );
 }
 
 
@@ -133,8 +139,11 @@ method add ( Str $name, Str $value?, Str $date? ) {
     #warn "*** Node add $name write\n";
     $node->_write or return;
     #$self->clear__nodes; # Need read from Phanfare to learn id
-    delete $self->{_nodes};
+    #delete $self->{_nodes};
+    #$self->_nodes = [];
+    $self->_rebuild;
     #xx "Node add clear__nodes", $self->_nodes;
+    warn "** Branch add delete nodes\n";
     return $self; # success
   } else {
     #warn "*** Node add $name _add\n";

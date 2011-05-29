@@ -9,34 +9,39 @@ use_ok( 'FakeAgent' );
 
 use Data::Dumper;
 
-# Create test object on live site
-my %config;
-eval '
-  use Config::General;
-  use File::HomeDir;
-  use WWW::Phanfare::API;
-  my $rcfile = File::HomeDir->my_home . "/.phanfarerc";
-  %config = Config::General->new( $rcfile )->getall;
-  die unless $config{api_key}
-         and $config{private_key}
-         and $config{email_address}
-         and $config{password};
-';
-plan skip_all => "Local config not found: $@" if $@;
-my $class = new_ok( 'WWW::Phanfare::Class' => [ %config ] );
+my $class;
+if ( $ENV{SITE} ) {
+  # Create test object on live site
+  my %config;
+  eval '
+    use Config::General;
+    use File::HomeDir;
+    use WWW::Phanfare::API;
+    my $rcfile = File::HomeDir->my_home . "/.phanfarerc";
+    %config = Config::General->new( $rcfile )->getall;
+    die unless $config{api_key}
+           and $config{private_key}
+           and $config{email_address}
+           and $config{password};
+  ';
+  plan skip_all => "Local config not found: $@" if $@;
+  $class = new_ok( 'WWW::Phanfare::Class' => [ %config ] );
+
+} else { 
+  # Create an fake test object
+  $class = new_ok( 'WWW::Phanfare::Class' => [ 
+    api_key       => 'secret',
+    private_key   => 'secret',
+    email_address => 's@c.et',
+    password      => 'secret',
+  ] );
+  $class->api( FakeAgent->new() );
+}
+
 isa_ok( $class, 'WWW::Phanfare::Class' );
 
-# Create an fake test object
-#my $class = new_ok( 'WWW::Phanfare::Class' => [ 
-#  api_key       => 'secret',
-#  private_key   => 'secret',
-#  email_address => 's@c.et',
-#  password      => 'secret',
-#] );
-#isa_ok( $class, 'WWW::Phanfare::Class' );
-#$class->api( FakeAgent->new() );
-
 # Verify there is account
+#diag Dumper $class;
 ok( my $account = $class->account(), "Class has account" );
 isa_ok( $account, 'WWW::Phanfare::Class::Account' );
 
@@ -100,12 +105,17 @@ ok( ! $site->remove( $yearname ), "Year $yearname removed" );
 
 # Create, read and delete an album
 my $newalbum = "New Album";
+diag "Existing albums: " . Dumper [ $year->names ];
 ok( ! grep(/$newalbum/, $year->names), "Album $newalbum doesn't yet exist" );
 $year->add( $newalbum );
+diag "Existing albums: " . Dumper [ $year->names ];
 ok( grep(/$newalbum/, $year->names), "Album $newalbum now exists" );
-#diag '*** album list:' . Dumper [$year->names];
+diag '*** album list:' . Dumper [$year->names];
 $year->remove( $newalbum );
+diag '*** album list:' . Dumper [$year->names];
 ok( ! grep(/$newalbum/, $year->names), "Album $newalbum no longer exists" );
+diag '*** album list:' . Dumper [$year->names];
+done_testing(); exit;
 
 # Create, read and delete a section
 my $newsection = 'New Section';

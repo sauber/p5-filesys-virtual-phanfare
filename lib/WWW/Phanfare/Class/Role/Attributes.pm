@@ -36,7 +36,7 @@ method setattributes ( HashRef $data ) {
       : ( $_ => $data->{$_} )
   } keys %$data;
   use Data::Dumper;
-  warn "*** Attributes set: " . Dumper \%attr;
+  #warn "*** Attributes set: " . Dumper \%attr;
   $self->_set_attr( %attr );
 }
 
