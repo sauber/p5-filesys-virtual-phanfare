@@ -6,14 +6,6 @@ use Data::Dumper;
 use base qw( WWW::Phanfare::API );
 our $AUTOLOAD;
 
-#sub new {
-#  my $that  = shift;
-#  my $class = ref($that) || $that;
-#  my $self  = { @_ };
-#  bless $self, $class;
-#  return $self;
-#}
-
 our $CACHE = Cache::Memory->new(
   namespace       => 'WWW::Phanfare::Class',
   default_expires => '30 sec',
@@ -43,15 +35,17 @@ sub AUTOLOAD {
   $method =~ s/.*://;   # strip fully-qualified portion
   croak "method not defined" unless $method;
 
+  $CACHE->purge();
   my $cachestring = join ',', $method, @_;
   my $result = $CACHE->thaw( $cachestring );
   unless ( $result ) {
-    #warn "*** Caching $cachestring\n";
-    warn "*** CacheAPI caching for $method\n";
+    warn "*** cacheAPI Caching $cachestring\n";
+    #warn "*** CacheAPI caching for $method\n";
     my $super = "SUPER::$method";
     $result = $self->$super( @_ );
     #warn "*** result is " . Dumper $result;
-    $CACHE->freeze( $cachestring, $result ) unless $method eq 'NewImage';
+    #$CACHE->freeze( $cachestring, $result ) unless $method eq 'NewImage';
+    #$CACHE->freeze( $cachestring, $result ) unless substr $method, 0, 3 eq 'New';
 
     # Delete cached parent results when creating/deleting objects
     # *** Caching NewAlbum,target_uid,9497612,album_name,Test2,album_start_date,1999-01-01T00:00:00,album_end_date,1999-12-31T23:59:59
@@ -63,7 +57,7 @@ sub AUTOLOAD {
       $parent = join ',', 'GetAlbum', @_[0..3];
     }
     if ( $parent ) {
-      #warn "*** Expiring $parent\n";
+      warn "*** CacheAPI Expiring $parent\n";
       $CACHE->remove( $parent );
       # Also take the opportunity to remove all expired objects
       # to reduce overall size of cache.
@@ -71,8 +65,8 @@ sub AUTOLOAD {
       $CACHE->purge();
     }
   } else {
-    #warn "*** Reusing $cachestring\n";
-    warn "*** CacheAPI reusing cache for $method\n";
+    warn "*** CacheAPI Reusing $cachestring\n";
+    #warn "*** CacheAPI reusing cache for $method\n";
   }
   return $result;
 }

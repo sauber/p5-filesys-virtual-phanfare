@@ -8,7 +8,6 @@ method _fetch {
 }
 
 # List of album_id=>album_name pairs
-# XXX: Filter by year
 #
 method _idnames {
   #my $albumlist = $self->_info;

@@ -46,11 +46,10 @@ method _build__nodes {
   my @nodes;
   my $idname = $self->_idnames;
   #xx "Branch _build__nodes $self build $type", $idname unless ref $idname eq 'ARRAY';
-  #while ( my($id,$name) = each %$idname ) {
   for my $item ( @$idname ) {
     my $id = $item->{id};
     my $name = $item->{name};
-    #warn "*** build node type $type name $name id $id\n";
+    warn "*** build node type $type name $name id $id\n";
     my $node = $type->new(
       parent => $self,
       name => $name,
@@ -61,23 +60,21 @@ method _build__nodes {
       if $item->{attr} and $node->can('setattributes');
     # Object can build attributes by itself
     $node->_buildattributes if $node->can('_buildattributes');
-    #if ( $node->can('setattributes') ) {
-    #  warn "*** Branch _build__nodes $type name $name accepts attributes\n";
-    #  if ( $item->{obj} ) {
-    #    #xx "  setting to", [ keys %{$item->{obj}} ];
-    #    $node->setattributes( $item->{obj} );
-    #  } else {
-    #    warn "***   But there are no attributes to set\n";
-    #  }
-    #}
     push @nodes, $node;
   }
   return \@nodes;
 }
 
 method _rebuild {
-  warn sprintf "Rebuilding nodes in %s %s\n", $self->parent->childclass, $self->name;
-  $self->_nodes( $self->_build__nodes );
+  warn sprintf "*** Rebuilding nodes in %s %s\n", $self->parent->childclass, $self->name;
+  #sleep 3;
+  my $nodes = $self->_build__nodes;
+  warn sprintf "*** Branch _rebuild count of new nodes %s\n", scalar @$nodes;
+  use Data::Dumper;
+  warn "*** Branch _rebuild: " . $nodes;
+  #$self->_nodes( $self->_build__nodes );
+  #$self->_nodes = $nodes;
+  $self->_nodes( $nodes );
 }
 
 
