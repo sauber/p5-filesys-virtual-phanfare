@@ -35,6 +35,11 @@ sub AUTOLOAD {
   $method =~ s/.*://;   # strip fully-qualified portion
   croak "method not defined" unless $method;
 
+  # No caching at all
+  my $super = "SUPER::$method";
+  warn "*** calling $super @_\n";
+  return $self->$super( @_ );
+
   $CACHE->purge();
   my $cachestring = join ',', $method, @_;
   my $result = $CACHE->thaw( $cachestring );

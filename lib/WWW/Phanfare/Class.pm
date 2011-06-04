@@ -2,6 +2,7 @@ package WWW::Phanfare::Class;
 use Moose;
 use MooseX::Method::Signatures;
 use WWW::Phanfare::Class::CacheAPI;
+use WWW::Phanfare::API;
 use WWW::Phanfare::Class::Account;
 
 has 'api_key'       => ( is=>'ro', isa=>'Str', required=>1 );
@@ -66,7 +67,8 @@ sub _build_api {
   my $self = shift;
 
   # Create an API Agent
-  WWW::Phanfare::Class::CacheAPI->new(
+  #WWW::Phanfare::Class::CacheAPI->new(
+  WWW::Phanfare::API->new(
     api_key     => $self->api_key,
     private_key => $self->private_key,
   );
