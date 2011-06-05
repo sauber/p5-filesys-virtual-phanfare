@@ -85,6 +85,9 @@ my $imagename = shift @imagenames;
 ok( my $image = $rendition->$imagename, 'Class has image object' );
 isa_ok( $image, 'WWW::Phanfare::Class::Image' );
 
+#SKIP: {
+#  skip "Skipping to create selection", 0 if 1;
+
 # Make sure all image filenames are different
 my %U;
 my @uniqnames = grep { ! $U{$_}++ } @imagenames;
@@ -115,16 +118,20 @@ $year->remove( $newalbum );
 #diag '*** album list:' . Dumper [$year->names];
 ok( ! grep(/$newalbum/, $year->names), "Album $newalbum no longer exists" );
 #diag '*** album list:' . Dumper [$year->names];
-done_testing(); exit;
+#done_testing(); exit;
+
+#}; # SKIP
 
 # Create, read and delete a section
 my $newsection = 'New Section';
+#diag '*** album names:' . Dumper [$album->names];
 ok( ! grep(/$newsection/, $album->names), "Section $newsection doesn't yet exist" );
-$album->add( $newsection );
+ok( $album->add( $newsection ), "Adding section $newsection" );
 #diag '*** section list:' . Dumper [$album->names];
 ok( grep(/$newsection/, $album->names), "Section $newsection now exists" );
 $album->remove( $newsection );
 ok( ! grep(/$newsection/, $album->names), "Section $newsection no longer exists" );
+#done_testing(); exit;
 
 # Create, read and delete and image
 #$rendition = $section->Full;
