@@ -3,6 +3,7 @@
 # Test all class methods
 
 use Test::More;
+use File::Slurp;
 use_ok( 'WWW::Phanfare::Class' );
 use lib 't';
 use_ok( 'FakeAgent' );
@@ -133,17 +134,22 @@ $album->remove( $newsection );
 ok( ! grep(/$newsection/, $album->names), "Section $newsection no longer exists" );
 #done_testing(); exit;
 
+#}; # SKIP
+
 # Create, read and delete and image
 #$rendition = $section->Full;
 $rendition = $section->WebLarge;
 $renditionname = $rendition->name;
 #diag "Rendition for new image: " . $renditionname;
-my $newimage = 'New Image.jpg';
+my $newimage = 'testimage.png';
+my $imagedata = read_file('t/data/testimage.png', binmode => ':raw');
+ok( length $imagedata, "Read image file" );
+
 ok( ! grep(/$newimage/, $rendition->names), "Image $newimage doesn't yet exist" );
-ok( ! $rendition->add( $newimage, '<imagedata>' ), "Cannot add to $renditionname rendition" );
+ok( ! $rendition->add( $newimage, $imagedata ), "Cannot add to $renditionname rendition" );
 $rendition = $section->Full;
 $renditionname = $rendition->name;
-ok( $rendition->add( $newimage, '<imagedata>', '2009-09-15T00:00:00' ), "Added to $renditionname rendition" );
+ok( $rendition->add( $newimage, $imagedata, '2009-09-15T00:00:00' ), "Added to $renditionname rendition" );
 ok( grep(/$newimage/, $rendition->names), "Image $newimage now exists" );
 $rendition->remove( $newimage );
 ok( ! grep(/$newimage/, $rendition->names), "Image $newimage no longer exists" );

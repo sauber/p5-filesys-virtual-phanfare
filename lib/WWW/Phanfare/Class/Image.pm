@@ -166,7 +166,8 @@ method _write {
       section_id => $self->section->id,
       filename   => $self->name,
       content    => $self->_imagedata,
-      image_date  => $self->attribute('image_date'),
+      #image_date  => $self->attribute('image_date'),
+      ( $self->attribute('image_date') ? ( image_date => $self->attribute('image_date') ) : () ),
     );
   } else {
     warn sprintf "*** Error: Write image %s in %s rendition failed\n", $self->name, $self->rendition->name;
