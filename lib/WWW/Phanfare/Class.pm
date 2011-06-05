@@ -67,8 +67,8 @@ sub _build_api {
   my $self = shift;
 
   # Create an API Agent
-  #WWW::Phanfare::Class::CacheAPI->new(
-  WWW::Phanfare::API->new(
+  #WWW::Phanfare::API->new(
+  WWW::Phanfare::Class::CacheAPI->new(
     api_key     => $self->api_key,
     private_key => $self->private_key,
   );

@@ -105,16 +105,16 @@ ok( ! $site->remove( $yearname ), "Year $yearname removed" );
 
 # Create, read and delete an album
 my $newalbum = "New Album";
-diag "Existing albums: " . Dumper [ $year->names ];
+#diag "Existing albums: " . Dumper [ $year->names ];
 ok( ! grep(/$newalbum/, $year->names), "Album $newalbum doesn't yet exist" );
 $year->add( $newalbum );
-diag "Existing albums: " . Dumper [ $year->names ];
+#diag "Existing albums: " . Dumper [ $year->names ];
 ok( grep(/$newalbum/, $year->names), "Album $newalbum now exists" );
-diag '*** album list:' . Dumper [$year->names];
+#diag '*** album list:' . Dumper [$year->names];
 $year->remove( $newalbum );
-diag '*** album list:' . Dumper [$year->names];
+#diag '*** album list:' . Dumper [$year->names];
 ok( ! grep(/$newalbum/, $year->names), "Album $newalbum no longer exists" );
-diag '*** album list:' . Dumper [$year->names];
+#diag '*** album list:' . Dumper [$year->names];
 done_testing(); exit;
 
 # Create, read and delete a section

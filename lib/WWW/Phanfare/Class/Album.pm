@@ -48,7 +48,7 @@ method _delete {
      album_id   => $self->id,
   );
   use Data::Dumper;
-  warn "*** Album _delete result: " . Dumper $res;
+  #warn "*** Album _delete result: " . Dumper $res;
   return $res;
 }
 

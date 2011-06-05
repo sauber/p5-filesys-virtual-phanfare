@@ -49,7 +49,7 @@ method _build__nodes {
   for my $item ( @$idname ) {
     my $id = $item->{id};
     my $name = $item->{name};
-    warn "*** build node type $type name $name id $id\n";
+    #warn "*** build node type $type name $name id $id\n";
     my $node = $type->new(
       parent => $self,
       name => $name,
@@ -66,12 +66,12 @@ method _build__nodes {
 }
 
 method _rebuild {
-  warn sprintf "*** Rebuilding nodes in %s %s\n", $self->parent->childclass, $self->name;
+  #warn sprintf "*** Rebuilding nodes in %s %s\n", $self->parent->childclass, $self->name;
   #sleep 3;
   my $nodes = $self->_build__nodes;
-  warn sprintf "*** Branch _rebuild count of new nodes %s\n", scalar @$nodes;
+  #warn sprintf "*** Branch _rebuild count of new nodes %s\n", scalar @$nodes;
   use Data::Dumper;
-  warn "*** Branch _rebuild: " . $nodes;
+  #warn "*** Branch _rebuild: " . $nodes;
   #$self->_nodes( $self->_build__nodes );
   #$self->_nodes = $nodes;
   $self->_nodes( $nodes );
@@ -140,7 +140,7 @@ method add ( Str $name, Str $value?, Str $date? ) {
     #$self->_nodes = [];
     $self->_rebuild;
     #xx "Node add clear__nodes", $self->_nodes;
-    warn "** Branch add delete nodes\n";
+    #warn "** Branch add delete nodes\n";
     return $self; # success
   } else {
     #warn "*** Node add $name _add\n";
