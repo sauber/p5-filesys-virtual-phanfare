@@ -12,7 +12,7 @@ test_requires 'Pod::Coverage::Moose';
 #test_requires 'Fuse';
 test_requires 'YAML::Syck';
 
-requires 'WWW::Phanfare::API' => 0.07;
+requires 'WWW::Phanfare::Class' => 0.01;
 requires 'Filesys::Virtual::Plain';
 requires 'MooseX::Method::Signatures';
 requires 'Devel::Size';
